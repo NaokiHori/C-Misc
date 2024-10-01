@@ -4,7 +4,7 @@ import sys
 sys.path.append(os.path.abspath("./ext"))
 sys.path.append(os.path.abspath("./conf_params"))
 
-project = "My Project"
+project = "C Misc"
 author = "Naoki Hori"
 copyright = f"2024, {author}"
 

@@ -12,11 +12,11 @@ Instead of a signal composed of :math:`N` complex numbers, we aim at finding the
 
     X_k
     =
-    \fourier{N}{x}{0}{1}{N - 1}
+    \rdft{N}{x}{0}{1}{N - 1}
     =
     \sum_{n = 0}^{N - 1}
     x_n
-    \twiddle{-}{n k}{N},
+    \rdfttwiddle{-}{n k}{N},
 
 where :math:`\seq{k}{N - 1}`.
 Recall that we assume :math:`N` is a multiple of :math:`2`.
@@ -28,16 +28,16 @@ By utilizing the `DIT` derived above, we notice
     X_k
     &
     =
-    \fourier{N / 2}{x}{0}{2}{N / 2 - 2}
+    \rdft{N / 2}{x}{0}{2}{N / 2 - 2}
     +
-    \twiddle{-}{k}{N}
-    \fourier{N / 2}{x}{1}{3}{N / 2 - 1}
+    \rdfttwiddle{-}{k}{N}
+    \rdft{N / 2}{x}{1}{3}{N / 2 - 1}
 
     &
     \equiv
     X_k^e
     +
-    \twiddle{-}{k}{N}
+    \rdfttwiddle{-}{k}{N}
     X_k^o
 
 with :math:`\seq{k}{N}`.
@@ -73,14 +73,14 @@ Their discrete Fourier transforms lead
 
     X_k^e
     \equiv
-    \fourier{N / 2}{x}{0}{2}{N / 2 - 2}
+    \rdft{N / 2}{x}{0}{2}{N / 2 - 2}
     =
     +
     \frac{1}{2}
-    \fourier{N / 2}{z}{0}{1}{N / 2 - 1}
+    \rdft{N / 2}{z}{0}{1}{N / 2 - 1}
     +
     \frac{1}{2}
-    \fourier{N / 2}{z^*}{0}{1}{N / 2 - 1},
+    \rdft{N / 2}{z^*}{0}{1}{N / 2 - 1},
 
 and
 
@@ -88,14 +88,14 @@ and
 
     X_k^o
     \equiv
-    \fourier{N / 2}{x}{1}{3}{N / 2 - 1}
+    \rdft{N / 2}{x}{1}{3}{N / 2 - 1}
     =
     -
     \frac{I}{2}
-    \fourier{N / 2}{z}{0}{1}{N / 2 - 1}
+    \rdft{N / 2}{z}{0}{1}{N / 2 - 1}
     +
     \frac{I}{2}
-    \fourier{N / 2}{z^*}{0}{1}{N / 2 - 1},
+    \rdft{N / 2}{z^*}{0}{1}{N / 2 - 1},
 
 where :math:`\seq{k}{N / 2 - 1}`.
 
@@ -105,49 +105,49 @@ In addition to the discrete Fourier transform of :math:`z_n`:
 
     Z_k
     \equiv
-    \fourier{N / 2}{z}{0}{1}{N / 2 - 1}
+    \rdft{N / 2}{z}{0}{1}{N / 2 - 1}
     =
     \sum_{n = 0}^{N / 2 - 1}
     z_n
-    \twiddle{-}{n k}{N / 2}
+    \rdfttwiddle{-}{n k}{N / 2}
 
 with :math:`\seq{k}{N / 2 - 1}`, we seemingly need to evaluate the discrete Fourier transform of :math:`z_n^*`:
 
 .. math::
 
-    \fourier{N / 2}{z^*}{0}{1}{N / 2 - 1},
+    \rdft{N / 2}{z^*}{0}{1}{N / 2 - 1},
 
 which is not necessary due to
 
 .. math::
 
-    \fourier{N / 2}{z^*}{0}{1}{N / 2 - 1}
+    \rdft{N / 2}{z^*}{0}{1}{N / 2 - 1}
     =
     &
     \sum_{n = 0}^{N / 2 - 1}
     z_n^*
-    \twiddle{-}{n k}{N / 2}
+    \rdfttwiddle{-}{n k}{N / 2}
 
     =
     &
     \sum_{n = 0}^{N / 2 - 1}
     z_n^*
-    \left[ \twiddle{-}{n \left( -k \right)}{N / 2} \right]^*
+    \left[ \rdfttwiddle{-}{n \left( -k \right)}{N / 2} \right]^*
 
     =
     &
     \sum_{n = 0}^{N / 2 - 1}
     z_n^*
-    \left[ \twiddle{-}{n \left( -k \right)}{N / 2} \right]^*
-    \left[ \twiddle{-}{n N / 2}{N / 2} \right]^*
+    \left[ \rdfttwiddle{-}{n \left( -k \right)}{N / 2} \right]^*
+    \left[ \rdfttwiddle{-}{n N / 2}{N / 2} \right]^*
 
     =
     &
     \sum_{n = 0}^{N / 2 - 1}
     z_n^*
     \left[
-        \twiddle{-}{n \left( -k \right)}{N / 2}
-        \twiddle{-}{n N / 2}{N / 2}
+        \rdfttwiddle{-}{n \left( -k \right)}{N / 2}
+        \rdfttwiddle{-}{n N / 2}{N / 2}
     \right]^*
 
     =
@@ -155,7 +155,7 @@ which is not necessary due to
     \sum_{n = 0}^{N / 2 - 1}
     z_n^*
     \left[
-        \twiddle{-}{n \left( N / 2 - k \right)}{N / 2}
+        \rdfttwiddle{-}{n \left( N / 2 - k \right)}{N / 2}
     \right]^*
 
     =
@@ -163,7 +163,7 @@ which is not necessary due to
     \left[
         \sum_{n = 0}^{N / 2 - 1}
         z_n
-        \twiddle{-}{n \left( N / 2 - k \right)}{N / 2}
+        \rdfttwiddle{-}{n \left( N / 2 - k \right)}{N / 2}
     \right]^*
 
     =
@@ -182,9 +182,9 @@ and
 
 .. math::
 
-    \twiddle{+}{n N / 2}{N / 2}
+    \rdfttwiddle{+}{n N / 2}{N / 2}
     =
-    \left[ \twiddle{-}{n N / 2}{N / 2} \right]^*
+    \left[ \rdfttwiddle{-}{n N / 2}{N / 2} \right]^*
     \equiv
     1.
 
@@ -224,7 +224,7 @@ Finally, we find
     =
     X_k^e
     +
-    \twiddle{-}{k}{N}
+    \rdfttwiddle{-}{k}{N}
     X_k^o
 
 with :math:`\seq{k}{N / 2 - 1}`.
@@ -283,7 +283,7 @@ First, from the given input signal:
 
     X_k
     =
-    \fourier{N}{x}{0}{1}{N - 1}
+    \rdft{N}{x}{0}{1}{N - 1}
 
 with :math:`\seq{k}{N}`, the spectral representations of the even / odd signal are to be recovered.
 
@@ -359,7 +359,7 @@ By applying these relations to
     =
     X_k^e
     +
-    \twiddle{-}{k}{N}
+    \rdfttwiddle{-}{k}{N}
     X_k^o
 
 with :math:`\seq{k}{N / 2}`, we obtain
@@ -371,7 +371,7 @@ with :math:`\seq{k}{N / 2}`, we obtain
     &
     X_{N / 2 - k}^e
     +
-    \twiddle{-}{N / 2 - k}{N}
+    \rdfttwiddle{-}{N / 2 - k}{N}
     X_{N / 2 - k}^o
 
     =
@@ -379,14 +379,14 @@ with :math:`\seq{k}{N / 2}`, we obtain
     X_{N / 2 - k}^e
     +
     \exp \left( - \pi I \right)
-    \twiddle{}{k}{N}
+    \rdfttwiddle{}{k}{N}
     X_{N / 2 - k}^o
 
     =
     &
     X_{N / 2 - k}^e
     -
-    \twiddle{}{k}{N}
+    \rdfttwiddle{}{k}{N}
     X_{N / 2 - k}^o.
 
 The complex conjugate yields
@@ -399,7 +399,7 @@ The complex conjugate yields
     \left( X_{N / 2 - k}^e \right)^*
     -
     \left[
-        \twiddle{}{k}{N}
+        \rdfttwiddle{}{k}{N}
         X_{N / 2 - k}^o
     \right]^*
 
@@ -407,14 +407,14 @@ The complex conjugate yields
     &
     \left( X_{N / 2 - k}^e \right)^*
     -
-    \twiddle{-}{k}{N}
+    \rdfttwiddle{-}{k}{N}
     \left( X_{N / 2 - k}^o \right)^*
 
     =
     &
     X_k^e
     -
-    \twiddle{-}{k}{N}
+    \rdfttwiddle{-}{k}{N}
     X_k^o.
 
 As a consequence, :math:`X_k^e` and :math:`X_k^o` are obtained from :math:`X_k` following:
@@ -430,7 +430,7 @@ As a consequence, :math:`X_k^e` and :math:`X_k^o` are obtained from :math:`X_k` 
     \left( X_{N / 2 - k} \right)^*,
 
     X_k^o
-    \twiddle{-}{k}{N}
+    \rdfttwiddle{-}{k}{N}
     =
     \frac{1}{2}
     X_k

@@ -1,12 +1,12 @@
 html_theme = "alabaster"
 html_static_path = ["_static"]
 html_theme_options = {
-        "description": "Description here",
+        "description": "",
         "fixed_sidebar": "false",
         "github_banner": "false",
         "github_button": "true",
         "github_count": "true",
-        "github_repo": "",
+        "github_repo": "C-Misc",
         "github_type": "star",
         "github_user": "NaokiHori",
         "navigation_with_keys": "true",

@@ -12,11 +12,11 @@ The discrete Fourier transform of a sequence composed of real numbers :math:`x_n
 
     X_k
     =
-    \fourier{N}{x}{0}{1}{N - 1}
+    \rdft{N}{x}{0}{1}{N - 1}
     =
     \sum_{n = 0}^{N - 1}
     x_n
-    \twiddle{-}{n k}{N}
+    \rdfttwiddle{-}{n k}{N}
 
 with :math:`\seq{k}{N - 1}`, can be computed as follows.
 
@@ -38,7 +38,7 @@ with :math:`\seq{k}{N - 1}`, can be computed as follows.
 
         Z_k
         \equiv
-        \fourier{N / 2}{z}{0}{1}{N / 2 - 1}
+        \rdft{N / 2}{z}{0}{1}{N / 2 - 1}
 
     with :math:`\seq{k}{N / 2 - 1}`.
 
@@ -136,7 +136,7 @@ with :math:`\seq{k}{N - 1}`, can be computed as follows.
         =
         X_k^e
         +
-        \twiddle{-}{k}{N}
+        \rdfttwiddle{-}{k}{N}
         X_k^o,
 
     where :math:`\seq{k}{N / 2}`.
@@ -151,11 +151,11 @@ The inverse discrete Fourier transform of a sequence composed of complex numbers
 
     x_n
     =
-    \ifourier{N}{X}{0}{1}{N - 1}
+    \irdft{N}{X}{0}{1}{N - 1}
     \equiv
     \sum_{k = 0}^{N - 1}
     X_k
-    \twiddle{+}{n k}{N}
+    \rdfttwiddle{+}{n k}{N}
 
 with :math:`\seq{n}{N - 1}`, can be computed as follows.
 Note that :math:`X_k` should satisfy
@@ -184,7 +184,7 @@ Also this implies that :math:`\Im \left( X_0 \right) = \Im \left( X_{N / 2} \rig
         \left( X_{N / 2 - k} \right)^*,
 
         X_k^o
-        \twiddle{-}{k}{N}
+        \rdfttwiddle{-}{k}{N}
         =
         \frac{1}{2}
         X_k
@@ -213,7 +213,7 @@ Also this implies that :math:`\Im \left( X_0 \right) = \Im \left( X_{N / 2} \rig
 
         z_n
         \equiv
-        \ifourier{N / 2}{Z}{0}{1}{N / 2 - 1}
+        \irdft{N / 2}{Z}{0}{1}{N / 2 - 1}
 
     with :math:`\seq{n}{N / 2 - 1}`.
 
