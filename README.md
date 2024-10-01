@@ -1,6 +1,6 @@
 # C-Misc
 
-Minimal yet standalone implementations of various data structures, algorithms, and numerical methods in `C99`.
+Minimal yet standalone implementations of various data structures, algorithms, numerical methods, etc. in `C99`.
 
 > [!NOTE]
 > Implementations in this project are in general for self-study purpose.
@@ -22,4 +22,8 @@ Visit one of the directories and
 make all
 ./a.out
 ```
+
+## Documentation
+
+Complex stuffs are partially documented [here](https://naokihori.github.io/C-Misc/).
 
