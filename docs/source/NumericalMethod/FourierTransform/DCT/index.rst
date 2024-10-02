@@ -1,6 +1,6 @@
-###
-DCT
-###
+#########################
+Discrete Cosine Transform
+#########################
 
 Discrete Cosine Transform by Lee 1984.
 
