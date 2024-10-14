@@ -9,6 +9,7 @@ author = "Naoki Hori"
 copyright = f"2024, {author}"
 
 extensions = [
+        "myliteralinclude"
 ]
 
 from alabaster_params import html_theme

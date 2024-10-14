@@ -1,6 +1,7 @@
 # Real-Valued Fast Fourier Transform
 
 Discrete Fourier transforms of real-valued signals and the corresponding inverse transform in `O(N log N)` operations.
+The input / output signals are pure real, which is achieved by ordering the spectral data `X_k`as `Re(X_0)`, `Re(X_1)`, ..., `Re(X_{N / 2 - 1})`, `Re(X_{N / 2})`, `Im(X_{N / 2 - 1})`, `Im(X_{N / 2 - 2})`, ..., `Im(X_2)`, `Im(X_1)`.
 
 ## Caveat
 

@@ -3,7 +3,8 @@ Fourier transform of a real signal
 ##################################
 
 .. toctree::
+    :maxdepth: 1
 
-    derivation
-    implementation
+    derivation/index.rst
+    implementation/index.rst
 
