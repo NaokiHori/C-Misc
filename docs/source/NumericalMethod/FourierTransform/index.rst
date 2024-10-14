@@ -8,6 +8,7 @@ Fourier transforms in the context of solving partial-differential equations.
     :maxdepth: 1
 
     background/index.rst
+    DFT/index.rst
     RDFT/index.rst
     DCT/index.rst
 

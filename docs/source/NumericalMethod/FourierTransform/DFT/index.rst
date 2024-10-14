@@ -1,6 +1,6 @@
-#####################################
-Fourier transform of a complex signal
-#####################################
+##########################
+Discrete Fourier transform
+##########################
 
 For a sequence of complex numbers :math:`z_n` where :math:`\seq{n}{N - 1}` with :math:`N` being the degree of freedom, its discrete Fourier transform:
 

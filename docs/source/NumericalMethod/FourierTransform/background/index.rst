@@ -2,8 +2,15 @@
 Background
 ##########
 
-.. toctree::
+**************
+Fourier series
+**************
 
-    definition.rst
-    discretization.rst
+.. include:: fourier-series.rst
+
+**************************
+Discrete Fourier transform
+**************************
+
+.. include:: discretization.rst
 
