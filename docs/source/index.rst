@@ -6,4 +6,5 @@ C Misc
     :hidden:
 
     NumericalMethod/FourierTransform/index.rst
+    NumericalMethod/LinearSystem/index.rst
 
