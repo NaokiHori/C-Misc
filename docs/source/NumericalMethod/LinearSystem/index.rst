@@ -21,5 +21,6 @@ Matrix solvers.
     :maxdepth: 1
 
     gauss_jordan.rst
+    GaussianElimination/index.rst
     ThomasAlgorithm/index.rst
 

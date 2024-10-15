@@ -2,9 +2,27 @@
 Gauss-Jordan method
 ###################
 
-We consider a :math:`n \times n`-sized square matrix :math:`A_{ij}`, whose inverse :math:`A_{ij}^{-1}` is computed here (assuming it is a regular matrix).
+We consider a :math:`n \times n`-sized square matrix :math:`A_{ij}`.
+Assuming that :math:`A_{ij}` is a regular matrix, our objective is to compute the inverse :math:`A_{ij}^{-1}`.
 
-Starting from the initial state:
+Starting from
+
+.. math::
+
+    A_{ik} X_{kj} = I_{ij},
+
+the inverse matrix is obtained by
+
+.. math::
+
+    X_{ij}
+    =
+    A_{ik}^{-1}
+    I_{kj}
+    =
+    A_{ij}^{-1}.
+
+Component-wise, starting from the initial state:
 
 .. math::
 
@@ -33,7 +51,7 @@ Starting from the initial state:
         0      & 0      & \cdots & 0      & 0      & 0      & \cdots & 0      & 1      \\
     \end{bmatrix},
 
-we aim at making the first and the second the identity and the inverse matrices, respectively.
+and we aim at making the first and the second the identity and the inverse matrices, respectively.
 
 *************
 Forward sweep

@@ -1,0 +1,9 @@
+.. math::
+
+    \begin{bmatrix}
+             \vdots &      \vdots &      \ddots &      \vdots &      \vdots &      \vdots &             &      \vdots &      \vdots &      \vdots \\
+                  0 &           0 &      \cdots &           1 & a_{i-1,i  } & a_{i-1,i+1} &      \cdots & a_{i-1,n-2} & a_{i-1,n-1} &     b_{i-1} \\
+                  0 &           0 &      \cdots &           0 &           1 & a_{i  ,i+1} := a_{i  ,i+1} / a_{i  ,i  } &      \cdots & a_{i  ,n-2} := a_{i  ,n-2} / a_{i  ,i  } & a_{i  ,n-1} := a_{i  ,n-1} / a_{i  ,i  } & b_{i  } := b_{i  } / a_{i  ,i  } \\
+                  0 &           0 &      \cdots &           0 & a_{i+1,i  } & a_{i+1,i+1} &      \cdots & a_{i+1,n-2} & a_{i+1,n-1} &     b_{i+1} \\
+             \vdots &      \vdots &             &      \vdots &      \vdots &      \vdots &      \ddots &      \vdots &      \vdots &      \vdots \\
+    \end{bmatrix}.
