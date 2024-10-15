@@ -20,5 +20,6 @@ Matrix solvers.
 .. toctree::
     :maxdepth: 1
 
+    gauss_jordan.rst
     ThomasAlgorithm/index.rst
 
