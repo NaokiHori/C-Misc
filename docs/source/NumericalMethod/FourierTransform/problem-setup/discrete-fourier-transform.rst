@@ -64,7 +64,7 @@ Now we consider the corresponding discrete relation:
         \text{N.B. integral and summation are interchanged}
     \right).
 
-Namely, the continuous function :math:`f \left( x \right)` is represented by the superposition of :math:`N` Dirac delta functions, which have non-zero values at :math:`x_n \in \left[ 0, L \right)`.
+Namely, the continuous function :math:`f \left( x \right)` is represented by the superposition of :math:`N` Dirac delta functions, which have non-zero value at :math:`x_n \in \left[ 0, L \right)`.
 
 By taking the sampling points as
 
@@ -84,23 +84,6 @@ we obtain
 .. math::
 
     F_k
-    &
-    =
-    \frac{1}{N}
-    \sum_{n = 0}^{N - 1}
-    f_n
-    \exp
-    \left(
-        -
-        \frac{
-            2 \pi k x_n
-        }{
-            L
-        }
-        I
-    \right)
-
-    &
     =
     \frac{1}{N}
     \sum_{n = 0}^{N - 1}
@@ -125,7 +108,7 @@ Correspondingly, we notice
     \exp
     \left(
         \frac{
-            2 \pi k m
+            2 \pi k n
         }{
             N
         }
@@ -134,23 +117,25 @@ Correspondingly, we notice
     &
     =
     \sum_{k = 0}^{N - 1}
-    \frac{1}{N}
-    \sum_{n = 0}^{N - 1}
-    f_n
+    \left\{
+        \frac{1}{N}
+        \sum_{m = 0}^{N - 1}
+        f_m
+        \exp
+        \left(
+            -
+            \frac{
+                2 \pi k m
+            }{
+                N
+            }
+            I
+        \right)
+    \right\}
     \exp
     \left(
-        -
         \frac{
             2 \pi k n
-        }{
-            N
-        }
-        I
-    \right)
-    \exp
-    \left(
-        \frac{
-            2 \pi k m
         }{
             N
         }
@@ -160,13 +145,13 @@ Correspondingly, we notice
     &
     =
     \frac{1}{N}
-    \sum_{n = 0}^{N - 1}
+    \sum_{m = 0}^{N - 1}
     \sum_{k = 0}^{N - 1}
-    f_n
+    f_m
     \exp
     \left\{
         \frac{
-            2 \pi k \left( m - n \right)
+            2 \pi k \left( n - m \right)
         }{
             N
         }
@@ -176,14 +161,14 @@ Correspondingly, we notice
     &
     =
     \frac{1}{N}
-    \sum_{n = 0}^{N - 1}
-    f_n
+    \sum_{m = 0}^{N - 1}
+    f_m
     N
-    \delta_{mn}
+    \delta_{nm}
 
     &
     =
-    f_m,
+    f_n,
 
 where we use
 
@@ -208,15 +193,31 @@ which can be derived by adopting the identity (for :math:`n \ne 0`):
 .. math::
 
     \sum_{k = 0}^{N - 1}
-    \exp \left( n k I \right)
+    \exp
+    \left(
+        \frac{2 \pi n}{N} k I
+    \right)
+    &
     =
     \frac{
-        1 - \exp \left( n N I \right)
+        1 - \exp \left( \frac{2 \pi n}{N} N I \right)
     }{
-        1 - \exp \left( n I \right)
-    }.
+        1 - \exp \left( \frac{2 \pi n}{N} I \right)
+    }
 
-In summary, we confirm the discrete Fourier transform and its inverse relation:
+    &
+    =
+    \frac{
+        1 - \exp \left( 2 \pi n I \right)
+    }{
+        1 - \exp \left( \frac{2 \pi n}{N} I \right)
+    }
+
+    &
+    =
+    0.
+
+In summary, the discrete Fourier transform :math:`\mathcal{F}` and its inverse transform :math:`\mathcal{F}^{-1}` are given by:
 
 .. math::
 
@@ -265,81 +266,5 @@ with
         N
     }.
 
-.. note::
-
-    By taking the sampling points differently:
-
-    .. math::
-
-        x_n
-        =
-        \frac{
-            2 n
-            +
-            1
-        }{
-            2
-        }
-        \frac{
-            L
-        }{
-            N
-        },
-
-    we obtain
-
-    .. math::
-
-        F_k
-        &
-        =
-        \frac{1}{N}
-        \sum_{n = 0}^{N - 1}
-        f_n
-        \exp
-        \left(
-            -
-            \frac{
-                2 \pi k x_n
-            }{
-                L
-            }
-            I
-        \right)
-
-        &
-        =
-        \frac{1}{N}
-        \sum_{n = 0}^{N - 1}
-        f_n
-        \exp
-        \left\{
-            -
-            \frac{
-                \pi k \left( 2 n + 1 \right)
-            }{
-                N
-            }
-            I
-        \right\},
-
-    and
-
-    .. math::
-
-        f_n
-        =
-        \sum_{k = 0}^{N - 1}
-        F_k
-        \exp
-        \left\{
-            \frac{
-                \pi k \left( 2 n + 1 \right)
-            }{
-                N
-            }
-            I
-        \right\},
-
-    which is known as `the shifted DFT <https://en.wikipedia.org/wiki/Discrete_Fourier_transform#Generalized_DFT_(shifted_and_non-linear_phase)>`_ and appears when dealing with symmetric signals.
+Note that :math:`\mathcal{F}: \mathbb{C}^N \rightarrow \mathbb{C}^N` and :math:`\mathcal{F}^{-1}: \mathbb{C}^N \rightarrow \mathbb{C}^N` are both linear operators.
 

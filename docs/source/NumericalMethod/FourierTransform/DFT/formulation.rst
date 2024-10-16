@@ -1,10 +1,4 @@
-For a sequence of complex numbers :math:`z_n` where :math:`\seq{n}{N - 1}` with :math:`N` being the degree of freedom, its discrete Fourier transform:
-
-.. math::
-
-    \mathcal{F}_N: \mathbb{C}^N \rightarrow \mathbb{C}^N
-
-is defined as
+For a sequence of :math:`N` complex numbers :math:`z_n` with :math:`\seq{n}{N - 1}`, the discrete Fourier transform is defined as
 
 .. math::
 
@@ -18,7 +12,7 @@ is defined as
 
 where :math:`\seq{k}{N - 1}`.
 
-Assuming that :math:`N` is a multiple of :math:`2`, we decompose the right-hand side into two components:
+Assuming that :math:`N` is a multiple of :math:`2`, we decompose the sum into two components:
 
 .. math::
 
@@ -39,7 +33,7 @@ Assuming that :math:`N` is a multiple of :math:`2`, we decompose the right-hand 
     z_{2 n + 1}
     \rdfttwiddle{-}{n k}{N / 2}
 
-to yield the following relation known as the decimation in time:
+to yield
 
 .. math::
 
@@ -51,8 +45,7 @@ to yield the following relation known as the decimation in time:
     \rdft{N / 2}{z}{1}{3}{N - 1},
 
 where :math:`\seq{k}{N - 1}`.
-
-Note that we have
+Due to
 
 .. math::
 
@@ -86,8 +79,7 @@ Note that we have
     \rdfttwiddle{-}{k}{N}
     \rdft{N / 2}{z}{1}{3}{N - 1},
 
-which can be used to relate :math:`k` and :math:`k + N / 2`.
-To summarize,
+we obtain the following relation known as the decimation in time:
 
 .. math::
 
@@ -125,7 +117,7 @@ is defined as an identical way with the opposite sign of the twiddle factor:
     \equiv
     \irdft{N}{Z}{0}{1}{N - 1}
 
-with :math:`\seq{n}{N - 1}`, and we have
+with :math:`\seq{n}{N - 1}`, and equivalently we have
 
 .. math::
 

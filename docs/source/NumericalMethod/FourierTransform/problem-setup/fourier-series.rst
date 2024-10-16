@@ -1,4 +1,5 @@
-We consider a one-dimensional periodic signal :math:`f \left( x \right)` with :math:`x \in \left[ 0, L \right)`, whose Fourier series expansion is given by
+We consider a one-dimensional periodic signal :math:`f \left( x \right) \in \mathbb{C}` with :math:`x \in \left[ 0, L \right)`.
+The Fourier series expansion of this signal is given by
 
 .. math::
 
@@ -17,7 +18,6 @@ We consider a one-dimensional periodic signal :math:`f \left( x \right)` with :m
     \right),
 
 where :math:`I` is the imaginary unit and :math:`k \in \mathbb{Z}`.
-
 By utilizing the identity due to the orthogonality of the trigonometric functions:
 
 .. math::
@@ -113,5 +113,5 @@ with :math:`n \in \mathbb{Z}`, we have
     =
     F_k,
 
-giving a way to compute Fourier coefficient :math:`F_k`.
+which gives a way to find :math:`F_k` from :math:`f \left( x \right)`.
 
