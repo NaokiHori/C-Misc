@@ -8,7 +8,7 @@ We aim at finding the discrete Fourier transform of a sequence composed of :math
     =
     \sum_{n = 0}^{N - 1}
     x_n
-    \rdfttwiddle{-}{n k}{N},
+    \twiddle{- 2 \pi}{n k}{N},
 
 where :math:`\seq{k}{N - 1}`.
 
@@ -20,47 +20,47 @@ By utilizing the decimation in time (assuming :math:`N` is a multiple of :math:`
     =
     \rdft{N / 2}{x}{0}{2}{N - 2}
     +
-    \rdfttwiddle{-}{k}{N}
+    \twiddle{- 2 \pi}{k}{N}
     \rdft{N / 2}{x}{1}{3}{N - 1}.
 
-Although this relation is fulfilled for :math:`\seq{k}{N - 1}`, due to
+Although this relation is fulfilled for :math:`\seq{k}{N - 1}`, it is enough to consider up to :math:`k = N / 2` as :math:`X_{N - k} = X_k^*` is satisfied.
 
-.. math::
+.. mydetails:: Derivation
 
-    X_{N - k}
-    &
-    =
-    \sum_{n = 0}^{N - 1}
-    x_n
-    \rdfttwiddle{-}{n \left( N - k \right)}{N}
+    .. math::
 
-    &
-    =
-    \sum_{n = 0}^{N - 1}
-    x_n
-    \exp \left( - 2 \pi n I \right)
-    \rdfttwiddle{}{n k}{N}
-
-    &
-    =
-    \sum_{n = 0}^{N - 1}
-    x_n
-    \rdfttwiddle{}{n k}{N}
-
-    &
-    =
-    \left[
+        X_{N - k}
+        &
+        =
         \sum_{n = 0}^{N - 1}
         x_n
-        \rdfttwiddle{-}{n k}{N}
-    \right]^*
-    \,\, \left( \because x_n^* = x_n \right)
+        \twiddle{- 2 \pi}{n \left( N - k \right)}{N}
 
-    &
-    =
-    X_k^*
+        &
+        =
+        \sum_{n = 0}^{N - 1}
+        x_n
+        \exp \left( - 2 \pi n I \right)
+        \twiddle{2 \pi}{n k}{N}
 
-being satisfied, it is enough to consider up to :math:`k = N / 2`.
+        &
+        =
+        \sum_{n = 0}^{N - 1}
+        x_n
+        \twiddle{2 \pi}{n k}{N}
+
+        &
+        =
+        \left[
+            \sum_{n = 0}^{N - 1}
+            x_n
+            \twiddle{- 2 \pi}{n k}{N}
+        \right]^*
+        \,\, \left( \because x_n^* = x_n \right)
+
+        &
+        =
+        X_k^*.
 
 For later notational convenience, we introduce
 
@@ -84,7 +84,7 @@ and the relation of interest here is written as
     =
     X_k^e
     +
-    \rdfttwiddle{-}{k}{N}
+    \twiddle{- 2 \pi}{k}{N}
     X_k^o
 
 with :math:`\seq{k}{N / 2}`.
@@ -128,7 +128,7 @@ we have
 
 where :math:`\seq{n}{N / 2 - 1}`.
 
-Their discrete Fourier transforms lead
+Their discrete Fourier transforms lead to
 
 .. math::
 
@@ -162,72 +162,80 @@ We do not need to calculate the discrete Fourier transform of :math:`z_n^*`:
 
 .. math::
 
-    \rdft{N / 2}{z^*}{0}{1}{N / 2 - 1},
+    \sum_{n = 0}^{N / 2 - 1}
+    z_n^*
+    \twiddle{- 2 \pi}{n k}{N / 2}
+    =
+    \rdft{N / 2}{z^*}{0}{1}{N / 2 - 1}
 
-due to
+since this is equal to
 
 .. math::
 
-    \sum_{n = 0}^{N / 2 - 1}
-    z_n^*
-    \rdfttwiddle{-}{n k}{N / 2}
-    =
-    &
-    \sum_{n = 0}^{N / 2 - 1}
-    z_n^*
-    \left[ \rdfttwiddle{-}{n \left( -k \right)}{N / 2} \right]^*
+    Z_{N / 2 - k}^*.
 
-    =
-    &
-    \sum_{n = 0}^{N / 2 - 1}
-    z_n^*
-    \left[ \rdfttwiddle{-}{n \left( -k \right)}{N / 2} \right]^*
-    \left[ \rdfttwiddle{-}{n N / 2}{N / 2} \right]^*
-    \,\,
-    \left(
-        \because
-        \left[ \rdfttwiddle{-}{n N / 2}{N / 2} \right]^*
-        \equiv
-        1
-    \right)
+.. mydetails:: Derivation
 
-    =
-    &
-    \sum_{n = 0}^{N / 2 - 1}
-    z_n^*
-    \left[
-        \rdfttwiddle{-}{n \left( -k \right)}{N / 2}
-        \rdfttwiddle{-}{n N / 2}{N / 2}
-    \right]^*
+    .. math::
 
-    =
-    &
-    \sum_{n = 0}^{N / 2 - 1}
-    z_n^*
-    \left[
-        \rdfttwiddle{-}{n \left( N / 2 - k \right)}{N / 2}
-    \right]^*
-
-    =
-    &
-    \left[
         \sum_{n = 0}^{N / 2 - 1}
-        z_n
-        \rdfttwiddle{-}{n \left( N / 2 - k \right)}{N / 2}
-    \right]^*
-    \,\,
-    \left(
-        \because
-        \left( a b \right)^*
-        \equiv
-        a^* b^*
-    \right)
+        z_n^*
+        \twiddle{- 2 \pi}{n k}{N / 2}
+        =
+        &
+        \sum_{n = 0}^{N / 2 - 1}
+        z_n^*
+        \left[ \twiddle{- 2 \pi}{n \left( -k \right)}{N / 2} \right]^*
 
-    =
-    &
-    Z_{N / 2 - k}^*,
+        =
+        &
+        \sum_{n = 0}^{N / 2 - 1}
+        z_n^*
+        \left[ \twiddle{- 2 \pi}{n \left( -k \right)}{N / 2} \right]^*
+        \left[ \twiddle{- 2 \pi}{n N / 2}{N / 2} \right]^*
+        \,\,
+        \left(
+            \because
+            \left[ \twiddle{- 2 \pi}{n N / 2}{N / 2} \right]^*
+            \equiv
+            1
+        \right)
 
-indicating that it is related to the discrete Fourier transform of :math:`z_n`.
+        =
+        &
+        \sum_{n = 0}^{N / 2 - 1}
+        z_n^*
+        \left[
+            \twiddle{- 2 \pi}{n \left( -k \right)}{N / 2}
+            \twiddle{- 2 \pi}{n N / 2}{N / 2}
+        \right]^*
+
+        =
+        &
+        \sum_{n = 0}^{N / 2 - 1}
+        z_n^*
+        \left[
+            \twiddle{- 2 \pi}{n \left( N / 2 - k \right)}{N / 2}
+        \right]^*
+
+        =
+        &
+        \left[
+            \sum_{n = 0}^{N / 2 - 1}
+            z_n
+            \twiddle{- 2 \pi}{n \left( N / 2 - k \right)}{N / 2}
+        \right]^*
+        \,\,
+        \left(
+            \because
+            \left( a b \right)^*
+            \equiv
+            a^* b^*
+        \right)
+
+        =
+        &
+        Z_{N / 2 - k}^*.
 
 Thus we have
 
@@ -328,7 +336,7 @@ from which we compute the resulting relation
     =
     X_k^e
     +
-    \rdfttwiddle{-}{k}{N}
+    \twiddle{- 2 \pi}{k}{N}
     X_k^o
 
 with :math:`\seq{k}{N / 2}`.

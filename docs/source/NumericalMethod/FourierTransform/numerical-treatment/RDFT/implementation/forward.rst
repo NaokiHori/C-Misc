@@ -8,7 +8,7 @@ The discrete Fourier transform of a sequence composed of real numbers :math:`x_n
     \equiv
     \sum_{n = 0}^{N - 1}
     x_n
-    \rdfttwiddle{-}{n k}{N}
+    \twiddle{- 2 \pi}{n k}{N}
 
 with :math:`\seq{k}{N / 2}` due to the Hermitian symmetry, can be computed as follows.
 
@@ -74,7 +74,7 @@ with :math:`\seq{k}{N / 2}` due to the Hermitian symmetry, can be computed as fo
         =
         X_k^e
         +
-        \rdfttwiddle{-}{k}{N}
+        \twiddle{- 2 \pi}{k}{N}
         X_k^o,
 
     with :math:`\seq{k}{N / 2}`.

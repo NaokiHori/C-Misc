@@ -8,7 +8,7 @@ The inverse discrete Fourier transform of a sequence composed of complex numbers
     \equiv
     \sum_{k = 0}^{N - 1}
     X_k
-    \rdfttwiddle{}{n k}{N}
+    \twiddle{2 \pi}{n k}{N}
 
 with :math:`\seq{n}{N - 1}`, can be computed as follows.
 Note that :math:`X_k` should satisfy the Hermitian symmetry:
@@ -51,7 +51,7 @@ and thus :math:`X_k` are stored only up to :math:`k = N / 2` in practice.
         =
         X_k^e
         +
-        \rdfttwiddle{}{k}{N}
+        \twiddle{2 \pi}{k}{N}
         X_k^o
 
     is constructed, with :math:`\seq{k}{N / 2 - 1}`.
@@ -116,9 +116,9 @@ and thus :math:`X_k` are stored only up to :math:`k = N / 2` in practice.
 
     .. math::
 
-        x_{2 n    } & = \Re \left( z_n \right),
+        x_{2 n    } & = 2 \Re \left( z_n \right),
 
-        x_{2 n + 1} & = \Im \left( z_n \right),
+        x_{2 n + 1} & = 2 \Im \left( z_n \right),
 
     with :math:`\seq{n}{N / 2 - 1}`.
     The output signal is ordered as this way, and thus no additional procedure is necessary here.

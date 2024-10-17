@@ -14,6 +14,8 @@ Implementation
 
 .. include:: implementation.rst
 
+.. _shifted_discrete_fourier_transform:
+
 **********************************
 Shifted discrete Fourier transform
 **********************************

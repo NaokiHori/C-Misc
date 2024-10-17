@@ -6,7 +6,7 @@ For a sequence of :math:`N` complex numbers :math:`z_n` with :math:`\seq{n}{N - 
     \equiv
     \sum_{n = 0}^{N - 1}
     z_n
-    \rdfttwiddle{-}{n k}{N}
+    \twiddle{- 2 \pi}{n k}{N}
     \equiv
     \rdft{N}{z}{0}{1}{N - 1},
 
@@ -16,22 +16,25 @@ Assuming that :math:`N` is a multiple of :math:`2`, we decompose the sum into tw
 
 .. math::
 
+    &
     \sum_{n = 0}^{N / 2 - 1}
     z_{2 n}
-    \rdfttwiddle{-}{2 n k}{N}
+    \twiddle{- 2 \pi}{2 n k}{N}
     +
     \sum_{n = 0}^{N / 2 - 1}
     z_{2 n + 1}
-    \rdfttwiddle{-}{\left( 2 n + 1 \right) k}{N}
+    \twiddle{- 2 \pi}{\left( 2 n + 1 \right) k}{N}
+
     =
+    &
     \sum_{n = 0}^{N / 2 - 1}
     z_{2 n}
-    \rdfttwiddle{-}{n k}{N / 2}
+    \twiddle{- 2 \pi}{n k}{N / 2}
     +
-    \rdfttwiddle{-}{k}{N}
+    \twiddle{- 2 \pi}{k}{N}
     \sum_{n = 0}^{N / 2 - 1}
     z_{2 n + 1}
-    \rdfttwiddle{-}{n k}{N / 2}
+    \twiddle{- 2 \pi}{n k}{N / 2}
 
 to yield
 
@@ -41,7 +44,7 @@ to yield
     =
     \rdft{N / 2}{z}{0}{2}{N - 2}
     +
-    \rdfttwiddle{-}{k}{N}
+    \twiddle{- 2 \pi}{k}{N}
     \rdft{N / 2}{z}{1}{3}{N - 1},
 
 where :math:`\seq{k}{N - 1}`.
@@ -54,29 +57,29 @@ Due to
     &
     \sum_{n = 0}^{N / 2 - 1}
     z_{2 n}
-    \rdfttwiddle{-}{n \left( k + N / 2 \right)}{N / 2}
+    \twiddle{- 2 \pi}{n \left( k + N / 2 \right)}{N / 2}
     +
-    \rdfttwiddle{-}{\left( k + N / 2 \right)}{N}
+    \twiddle{- 2 \pi}{\left( k + N / 2 \right)}{N}
     \sum_{n = 0}^{N / 2 - 1}
     z_{2 n + 1}
-    \rdfttwiddle{-}{n \left( k + N / 2 \right)}{N / 2}
+    \twiddle{- 2 \pi}{n \left( k + N / 2 \right)}{N / 2}
 
     =
     &
     \sum_{n = 0}^{N / 2 - 1}
     z_{2 n}
-    \rdfttwiddle{-}{n k}{N / 2}
+    \twiddle{- 2 \pi}{n k}{N / 2}
     -
-    \rdfttwiddle{-}{k}{N}
+    \twiddle{- 2 \pi}{k}{N}
     \sum_{n = 0}^{N / 2 - 1}
     z_{2 n + 1}
-    \rdfttwiddle{-}{n k}{N / 2}
+    \twiddle{- 2 \pi}{n k}{N / 2}
 
     =
     &
     \rdft{N / 2}{z}{0}{2}{N - 2}
     -
-    \rdfttwiddle{-}{k}{N}
+    \twiddle{- 2 \pi}{k}{N}
     \rdft{N / 2}{z}{1}{3}{N - 1},
 
 we obtain the following relation known as the decimation in time:
@@ -87,14 +90,14 @@ we obtain the following relation known as the decimation in time:
     =
     \rdft{N / 2}{z}{0}{2}{N - 2}
     +
-    \rdfttwiddle{-}{k}{N}
+    \twiddle{- 2 \pi}{k}{N}
     \rdft{N / 2}{z}{1}{3}{N - 1},
 
     Z_{k + N / 2}
     =
     \rdft{N / 2}{z}{0}{2}{N - 2}
     -
-    \rdfttwiddle{-}{k}{N}
+    \twiddle{- 2 \pi}{k}{N}
     \rdft{N / 2}{z}{1}{3}{N - 1},
 
 with :math:`\seq{k}{N / 2 - 1}`.
@@ -105,15 +108,16 @@ The inverse transform
 
     \mathcal{F}_N^{-1}: \mathbb{C}^N \rightarrow \mathbb{C}^N
 
-is defined as an identical way with the opposite sign of the twiddle factor:
+is defined as an identical way with the opposite sign of the twiddle factor (and the pre-factor :math:`N`):
 
 .. math::
 
     z_n
     \equiv
+    \frac{1}{N}
     \sum_{k = 0}^{N - 1}
     Z_k
-    \rdfttwiddle{}{n k}{N}
+    \twiddle{2 \pi}{n k}{N}
     \equiv
     \irdft{N}{Z}{0}{1}{N - 1}
 
@@ -125,14 +129,14 @@ with :math:`\seq{n}{N - 1}`, and equivalently we have
     =
     \irdft{N / 2}{Z}{0}{2}{N - 2}
     +
-    \rdfttwiddle{}{n}{N}
+    \twiddle{2 \pi}{n}{N}
     \irdft{N / 2}{Z}{1}{3}{N - 1},
 
     z_{n + N / 2}
     =
     \irdft{N / 2}{Z}{0}{2}{N - 2}
     -
-    \rdfttwiddle{}{n}{N}
+    \twiddle{2 \pi}{n}{N}
     \irdft{N / 2}{Z}{1}{3}{N - 1},
 
 with :math:`\seq{n}{N / 2 - 1}`.

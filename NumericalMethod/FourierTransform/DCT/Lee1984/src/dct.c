@@ -36,7 +36,7 @@ static void memory_free (
 
 static int dct2 (
     const size_t nitems,
-    const size_t inv,
+    const size_t stride,
     const double * const restrict table,
     double * const restrict xs,
     double * const restrict ys
@@ -49,22 +49,28 @@ static int dct2 (
 		xs[0] = 2.    * v0 + 2.    * v1;
 		xs[1] = sqrt2 * v0 - sqrt2 * v1;
   } else if (0 == nitems % 2) {
+    // divide and conquer, forward | 22
     const size_t nhalfs = nitems / 2;
     for (size_t n = 0; n < nhalfs; n++) {
-      const double c = table[(2 * n + 1) * inv];
+      // c: inverse of cos(beta)
+      const double c = table[(2 * n + 1) * stride];
       const double v0 = xs[             n];
       const double v1 = xs[nitems - 1 - n];
       ys[n         ] = 1. * (v0 + v1);
       ys[n + nhalfs] = c  * (v0 - v1);
     }
-    dct2(nhalfs, inv * 2, table, ys +      0, xs);
-    dct2(nhalfs, inv * 2, table, ys + nhalfs, xs);
+    // solve two sub problems
+    dct2(nhalfs, stride * 2, table, ys +      0, xs);
+    dct2(nhalfs, stride * 2, table, ys + nhalfs, xs);
+    // even frequencies
     for (size_t k = 0; k < nhalfs; k++) {
       xs[k * 2 + 0] = ys[k];
     }
+    // odd frequencies
     for (size_t k = 0; k < nhalfs - 1; k++) {
       xs[k * 2 + 1] = ys[nhalfs + k] + ys[nhalfs + k + 1];
     }
+    // for the last element, "k+1"-th element is zero
     xs[nitems - 1] = ys[nitems - 1];
   } else {
     // fallback to N^2 DCT2
@@ -85,7 +91,7 @@ static int dct2 (
 
 static int dct3 (
     const size_t nitems,
-    const size_t inv,
+    const size_t stride,
     const double * const restrict table,
     double * const restrict xs,
     double * const restrict ys
@@ -98,6 +104,7 @@ static int dct3 (
     xs[0] = 2. * v0 + sqrt2 * v1;
     xs[1] = 2. * v0 - sqrt2 * v1;
   } else if (0 == nitems % 2) {
+    // divide and conquer, backward | 22
     const size_t nhalfs = nitems / 2;
     // first  idct: ys[     0 : nhalfs - 1], even elements
     // second idct: ys[nhalfs : nitems - 1], sum of two odd elements
@@ -108,11 +115,13 @@ static int dct3 (
     for (size_t k = 1; k < nhalfs; k++) {
       ys[nhalfs + k] = xs[k * 2 - 1] + xs[k * 2 + 1];
     }
-    dct3(nhalfs, inv * 2, table, ys         , xs);
-    dct3(nhalfs, inv * 2, table, ys + nhalfs, xs);
-    // combine two idcts (butterfly)
+    // solve two sub problems
+    dct3(nhalfs, stride * 2, table, ys         , xs);
+    dct3(nhalfs, stride * 2, table, ys + nhalfs, xs);
+    // combine results of sub problems
     for (size_t n = 0; n < nhalfs; n++) {
-      const double c = table[(2 * n + 1) * inv];
+      // c: inverse of cos(beta)
+      const double c = table[(2 * n + 1) * stride];
       const double v0 = 1. * ys[         n];
       const double v1 = c  * ys[nhalfs + n];
       xs[             n] = v0 + v1;
@@ -204,6 +213,7 @@ int dct_exec_b (
   const size_t nitems = plan->nitems;
   const double * const restrict table = plan->table;
   double * const restrict ys = plan->buf;
+  // normalize 0-th wave number before executing DCT3 | 1
   xs[0] *= 0.5;
   dct3(nitems, 1, table, xs, ys);
   return 0;

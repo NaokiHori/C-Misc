@@ -1,9 +1,8 @@
-SPHINXOPTS  ?=
-SPHINXBUILD ?= sphinx-build
-SOURCEDIR   = source
-BUILDDIR    = build
+SPHINXBUILD := sphinx-build
+SOURCEDIR   := source
+BUILDDIR    := build
 
-.PHONY: Makefile
+.PHONY: Makefile docs
 
 help:
 	@echo "all   : build"
