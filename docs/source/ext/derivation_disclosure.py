@@ -4,6 +4,10 @@ from sphinx.transforms.post_transforms import SphinxPostTransform
 from sphinx.util.nodes import NodeMatcher
 
 
+DETAILS_TAG_CLASS_NAME = "derivation"
+DETAILS_SUMMARY = "Derivation"
+
+
 class details(nodes.Element, nodes.General):
     pass
 
@@ -11,7 +15,7 @@ class summary(nodes.TextElement, nodes.General):
     pass
 
 def visit_details(self, node):
-    self.body.append("<details>")
+    self.body.append(f"<details class=\"{DETAILS_TAG_CLASS_NAME}\">")
 
 def depart_details(self, node):
     self.body.append("</details>")
@@ -22,8 +26,8 @@ def visit_summary(self, node):
 def depart_summary(self, node):
     self.body.append("</summary>")
 
-class MyDetails(Directive):
-    required_arguments = 1
+class DerivationDisclosure(Directive):
+    required_arguments = 0
     final_argument_whitespace = True
     has_content = True
     option_spec = {
@@ -34,22 +38,22 @@ class MyDetails(Directive):
         admonition = nodes.container(
                 "",
                 classes=self.options.get("classes", []),
-                type="mydetails"
+                type="derivation_disclosure"
         )
         textnodes, messages = self.state.inline_text(
-                self.arguments[0],
+                DETAILS_SUMMARY,
                 self.lineno
         )
-        admonition += nodes.paragraph(self.arguments[0], "", *textnodes)
+        admonition += nodes.paragraph(DETAILS_SUMMARY, "", *textnodes)
         admonition += messages
         self.state.nested_parse(self.content, self.content_offset, admonition)
         self.add_name(admonition)
         return [admonition]
 
-class MyDetailsTransform(SphinxPostTransform):
+class DerivationDisclosureTransform(SphinxPostTransform):
     default_priority = 200
     def run(self):
-        matcher = NodeMatcher(nodes.container, type="mydetails")
+        matcher = NodeMatcher(nodes.container, type="derivation_disclosure")
         for node in self.document.traverse(matcher):
             newnode = details(**node.attributes)
             newnode += summary("", "", *node[0])
@@ -59,8 +63,8 @@ class MyDetailsTransform(SphinxPostTransform):
 def setup(app):
     app.add_node(details, html=(visit_details, depart_details))
     app.add_node(summary, html=(visit_summary, depart_summary))
-    app.add_directive("mydetails", MyDetails)
-    app.add_post_transform(MyDetailsTransform)
+    app.add_directive("derivation_disclosure", DerivationDisclosure)
+    app.add_post_transform(DerivationDisclosureTransform)
     return {
         "version": "0.1",
         "parallel_read_safe": True,

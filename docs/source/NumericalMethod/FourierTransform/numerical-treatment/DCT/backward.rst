@@ -34,7 +34,7 @@ to write the inverse transform as
     \frac{1}{N}
     \sum_{k = 0}^{N - 1}
     X_k
-    \twiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}.
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}.
 
 We perform this conversion a priori:
 
@@ -42,7 +42,7 @@ We perform this conversion a priori:
     :language: c
     :tag: normalize 0-th wave number before executing DCT3
 
-Furthermore, we introduce a symbol for brevity:
+Furthermore, we introduce a symbol denoting the inverse transform for brevity:
 
 .. math::
 
@@ -51,18 +51,28 @@ Furthermore, we introduce a symbol for brevity:
     \frac{1}{N}
     \sum_{k = 0}^{N - 1}
     X_k
-    \twiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}.
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}.
 
 Assuming that :math:`N` is a multiple of :math:`2`, we decompose the right-hand side into two components:
 
 .. math::
 
     x_n
+    &
     =
     \frac{1}{N}
     \sum_{k = 0}^{N / 2 - 1}
     X_{2 k}
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k \right)}{2 N}
+    +
+    \frac{1}{N}
+    \sum_{k = 0}^{N / 2 - 1}
+    X_{2 k + 1}
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N}
+
+    &
+    =
+    \dctiii{n}{N / 2}{X_0}{X_2}{X_{N - 2}}
     +
     \frac{1}{N}
     \sum_{k = 0}^{N / 2 - 1}
@@ -96,36 +106,29 @@ To decompose :math:`n` as well, we consider :math:`n \leftarrow N - 1 - n` to yi
     \frac{1}{N}
     \sum_{k = 0}^{N / 2 - 1}
     X_{2 k + 1}
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N},
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N}
 
-due to :ref:`one of the trigonometric relations derived before <trig_relation_phase>`.
-
-Thus we notice
-
-.. math::
-
-    x_n
     &
     =
-    \dctiii{n}{N / 2}{X_0}{X_2}{X_{N / 2 - 2}}
-    +
-    \frac{1}{N}
-    \sum_{k = 0}^{N / 2 - 1}
-    X_{2 k + 1}
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N},
-
-    x_{N - 1 - n}
-    &
-    =
-    \dctiii{n}{N / 2}{X_0}{X_2}{X_{N / 2 - 2}}
+    \dctiii{n}{N / 2}{X_0}{X_2}{X_{N - 2}}
     -
     \frac{1}{N}
     \sum_{k = 0}^{N / 2 - 1}
     X_{2 k + 1}
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N}.
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N},
 
-Although the first part is the inverse transform of size :math:`N / 2`, the second part is not due to the phase shift (:math:`2 k + 1` instead of :math:`2 k`), preventing the application of the divide-and-conquer strategy.
-To make it a smaller transform as well, we assign
+due to :ref:`one of the trigonometric relations derived before <trig_relation_phase>`.
+
+To process the second terms:
+
+.. math::
+
+    \frac{1}{N}
+    \sum_{k = 0}^{N / 2 - 1}
+    X_{2 k + 1}
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N},
+
+we assign
 
 .. math::
 

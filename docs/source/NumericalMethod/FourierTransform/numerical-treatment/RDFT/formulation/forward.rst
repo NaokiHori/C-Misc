@@ -25,7 +25,7 @@ By utilizing the decimation in time (assuming :math:`N` is a multiple of :math:`
 
 Although this relation is fulfilled for :math:`\seq{k}{N - 1}`, it is enough to consider up to :math:`k = N / 2` as :math:`X_{N - k} = X_k^*` is satisfied.
 
-.. mydetails:: Derivation
+.. derivation_disclosure:: 
 
     .. math::
 
@@ -174,7 +174,7 @@ since this is equal to
 
     Z_{N / 2 - k}^*.
 
-.. mydetails:: Derivation
+.. derivation_disclosure:: 
 
     .. math::
 

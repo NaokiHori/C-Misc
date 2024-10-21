@@ -6,3 +6,12 @@ div.MathJax_Display {
   overflow-x: scroll;
   overflow-y: hidden;
 }
+
+details.derivation {
+  border-color: #000;
+  border-width: 1px;
+  border-style: dashed;
+  &[open] {
+    border-color: #fff;
+  }
+}

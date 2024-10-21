@@ -72,7 +72,7 @@ Due to
     x_n
     \twiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N},
 
-.. mydetails:: Derivation
+.. derivation_disclosure:: 
 
     With :math:`m = 2 N - 1 - n`, we have
 
@@ -126,7 +126,7 @@ Note that
     -
     X_k,
 
-.. mydetails:: Derivation
+.. derivation_disclosure:: 
 
     .. math::
 
@@ -176,7 +176,7 @@ Also by utilizing this relation, we find
     X_k
     \twiddle{- 2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N},
 
-.. mydetails:: Derivation
+.. derivation_disclosure:: 
 
     Assigning :math:`k \leftarrow 2 N - k` to the relation of the discrete cosine transform (type II) yields
 

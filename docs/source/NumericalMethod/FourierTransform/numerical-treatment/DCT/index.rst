@@ -6,7 +6,7 @@ Discrete Cosine Transform
 Trigonometric relation
 **********************
 
-The following relations of the trigonometric function are repeatedly used and thus they are derived beforehand.
+The following relations of the trigonometric function are useful in this section and thus are derived beforehand.
 
 .. _trig_relation_phase:
 

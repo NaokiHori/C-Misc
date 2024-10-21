@@ -10,7 +10,7 @@ copyright = f"2024, {author}"
 
 extensions = [
         "myliteralinclude",
-        "mydetails",
+        "derivation_disclosure",
 ]
 
 from alabaster_params import html_theme

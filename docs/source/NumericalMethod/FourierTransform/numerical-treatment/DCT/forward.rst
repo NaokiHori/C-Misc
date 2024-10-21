@@ -79,26 +79,20 @@ giving
     2
     \sum_{n = 0}^{N / 2 - 1}
     x_{N - 1 - n}
-    \ctwiddle{2 \pi}{\left( N - 1 - n + \frac{1}{2} \right) \left( 2 k \right)}{2 N},
+    \ctwiddle{2 \pi}{\left( N - 1 - n + \frac{1}{2} \right) \left( 2 k \right)}{2 N}
 
-    X_{2 k + 1}
     =
     &
     2
     \sum_{n = 0}^{N / 2 - 1}
     x_n
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N}
-    -
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k \right)}{2 N}
+    +
     2
     \sum_{n = 0}^{N / 2 - 1}
     x_{N - 1 - n}
-    \ctwiddle{2 \pi}{\left( N - 1 - n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N}.
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k \right)}{2 N}
 
-Using :ref:`one of the trigonometric relations derived before <trig_relation_phase>`, we obtain
-
-.. math::
-
-    X_{2 k}
     =
     &
     2
@@ -114,7 +108,35 @@ Using :ref:`one of the trigonometric relations derived before <trig_relation_pha
     &
     \dctii{k}{N / 2}{x_0 + x_{N - 1}}{x_1 + x_{N - 2}}{x_{N / 2 - 1} + x_{N / 2}},
 
+and
+
+.. math::
+
     X_{2 k + 1}
+    =
+    &
+    2
+    \sum_{n = 0}^{N / 2 - 1}
+    x_n
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N}
+    +
+    2
+    \sum_{n = 0}^{N / 2 - 1}
+    x_{N - 1 - n}
+    \ctwiddle{2 \pi}{\left( N - 1 - n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N}
+
+    =
+    &
+    2
+    \sum_{n = 0}^{N / 2 - 1}
+    x_n
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N}
+    -
+    2
+    \sum_{n = 0}^{N / 2 - 1}
+    x_{N - 1 - n}
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N}
+
     =
     &
     2
@@ -127,7 +149,36 @@ Using :ref:`one of the trigonometric relations derived before <trig_relation_pha
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N},
 
 with :math:`\seq{k}{N / 2 - 1}`.
-By utilizing :ref:`the identity derived before <trig_relation_prod_sum>`, :math:`X_{2 k + 1}` leads to
+Note that we adopt :ref:`the trigonometric relations derived before <trig_relation_phase>`.
+
+By utilizing the product-to-sum identity:
+
+.. math::
+
+    2 \cos \alpha
+    \equiv
+    \frac{
+        \cos \left( \alpha + \beta \right)
+        +
+        \cos \left( \alpha - \beta \right)
+    }{
+        \cos \beta
+    }
+
+with
+
+.. math::
+
+    \beta
+    =
+    2 \pi
+    \frac{
+        n + \frac{1}{2}
+    }{
+        2 N
+    },
+
+:math:`X_{2 k + 1}` leads to
 
 .. math::
 
@@ -139,9 +190,7 @@ By utilizing :ref:`the identity derived before <trig_relation_prod_sum>`, :math:
         x_{N - 1 - n}
     }{\cos \beta}
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( k + 1 \right)}{2 \left( N / 2 \right)}
-
     +
-    &
     \sum_{n = 0}^{N / 2 - 1}
     \frac{
         x_n
@@ -175,9 +224,7 @@ By utilizing :ref:`the identity derived before <trig_relation_prod_sum>`, :math:
             x_{N / 2}
         }{\cos \beta}
     }
-
     +
-    &
     \dctii{
         k
     }{
@@ -203,7 +250,7 @@ By utilizing :ref:`the identity derived before <trig_relation_prod_sum>`, :math:
     },
 
 which can be applied directly for :math:`\seq{k}{N / 2 - 2}`.
-For :math:`k = N / 2 - 1` (i.e. a corner case), assigning :math:`k = N / 2 - 1` reveals
+For :math:`k = N / 2 - 1` (i.e. a corner case), assigning :math:`k = N / 2 - 1` to the first term reveals
 
 .. math::
 

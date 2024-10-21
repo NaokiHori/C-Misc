@@ -29,7 +29,7 @@ Due to
     x_n
     \twiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N},
 
-.. mydetails:: Derivation
+.. derivation_disclosure:: 
 
     With :math:`m = 2 N - 1 - n`, we have
 
@@ -75,7 +75,7 @@ Note that
     =
     X_k,
 
-.. mydetails:: Derivation
+.. derivation_disclosure:: 
 
     .. math::
 
@@ -140,7 +140,7 @@ The inverse transform can be found as follows; due to
     I
     X_N,
 
-.. mydetails:: Derivation
+.. derivation_disclosure:: 
 
     .. math::
 
