@@ -175,11 +175,9 @@ with :math:`\seq{k}{N / 2 - 1}`, followed by
 
 .. math::
 
-    &
-    x_{2 n    } = 2 \Re \left( z_n \right),
+    x_{2 n    } &= 2 \Re \left( z_n \right),
 
-    &
-    x_{2 n + 1} = 2 \Im \left( z_n \right),
+    x_{2 n + 1} &= 2 \Im \left( z_n \right),
 
 with :math:`\seq{n}{N / 2 - 1}`.
 Note that the presence of pre-factor :math:`2` is because the size of the inverse Fourier transform to convert :math:`Z_k` to :math:`z_n` is :math:`N / 2`.

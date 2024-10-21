@@ -4,7 +4,7 @@ The discrete Fourier transform of a sequence composed of real numbers :math:`x_n
 
     X_k
     \equiv
-    \dft{N}{x}{0}{1}{N - 1}
+    \dft{k}{N}{x_0}{x_1}{x_{N - 1}}
     \equiv
     \sum_{n = 0}^{N - 1}
     x_n
@@ -31,7 +31,7 @@ with :math:`\seq{k}{N / 2}` due to the Hermitian symmetry, can be computed as fo
 
         Z_k
         \equiv
-        \dft{N / 2}{z}{0}{1}{N / 2 - 1}
+        \dft{k}{N / 2}{z_0}{z_1}{z_{N / 2 - 1}}
 
     with :math:`\seq{k}{N / 2 - 1}`.
 

@@ -259,7 +259,7 @@ To summarize, the discrete cosine transform of type II and type III are defined 
 .. math::
 
     X_k
-    =
+    \equiv
     2
     \sum_{n = 0}^{N - 1}
     x_n
@@ -270,7 +270,7 @@ with :math:`\seq{k}{N - 1}`, and
 .. math::
 
     x_n
-    =
+    \equiv
     \frac{1}{2 N}
     \left\{
         X_0

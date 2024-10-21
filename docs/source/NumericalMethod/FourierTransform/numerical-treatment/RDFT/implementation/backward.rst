@@ -4,7 +4,7 @@ The inverse discrete Fourier transform of a sequence composed of complex numbers
 
     x_n
     =
-    \idft{N}{X}{0}{1}{N - 1}
+    \idft{n}{N}{X_0}{X_1}{X_{N - 1}}
     \equiv
     \sum_{k = 0}^{N - 1}
     X_k
@@ -102,7 +102,7 @@ and thus :math:`X_k` are stored only up to :math:`k = N / 2` in practice.
 
         z_n
         \equiv
-        \idft{N / 2}{Z}{0}{1}{N / 2 - 1}
+        \idft{n}{N / 2}{Z_0}{Z_1}{Z_{N / 2 - 1}}
 
     with :math:`\seq{n}{N / 2 - 1}`.
 

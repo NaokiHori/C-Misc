@@ -152,7 +152,9 @@ In summary, the discrete Fourier transform and its inverse transform are given b
     \equiv
     \sum_{n = 0}^{N - 1}
     f_n
-    \twiddle{- 2 \pi}{k n}{N},
+    \twiddle{- 2 \pi}{k n}{N}
+    \equiv
+    \dft{k}{N}{f_0}{f_1}{f_{N - 1}},
 
     f_n
     &
@@ -160,20 +162,10 @@ In summary, the discrete Fourier transform and its inverse transform are given b
     \frac{1}{N}
     \sum_{k = 0}^{N - 1}
     F_k
-    \twiddle{2 \pi}{k n}{N},
+    \twiddle{2 \pi}{k n}{N}
+    \equiv
+    \idft{n}{N}{F_0}{F_1}{F_{N - 1}},
 
-with
-
-.. math::
-
-    x_n
-    =
-    n
-    \frac{
-        L
-    }{
-        N
-    }.
-
-Note that :math:`\mathcal{F}_N` and :math:`\mathcal{F}_N^{-1}` are both linear operators yielding linear maps: :math:`\mathbb{C}^N \rightarrow \mathbb{C}^N`.
+where :math:`\seq{k}{N - 1}` and :math:`\seq{n}{N - 1}`, respectively.
+Note that both transforms are linear operators yielding linear maps: :math:`\mathbb{C}^N \rightarrow \mathbb{C}^N`.
 

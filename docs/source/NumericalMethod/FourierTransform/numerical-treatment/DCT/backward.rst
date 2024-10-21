@@ -1,9 +1,9 @@
-The inverse transform (discrete cosine transform of type III) is defined as
+We consider :ref:`the inverse transform (discrete cosine transform of type III) <discrete_cosine_transform>`:
 
 .. math::
 
     x_n
-    \equiv
+    =
     \frac{1}{2 N}
     \left\{
         \hat{X}_0
@@ -11,7 +11,7 @@ The inverse transform (discrete cosine transform of type III) is defined as
         2
         \sum_{k = 1}^{N - 1}
         \hat{X}_k
-        \twiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}
+        \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}
     \right\}.
 
 For notational simplicity, we define
@@ -30,17 +30,28 @@ to write the inverse transform as
 .. math::
 
     x_n
-    \equiv
+    =
     \frac{1}{N}
     \sum_{k = 0}^{N - 1}
     X_k
-    \twiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}
-    \equiv
-    \idct{N}{n}{X_0}{X_1}{X_{N - 1}}.
+    \twiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}.
+
+We perform this conversion a priori:
 
 .. myliteralinclude:: /../../NumericalMethod/FourierTransform/DCT/Lee1984/src/dct.c
     :language: c
     :tag: normalize 0-th wave number before executing DCT3
+
+Furthermore, we introduce a symbol for brevity:
+
+.. math::
+
+    \dctiii{n}{N}{X_0}{X_1}{X_{N - 1}}
+    \equiv
+    \frac{1}{N}
+    \sum_{k = 0}^{N - 1}
+    X_k
+    \twiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}.
 
 Assuming that :math:`N` is a multiple of :math:`2`, we decompose the right-hand side into two components:
 
@@ -96,7 +107,7 @@ Thus we notice
     x_n
     &
     =
-    \idct{N / 2}{n}{X_0}{X_2}{X_{N / 2 - 2}}
+    \dctiii{n}{N / 2}{X_0}{X_2}{X_{N / 2 - 2}}
     +
     \frac{1}{N}
     \sum_{k = 0}^{N / 2 - 1}
@@ -106,7 +117,7 @@ Thus we notice
     x_{N - 1 - n}
     &
     =
-    \idct{N / 2}{n}{X_0}{X_2}{X_{N / 2 - 2}}
+    \dctiii{n}{N / 2}{X_0}{X_2}{X_{N / 2 - 2}}
     -
     \frac{1}{N}
     \sum_{k = 0}^{N / 2 - 1}
@@ -209,7 +220,7 @@ and in total we find
     &
     =
     \frac{1}{2 \cos \beta}
-    \idct{N / 2}{n}{X_1}{X_1 + X_3}{X_{N / 2 - 3} + X_{N / 2 - 1}}.
+    \dctiii{n}{N / 2}{X_1}{X_1 + X_3}{X_{N / 2 - 3} + X_{N / 2 - 1}}.
 
 In summary, we obtain the following recurrence relation:
 
@@ -218,18 +229,18 @@ In summary, we obtain the following recurrence relation:
     x_n
     &
     =
-    \idct{N / 2}{n}{X_0}{X_2}{X_{N / 2 - 2}}
+    \dctiii{n}{N / 2}{X_0}{X_2}{X_{N / 2 - 2}}
     +
     \frac{1}{2 \cos \beta}
-    \idct{N / 2}{n}{X_1}{X_1 + X_3}{X_{N / 2 - 3} + X_{N / 2 - 1}},
+    \dctiii{n}{N / 2}{X_1}{X_1 + X_3}{X_{N / 2 - 3} + X_{N / 2 - 1}},
 
     x_{N - 1 - n}
     &
     =
-    \idct{N / 2}{n}{X_0}{X_2}{X_{N / 2 - 2}}
+    \dctiii{n}{N / 2}{X_0}{X_2}{X_{N / 2 - 2}}
     -
     \frac{1}{2 \cos \beta}
-    \idct{N / 2}{n}{X_1}{X_1 + X_3}{X_{N / 2 - 3} + X_{N / 2 - 1}},
+    \dctiii{n}{N / 2}{X_1}{X_1 + X_3}{X_{N / 2 - 3} + X_{N / 2 - 1}},
 
 with :math:`\seq{n}{N / 2 - 1}`.
 

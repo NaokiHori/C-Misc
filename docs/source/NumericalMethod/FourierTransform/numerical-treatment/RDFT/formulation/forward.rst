@@ -4,7 +4,7 @@ We aim at finding the discrete Fourier transform of a sequence composed of :math
 
     X_k
     =
-    \dft{N}{x}{0}{1}{N - 1}
+    \dft{k}{N}{x_0}{x_1}{x_{N - 1}}
     =
     \sum_{n = 0}^{N - 1}
     x_n
@@ -18,10 +18,10 @@ By utilizing the decimation in time (assuming :math:`N` is a multiple of :math:`
 
     X_k
     =
-    \dft{N / 2}{x}{0}{2}{N - 2}
+    \dft{k}{N / 2}{x_0}{x_2}{x_{N - 2}}
     +
     \twiddle{- 2 \pi}{k}{N}
-    \dft{N / 2}{x}{1}{3}{N - 1}.
+    \dft{k}{N / 2}{x_1}{x_3}{x_{N - 1}}.
 
 Although this relation is fulfilled for :math:`\seq{k}{N - 1}`, it is enough to consider up to :math:`k = N / 2` as :math:`X_{N - k} = X_k^*` is satisfied.
 
@@ -69,12 +69,12 @@ For later notational convenience, we introduce
     X_k^e
     &
     \equiv
-    \dft{N / 2}{x}{0}{2}{N - 2},
+    \dft{k}{N / 2}{x_0}{x_2}{x_{N - 2}},
 
     X_k^o
     &
     \equiv
-    \dft{N / 2}{x}{1}{3}{N - 1},
+    \dft{k}{N / 2}{x_1}{x_3}{x_{N - 1}},
 
 and the relation of interest here is written as
 
@@ -137,20 +137,20 @@ Their discrete Fourier transforms lead to
     =
     +
     \frac{1}{2}
-    \dft{N / 2}{z}{0}{1}{N / 2 - 1}
+    \dft{k}{N / 2}{z_0}{z_1}{z_{N / 2 - 1}}
     +
     \frac{1}{2}
-    \dft{N / 2}{z^*}{0}{1}{N / 2 - 1},
+    \dft{k}{N / 2}{z_0^*}{z_1^*}{z_{N / 2 - 1}^*},
 
     X_k^o
     &
     =
     -
     \frac{I}{2}
-    \dft{N / 2}{z}{0}{1}{N / 2 - 1}
+    \dft{k}{N / 2}{z_0}{z_1}{z_{N / 2 - 1}}
     +
     \frac{I}{2}
-    \dft{N / 2}{z^*}{0}{1}{N / 2 - 1},
+    \dft{k}{N / 2}{z_0^*}{z_1^*}{z_{N / 2 - 1}^*},
 
 where :math:`\seq{k}{N / 2 - 1}`.
 
@@ -166,7 +166,7 @@ We do not need to calculate the discrete Fourier transform of :math:`z_n^*`:
     z_n^*
     \twiddle{- 2 \pi}{n k}{N / 2}
     =
-    \dft{N / 2}{z^*}{0}{1}{N / 2 - 1}
+    \dft{k}{N / 2}{z_0^*}{z_1^*}{z_{N / 2 - 1}^*}
 
 since this is equal to
 

@@ -8,7 +8,7 @@ For a sequence of :math:`N` complex numbers :math:`z_n` with :math:`\seq{n}{N - 
     z_n
     \twiddle{- 2 \pi}{n k}{N}
     \equiv
-    \dft{N}{z}{0}{1}{N - 1},
+    \dft{k}{N}{z_0}{z_1}{z_{N - 1}},
 
 where :math:`\seq{k}{N - 1}`.
 
@@ -42,10 +42,10 @@ to yield
 
     Z_k
     =
-    \dft{N / 2}{z}{0}{2}{N - 2}
+    \dft{k}{N / 2}{z_0}{z_2}{z_{N - 2}}
     +
     \twiddle{- 2 \pi}{k}{N}
-    \dft{N / 2}{z}{1}{3}{N - 1},
+    \dft{k}{N / 2}{z_1}{z_3}{z_{N - 1}},
 
 where :math:`\seq{k}{N - 1}`.
 Due to
@@ -77,10 +77,10 @@ Due to
 
     =
     &
-    \dft{N / 2}{z}{0}{2}{N - 2}
+    \dft{k}{N / 2}{z_0}{z_2}{z_{N - 2}}
     -
     \twiddle{- 2 \pi}{k}{N}
-    \dft{N / 2}{z}{1}{3}{N - 1},
+    \dft{k}{N / 2}{z_1}{z_3}{z_{N - 1}},
 
 we obtain the following relation known as the decimation in time:
 
@@ -88,27 +88,21 @@ we obtain the following relation known as the decimation in time:
 
     Z_k
     =
-    \dft{N / 2}{z}{0}{2}{N - 2}
+    \dft{k}{N / 2}{z_0}{z_2}{z_{N - 2}}
     +
     \twiddle{- 2 \pi}{k}{N}
-    \dft{N / 2}{z}{1}{3}{N - 1},
+    \dft{k}{N / 2}{z_1}{z_3}{z_{N - 1}},
 
     Z_{k + N / 2}
     =
-    \dft{N / 2}{z}{0}{2}{N - 2}
+    \dft{k}{N / 2}{z_0}{z_2}{z_{N - 2}}
     -
     \twiddle{- 2 \pi}{k}{N}
-    \dft{N / 2}{z}{1}{3}{N - 1},
+    \dft{k}{N / 2}{z_1}{z_3}{z_{N - 1}},
 
 with :math:`\seq{k}{N / 2 - 1}`.
 
-The inverse transform
-
-.. math::
-
-    \mathcal{F}_N^{-1}: \mathbb{C}^N \rightarrow \mathbb{C}^N
-
-is defined as an identical way with the opposite sign of the twiddle factor (and the pre-factor :math:`N`):
+The inverse transform is defined as an identical way with the opposite sign of the twiddle factor (and the pre-factor :math:`N`):
 
 .. math::
 
@@ -119,7 +113,7 @@ is defined as an identical way with the opposite sign of the twiddle factor (and
     Z_k
     \twiddle{2 \pi}{n k}{N}
     \equiv
-    \idft{N}{Z}{0}{1}{N - 1}
+    \idft{n}{N}{Z_0}{Z_1}{Z_{N - 1}}
 
 with :math:`\seq{n}{N - 1}`, and equivalently we have
 
@@ -127,17 +121,17 @@ with :math:`\seq{n}{N - 1}`, and equivalently we have
 
     z_n
     =
-    \idft{N / 2}{Z}{0}{2}{N - 2}
+    \idft{n}{N / 2}{Z_0}{Z_2}{Z_{N - 2}}
     +
     \twiddle{2 \pi}{n}{N}
-    \idft{N / 2}{Z}{1}{3}{N - 1},
+    \idft{n}{N / 2}{Z_1}{Z_3}{Z_{N - 1}},
 
     z_{n + N / 2}
     =
-    \idft{N / 2}{Z}{0}{2}{N - 2}
+    \idft{n}{N / 2}{Z_0}{Z_2}{Z_{N - 2}}
     -
     \twiddle{2 \pi}{n}{N}
-    \idft{N / 2}{Z}{1}{3}{N - 1},
+    \idft{n}{N / 2}{Z_1}{Z_3}{Z_{N - 1}},
 
 with :math:`\seq{n}{N / 2 - 1}`.
 

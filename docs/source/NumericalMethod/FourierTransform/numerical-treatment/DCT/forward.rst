@@ -1,4 +1,4 @@
-The forward transform (discrete cosine transform of type II) is defined as
+We consider :ref:`the forward transform (discrete cosine transform of type II) <discrete_cosine_transform>`:
 
 .. math::
 
@@ -7,9 +7,18 @@ The forward transform (discrete cosine transform of type II) is defined as
     2
     \sum_{n = 0}^{N - 1}
     x_n
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}.
+
+Here we introduce a symbol for brevity:
+
+.. math::
+
+    \dctii{k}{N}{x_0}{x_1}{x_{N - 1}}
     \equiv
-    \dct{N}{k}{x_0}{x_1}{x_{N - 1}}.
+    2
+    \sum_{n = 0}^{N - 1}
+    x_n
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}.
 
 Assuming that :math:`N` is a multiple of :math:`2`, we consider the even and odd wavenumbers separately:
 
@@ -99,7 +108,11 @@ Using :ref:`one of the trigonometric relations derived before <trig_relation_pha
         +
         x_{N - 1 - n}
     \right)
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 \left( N / 2 \right)},
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 \left( N / 2 \right)}
+
+    =
+    &
+    \dctii{k}{N / 2}{x_0 + x_{N - 1}}{x_1 + x_{N - 2}}{x_{N / 2 - 1} + x_{N / 2}},
 
     X_{2 k + 1}
     =
@@ -111,33 +124,10 @@ Using :ref:`one of the trigonometric relations derived before <trig_relation_pha
         -
         x_{N - 1 - n}
     \right)
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N}.
-
-The first equation is the forward transform having a smaller size:
-
-.. math::
-
-    X_{2 k}
-    =
-    \dct{N / 2}{k}{x_{0} + x_{N - 1}}{x_{1} + x_{N - 2}}{x_{N / 2 - 1} + x_{N / 2}},
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N},
 
 with :math:`\seq{k}{N / 2 - 1}`.
-
-By utilizing :ref:`the identity derived before <trig_relation_prod_sum>` and introducing
-
-.. math::
-
-    \beta \left( n \right)
-    \equiv
-    2
-    \pi
-    \frac{
-        n + \frac{1}{2}
-    }{
-        2 N
-    },
-
-:math:`X_{2 k + 1}` leads to
+By utilizing :ref:`the identity derived before <trig_relation_prod_sum>`, :math:`X_{2 k + 1}` leads to
 
 .. math::
 
@@ -149,7 +139,9 @@ By utilizing :ref:`the identity derived before <trig_relation_prod_sum>` and int
         x_{N - 1 - n}
     }{\cos \beta}
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( k + 1 \right)}{2 \left( N / 2 \right)}
+
     +
+    &
     \sum_{n = 0}^{N / 2 - 1}
     \frac{
         x_n
@@ -160,10 +152,10 @@ By utilizing :ref:`the identity derived before <trig_relation_prod_sum>` and int
 
     =
     &
-    \dct{
-        N / 2
-    }{
+    \dctii{
         k + 1
+    }{
+        N / 2
     }{
         \frac{
             x_0
@@ -183,11 +175,13 @@ By utilizing :ref:`the identity derived before <trig_relation_prod_sum>` and int
             x_{N / 2}
         }{\cos \beta}
     }
+
     +
-    \dct{
-        N / 2
-    }{
+    &
+    \dctii{
         k
+    }{
+        N / 2
     }{
         \frac{
             x_0
@@ -209,10 +203,13 @@ By utilizing :ref:`the identity derived before <trig_relation_prod_sum>` and int
     },
 
 which can be applied directly for :math:`\seq{k}{N / 2 - 2}`.
-For :math:`k = N / 2 - 1`, assigning :math:`k = N / 2 - 1` reveals
+For :math:`k = N / 2 - 1` (i.e. a corner case), assigning :math:`k = N / 2 - 1` reveals
 
 .. math::
 
+    \mathcal{C}_{N / 2}
+    &
+    =
     \sum_{n = 0}^{N / 2 - 1}
     \frac{
         x_n
@@ -220,6 +217,8 @@ For :math:`k = N / 2 - 1`, assigning :math:`k = N / 2 - 1` reveals
         x_{N - 1 - n}
     }{\cos \beta}
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) N / 2}{2 \left( N / 2 \right)}
+
+    &
     =
     \sum_{n = 0}^{N / 2 - 1}
     \frac{
@@ -232,6 +231,8 @@ For :math:`k = N / 2 - 1`, assigning :math:`k = N / 2 - 1` reveals
         \frac{2 n + 1}{2}
         \pi
     \right)
+
+    &
     =
     0.
 
@@ -242,15 +243,15 @@ In summary, we obtain the following recurrence relation:
     X_{2 k}
     &
     =
-    \dct{N / 2}{k}{x_{0} + x_{N - 1}}{x_{1} + x_{N - 2}}{x_{N / 2 - 1} + x_{N / 2}},
+    \dctii{k}{N / 2}{x_{0} + x_{N - 1}}{x_{1} + x_{N - 2}}{x_{N / 2 - 1} + x_{N / 2}},
 
     X_{2 k + 1}
     &
     =
-    \dct{
-        N / 2
-    }{
+    \dctii{
         k + 1
+    }{
+        N / 2
     }{
         \frac{
             x_0
@@ -273,10 +274,10 @@ In summary, we obtain the following recurrence relation:
 
     &
     +
-    \dct{
-        N / 2
-    }{
+    \dctii{
         k
+    }{
+        N / 2
     }{
         \frac{
             x_0
@@ -297,23 +298,10 @@ In summary, we obtain the following recurrence relation:
         }{\cos \beta}
     },
 
-with :math:`\seq{k}{N / 2 - 1}`.
+which is valid for :math:`\seq{k}{N / 2 - 1}`.
+Recall that :math:`\mathcal{C}_{N / 2} \equiv 0`.
 
 .. myliteralinclude:: /../../NumericalMethod/FourierTransform/DCT/Lee1984/src/dct.c
     :language: c
     :tag: divide and conquer, forward
-
-Also we let
-
-.. math::
-
-    \beta
-    \equiv
-    2
-    \pi
-    \frac{
-        n + \frac{1}{2}
-    }{
-        2 N
-    }.
 
