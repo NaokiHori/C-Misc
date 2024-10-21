@@ -8,7 +8,7 @@ For a sequence of :math:`N` complex numbers :math:`z_n` with :math:`\seq{n}{N - 
     z_n
     \twiddle{- 2 \pi}{n k}{N}
     \equiv
-    \rdft{N}{z}{0}{1}{N - 1},
+    \dft{N}{z}{0}{1}{N - 1},
 
 where :math:`\seq{k}{N - 1}`.
 
@@ -42,10 +42,10 @@ to yield
 
     Z_k
     =
-    \rdft{N / 2}{z}{0}{2}{N - 2}
+    \dft{N / 2}{z}{0}{2}{N - 2}
     +
     \twiddle{- 2 \pi}{k}{N}
-    \rdft{N / 2}{z}{1}{3}{N - 1},
+    \dft{N / 2}{z}{1}{3}{N - 1},
 
 where :math:`\seq{k}{N - 1}`.
 Due to
@@ -77,10 +77,10 @@ Due to
 
     =
     &
-    \rdft{N / 2}{z}{0}{2}{N - 2}
+    \dft{N / 2}{z}{0}{2}{N - 2}
     -
     \twiddle{- 2 \pi}{k}{N}
-    \rdft{N / 2}{z}{1}{3}{N - 1},
+    \dft{N / 2}{z}{1}{3}{N - 1},
 
 we obtain the following relation known as the decimation in time:
 
@@ -88,17 +88,17 @@ we obtain the following relation known as the decimation in time:
 
     Z_k
     =
-    \rdft{N / 2}{z}{0}{2}{N - 2}
+    \dft{N / 2}{z}{0}{2}{N - 2}
     +
     \twiddle{- 2 \pi}{k}{N}
-    \rdft{N / 2}{z}{1}{3}{N - 1},
+    \dft{N / 2}{z}{1}{3}{N - 1},
 
     Z_{k + N / 2}
     =
-    \rdft{N / 2}{z}{0}{2}{N - 2}
+    \dft{N / 2}{z}{0}{2}{N - 2}
     -
     \twiddle{- 2 \pi}{k}{N}
-    \rdft{N / 2}{z}{1}{3}{N - 1},
+    \dft{N / 2}{z}{1}{3}{N - 1},
 
 with :math:`\seq{k}{N / 2 - 1}`.
 
@@ -119,7 +119,7 @@ is defined as an identical way with the opposite sign of the twiddle factor (and
     Z_k
     \twiddle{2 \pi}{n k}{N}
     \equiv
-    \irdft{N}{Z}{0}{1}{N - 1}
+    \idft{N}{Z}{0}{1}{N - 1}
 
 with :math:`\seq{n}{N - 1}`, and equivalently we have
 
@@ -127,17 +127,17 @@ with :math:`\seq{n}{N - 1}`, and equivalently we have
 
     z_n
     =
-    \irdft{N / 2}{Z}{0}{2}{N - 2}
+    \idft{N / 2}{Z}{0}{2}{N - 2}
     +
     \twiddle{2 \pi}{n}{N}
-    \irdft{N / 2}{Z}{1}{3}{N - 1},
+    \idft{N / 2}{Z}{1}{3}{N - 1},
 
     z_{n + N / 2}
     =
-    \irdft{N / 2}{Z}{0}{2}{N - 2}
+    \idft{N / 2}{Z}{0}{2}{N - 2}
     -
     \twiddle{2 \pi}{n}{N}
-    \irdft{N / 2}{Z}{1}{3}{N - 1},
+    \idft{N / 2}{Z}{1}{3}{N - 1},
 
 with :math:`\seq{n}{N / 2 - 1}`.
 

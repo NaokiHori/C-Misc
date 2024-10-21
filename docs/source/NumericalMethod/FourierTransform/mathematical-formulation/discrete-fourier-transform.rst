@@ -143,20 +143,20 @@ where we use an identity with :math:`n \in \mathbb{Z}`:
 
     where we adopt the formula to calculate the sum of geometric progression.
 
-In summary, the discrete Fourier transform :math:`\mathcal{F}_N` and its inverse transform :math:`\mathcal{F}_N^{-1}` are given by:
+In summary, the discrete Fourier transform and its inverse transform are given by:
 
 .. math::
 
     F_k
     &
-    =
+    \equiv
     \sum_{n = 0}^{N - 1}
     f_n
     \twiddle{- 2 \pi}{k n}{N},
 
     f_n
     &
-    =
+    \equiv
     \frac{1}{N}
     \sum_{k = 0}^{N - 1}
     F_k
