@@ -2,7 +2,10 @@ mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS
 
 macros = dict()
 
-macros["seq"] = ["#1 = 0, 1, \\cdots, #2", 2]
+macros["real"] = ["{\\Re \\left[ #1 \\right]}", 1]
+macros["imag"] = ["{\\Im \\left[ #1 \\right]}", 1]
+
+macros["seq"] = ["{#1 = 0, 1, \\cdots, #2}", 2]
 
 macros["twiddle"]  = ["{\\exp \\left( {#1} \\frac{#2}{#3} I \\right)}", 3]
 macros["ctwiddle"] = ["{\\cos \\left( {#1} \\frac{#2}{#3}   \\right)}", 3]

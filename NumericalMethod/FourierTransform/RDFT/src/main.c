@@ -6,7 +6,6 @@
 
 static int naive_dft (
     const size_t nitems,
-    const double sign,
     const double complex * xs,
     double complex * ys
 ) {
@@ -15,8 +14,25 @@ static int naive_dft (
     double complex * y = ys + k;
     *y = 0. + I * 0.;
     for (size_t n = 0; n < nitems; n++) {
-      *y += xs[n] * cexp(sign * 2. * pi * n * k * I / nitems);
+      *y += xs[n] * cexp(- 2. * pi * n * k * I / nitems);
     }
+  }
+  return 0;
+}
+
+static int naive_idft (
+    const size_t nitems,
+    const double complex * xs,
+    double complex * ys
+) {
+  const double pi = 3.14159265358979324;
+  for (size_t k = 0; k < nitems; k++) {
+    double complex * y = ys + k;
+    *y = 0. + I * 0.;
+    for (size_t n = 0; n < nitems; n++) {
+      *y += xs[n] * cexp(+ 2. * pi * n * k * I / nitems);
+    }
+    *y /= nitems;
   }
   return 0;
 }
@@ -44,9 +60,6 @@ static int test0 (
   if (0 != rdft_exec_b(plan, xs)) {
     puts("backward execution failed");
     goto abort;
-  }
-  for (size_t i = 0; i < nitems; i++) {
-    xs[i] /= 1. * nitems;
   }
   double dif = 0.;
   for (size_t i = 0; i < nitems; i++) {
@@ -85,14 +98,15 @@ static int test1 (
     puts("forward execution failed");
     goto abort;
   }
-  naive_dft(nitems, - 1., ws, zs);
+  naive_dft(nitems, ws, zs);
   double dif = 0.;
-  for (size_t i = 0; i < nitems; i++) {
-    if (i < nitems / 2 + 1) {
-      dif += fabs(xs[i] - creal(zs[i]));
-    } else {
-      dif += fabs(xs[i] - cimag(zs[nitems - i]));
-    }
+  // real
+  for (size_t i = 0; i < nitems / 2 + 1; i++) {
+    dif += fabs(xs[i] - creal(zs[i]));
+  }
+  // imag
+  for (size_t i = nitems / 2 + 1; i < nitems; i++) {
+    dif += fabs(xs[i] - cimag(zs[i]));
   }
   dif /= 1. * nitems;
   printf("%zu % .15e\n", nitems, dif);
@@ -119,7 +133,7 @@ static int test2 (
     const double imag = 0 == i || nitems / 2 == i ? 0. : - 0.5 + 1. * rand() / RAND_MAX;
     xs[i] = real;
     if (0 != i && nitems / 2 != i) {
-      xs[nitems - i] = imag;
+      xs[nitems - i] = - imag;
     }
     ws[i] = real + imag * I;
   }
@@ -135,7 +149,7 @@ static int test2 (
     puts("backward execution failed");
     goto abort;
   }
-  naive_dft(nitems, + 1., ws, zs);
+  naive_idft(nitems, ws, zs);
   double dif = 0.;
   for (size_t i = 0; i < nitems; i++) {
     dif += fabs(creal(zs[i]) - xs[i]);
