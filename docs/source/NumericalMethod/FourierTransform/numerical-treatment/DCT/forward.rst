@@ -149,7 +149,7 @@ and
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N},
 
 with :math:`\seq{k}{N / 2 - 1}`.
-Note that we adopt :ref:`the trigonometric relations derived before <trig_relation_phase>`.
+Note that we adopt :ref:`the trigonometric relations derived before <trigonometric_relation>`.
 
 By utilizing the product-to-sum identity:
 
@@ -296,7 +296,7 @@ In summary, we obtain the following recurrence relation:
     &
     =
     \dctii{
-        k + 1
+        k
     }{
         N / 2
     }{
@@ -322,7 +322,7 @@ In summary, we obtain the following recurrence relation:
     &
     +
     \dctii{
-        k
+        k + 1
     }{
         N / 2
     }{
@@ -347,8 +347,9 @@ In summary, we obtain the following recurrence relation:
 
 which is valid for :math:`\seq{k}{N / 2 - 1}`.
 Recall that :math:`\mathcal{C}_{N / 2} \equiv 0`.
+Note that, :math:`X_0 = 2 x_0` for :math:`N = 1`.
 
 .. myliteralinclude:: /../../NumericalMethod/FourierTransform/DCT/Lee1984/src/dct.c
     :language: c
-    :tag: divide and conquer, forward
+    :tag: forward transform
 

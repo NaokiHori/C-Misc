@@ -4,7 +4,6 @@
 #include "dct.h"
 
 static const double pi = 3.141592653589793;
-static const double sqrt2 = 1.4142135623730951;
 
 struct dct_plan_t {
   // size of the input / output signals
@@ -34,6 +33,7 @@ static void memory_free (
   free(ptr);
 }
 
+// forward transform | 54
 static int dct2 (
     const size_t nitems,
     const size_t stride,
@@ -43,39 +43,39 @@ static int dct2 (
 ) {
   if (1 == nitems) {
     xs[0] *= 2.;
-  } else if (2 == nitems) {
-		const double v0 = xs[0];
-		const double v1 = xs[1];
-		xs[0] = 2.    * v0 + 2.    * v1;
-		xs[1] = sqrt2 * v0 - sqrt2 * v1;
-  } else if (0 == nitems % 2) {
-    // divide and conquer, forward | 22
+    return 0;
+  }
+  if (0 == nitems % 2) {
+    // divide and conquer
     const size_t nhalfs = nitems / 2;
+    double * const buf0 = ys +      0;
+    double * const buf1 = ys + nhalfs;
+    // create input buffers of DCT-II
     for (size_t n = 0; n < nhalfs; n++) {
-      // c: inverse of cos(beta)
+      // c: 1 / cos(beta)
       const double c = table[(2 * n + 1) * stride];
-      const double v0 = xs[             n];
-      const double v1 = xs[nitems - 1 - n];
-      ys[n         ] = 1. * (v0 + v1);
-      ys[n + nhalfs] = c  * (v0 - v1);
+      const double value0 = xs[             n];
+      const double value1 = xs[nitems - 1 - n];
+      buf0[n] = 1. * (value0 + value1);
+      buf1[n] = c  * (value0 - value1);
     }
     // solve two sub problems
-    dct2(nhalfs, stride * 2, table, ys +      0, xs);
-    dct2(nhalfs, stride * 2, table, ys + nhalfs, xs);
-    // even frequencies
+    dct2(nhalfs, stride * 2, table, buf0, xs);
+    dct2(nhalfs, stride * 2, table, buf1, xs);
+    // distribute results
     for (size_t k = 0; k < nhalfs; k++) {
-      xs[k * 2 + 0] = ys[k];
+      // to even frequencies
+      xs[k * 2 + 0] = buf0[k];
+      // to odd frequencies
+      // for the last element, "k+1"-th element is zero
+      const double value0 =                        buf1[k    ];
+      const double value1 = nhalfs - 1 == k ? 0. : buf1[k + 1];
+      xs[k * 2 + 1] = value0 + value1;
     }
-    // odd frequencies
-    for (size_t k = 0; k < nhalfs - 1; k++) {
-      xs[k * 2 + 1] = ys[nhalfs + k] + ys[nhalfs + k + 1];
-    }
-    // for the last element, "k+1"-th element is zero
-    xs[nitems - 1] = ys[nitems - 1];
   } else {
     // fallback to N^2 DCT2
     for (size_t k = 0; k < nitems; k++) {
-      double * y = ys + k;
+      double * const y = ys + k;
       *y = 0.;
       for (size_t n = 0; n < nitems; n++) {
         const double phase = pi * (2 * n + 1) * k / (2 * nitems);
@@ -89,6 +89,7 @@ static int dct2 (
   return 0;
 }
 
+// backward transform | 51
 static int dct3 (
     const size_t nitems,
     const size_t stride,
@@ -97,45 +98,42 @@ static int dct3 (
     double * const restrict ys
 ) {
   if (1 == nitems) {
-    xs[0] *= 2.;
-  } else if (2 == nitems) {
-    const double v0 = xs[0];
-    const double v1 = xs[1];
-    xs[0] = 2. * v0 + sqrt2 * v1;
-    xs[1] = 2. * v0 - sqrt2 * v1;
-  } else if (0 == nitems % 2) {
-    // divide and conquer, backward | 22
+    return 0;
+  }
+  if (0 == nitems % 2) {
+    // divide and conquer
     const size_t nhalfs = nitems / 2;
-    // first  idct: ys[     0 : nhalfs - 1], even elements
-    // second idct: ys[nhalfs : nitems - 1], sum of two odd elements
+    double * const buf0 = ys +      0;
+    double * const buf1 = ys + nhalfs;
+    // create input buffers of DCT-III
     for (size_t k = 0; k < nhalfs; k++) {
-      ys[k] = xs[k * 2];
-    }
-    ys[nhalfs] = xs[1];
-    for (size_t k = 1; k < nhalfs; k++) {
-      ys[nhalfs + k] = xs[k * 2 - 1] + xs[k * 2 + 1];
+      buf0[k] = xs[k * 2];
+      const double value0 = 0 == k ? 0. : xs[k * 2 - 1];
+      const double value1 =               xs[k * 2 + 1];
+      buf1[k] = value0 + value1;
     }
     // solve two sub problems
-    dct3(nhalfs, stride * 2, table, ys         , xs);
-    dct3(nhalfs, stride * 2, table, ys + nhalfs, xs);
+    dct3(nhalfs, stride * 2, table, buf0, xs);
+    dct3(nhalfs, stride * 2, table, buf1, xs);
     // combine results of sub problems
     for (size_t n = 0; n < nhalfs; n++) {
-      // c: inverse of cos(beta)
+      // c: 1 / cos(beta)
       const double c = table[(2 * n + 1) * stride];
-      const double v0 = 1. * ys[         n];
-      const double v1 = c  * ys[nhalfs + n];
-      xs[             n] = v0 + v1;
-      xs[nitems - 1 - n] = v0 - v1;
+      const double value0 = 0.5 * buf0[n];
+      const double value1 = 0.5 * c * buf1[n];
+      xs[             n] = value0 + value1;
+      xs[nitems - 1 - n] = value0 - value1;
     }
   } else {
     // fallback to N^2 DCT3
     for (size_t n = 0; n < nitems; n++) {
-      double * y = ys + n;
+      double * const y = ys + n;
       *y = 0.;
       for (size_t k = 0; k < nitems; k++) {
         const double phase = pi * (2 * n + 1) * k / (2 * nitems);
-        *y += 2. * xs[k] * cos(phase);
+        *y += xs[k] * cos(phase);
       }
+      *y /= 1. * nitems;
     }
     for (size_t n = 0; n < nitems; n++) {
       xs[n] = ys[n];
@@ -213,7 +211,7 @@ int dct_exec_b (
   const size_t nitems = plan->nitems;
   const double * const restrict table = plan->table;
   double * const restrict ys = plan->buf;
-  // normalize 0-th wave number before executing DCT3 | 1
+  // normalize 0-th wave number before executing DCT3 | 2
   xs[0] *= 0.5;
   dct3(nitems, 1, table, xs, ys);
   return 0;

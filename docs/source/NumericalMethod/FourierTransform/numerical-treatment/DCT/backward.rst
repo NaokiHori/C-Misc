@@ -72,6 +72,20 @@ Assuming that :math:`N` is a multiple of :math:`2`, we decompose the right-hand 
 
     &
     =
+    \frac{1}{2}
+    \frac{1}{N / 2}
+    \sum_{k = 0}^{N / 2 - 1}
+    X_{2 k}
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 \left( N / 2 \right)}
+    +
+    \frac{1}{N}
+    \sum_{k = 0}^{N / 2 - 1}
+    X_{2 k + 1}
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N}
+
+    &
+    =
+    \frac{1}{2}
     \dctiii{n}{N / 2}{X_0}{X_2}{X_{N - 2}}
     +
     \frac{1}{N}
@@ -98,10 +112,11 @@ To decompose :math:`n` as well, we consider :math:`n \leftarrow N - 1 - n` to yi
 
     &
     =
-    \frac{1}{N}
+    \frac{1}{2}
+    \frac{1}{N / 2}
     \sum_{k = 0}^{N / 2 - 1}
     X_{2 k}
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k \right)}{2 N}
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 \left( N / 2 \right)}
     -
     \frac{1}{N}
     \sum_{k = 0}^{N / 2 - 1}
@@ -110,6 +125,7 @@ To decompose :math:`n` as well, we consider :math:`n \leftarrow N - 1 - n` to yi
 
     &
     =
+    \frac{1}{2}
     \dctiii{n}{N / 2}{X_0}{X_2}{X_{N - 2}}
     -
     \frac{1}{N}
@@ -117,38 +133,35 @@ To decompose :math:`n` as well, we consider :math:`n \leftarrow N - 1 - n` to yi
     X_{2 k + 1}
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N},
 
-due to :ref:`one of the trigonometric relations derived before <trig_relation_phase>`.
-
-To process the second terms:
-
-.. math::
-
-    \frac{1}{N}
-    \sum_{k = 0}^{N / 2 - 1}
-    X_{2 k + 1}
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N},
-
-we assign
+due to :ref:`one of the trigonometric relations derived before <trigonometric_relation>`.
+By adopting the product-to-sum identity:
 
 .. math::
 
-    \alpha
-    =
-    \alpha \left( n, k \right)
-    =
-    2 \pi \frac{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N}
+    \cos \alpha
+    \equiv
+    \frac{
+        \cos \left( \alpha + \beta \right)
+        +
+        \cos \left( \alpha - \beta \right)
+    }{
+        2 \cos \beta
+    }
 
-and
+with
 
 .. math::
 
     \beta
     =
-    \beta \left( n \right)
-    =
-    2 \pi \frac{n + \frac{1}{2}}{2 N}
+    2 \pi
+    \frac{
+        n + \frac{1}{2}
+    }{
+        2 N
+    },
 
-to :ref:`one of the trigonometric relations derived before <trig_relation_prod_sum>`, allowing us to reformulate the second part as
+we obtain
 
 .. math::
 
@@ -160,47 +173,54 @@ to :ref:`one of the trigonometric relations derived before <trig_relation_prod_s
 
     =
     &
-    \frac{1}{N}
+    \frac{1}{2 N \cos \beta}
     \sum_{k = 0}^{N / 2 - 1}
     X_{2 k + 1}
-    \cos \alpha
-
-    =
-    &
-    \frac{1}{2 N \cos \beta}
-    \sum_{k = 1}^{N / 2}
-    X_{2 k - 1}
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k \right)}{2 N}
     +
     \frac{1}{2 N \cos \beta}
-    \sum_{k = 0}^{N / 2 - 1}
-    X_{2 k + 1}
+    \sum_{k = 1}^{N / 2}
+    X_{2 k - 1}
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k \right)}{2 N}.
 
-Not only the second but the first term seemingly satisfy the definition of the inverse transform, which is not true since the summation range is different: it should be from :math:`k = 0` to :math:`N / 2 - 1`.
-For :math:`k = 0`, we are free to add :math:`k = 0` to the summation by artificially defining :math:`X_{-1} \equiv 0`.
-Regarding :math:`k = N / 2`, which needs to be removed, we notice
+The first term leads to
 
 .. math::
 
-    X_{N - 1}
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) N}{2 N}
+    \frac{1}{4 \cos \beta}
+    \frac{1}{N / 2}
+    \sum_{k = 0}^{N / 2 - 1}
+    X_{2 k + 1}
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 \left( N / 2 \right)}
     =
-    X_{N - 1}
-    \cos \left( \frac{2 n + 1}{2} \pi \right)
-    =
-    0,
+    \frac{1}{4 \cos \beta}
+    \dctiii{n}{N / 2}{X_1}{X_3}{X_{N - 1}},
 
-and thus the first term leads to
+while the second term is
 
 .. math::
 
-    \frac{1}{2 N \cos \beta}
+    &
+    \frac{1}{4 \cos \beta}
+    \frac{1}{N / 2}
     \sum_{k = 0}^{N / 2 - 1}
     X_{2 k - 1}
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k \right)}{2 N},
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 \left( N / 2 \right)}
+    -
+    \frac{1}{2 N \cos \beta}
+    X_{-1}
+    +
+    \frac{1}{2 N \cos \beta}
+    X_{N - 1}
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) N}{2 N}
 
-and in total we find
+    =
+    &
+    \frac{1}{4 \cos \beta}
+    \dctiii{n}{N / 2}{X_{-1}}{X_1}{X_{N - 3}},
+
+where we artificially specify :math:`X_{-1} = 0`.
+As a consequence, we obtain
 
 .. math::
 
@@ -209,21 +229,8 @@ and in total we find
     X_{2 k + 1}
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N}
     =
-    &
-    =
-    \frac{1}{2 N \cos \beta}
-    \sum_{k = 0}^{N / 2 - 1}
-    \left(
-        X_{2 k - 1}
-        +
-        X_{2 k + 1}
-    \right)
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k \right)}{2 N}
-
-    &
-    =
-    \frac{1}{2 \cos \beta}
-    \dctiii{n}{N / 2}{X_1}{X_1 + X_3}{X_{N / 2 - 3} + X_{N / 2 - 1}}.
+    \frac{1}{4 \cos \beta}
+    \dctiii{n}{N / 2}{X_1}{X_1 + X_3}{X_{N - 3} + X_{N - 1}}.
 
 In summary, we obtain the following recurrence relation:
 
@@ -232,36 +239,25 @@ In summary, we obtain the following recurrence relation:
     x_n
     &
     =
-    \dctiii{n}{N / 2}{X_0}{X_2}{X_{N / 2 - 2}}
+    \frac{1}{2}
+    \dctiii{n}{N / 2}{X_0}{X_2}{X_{N - 2}}
     +
-    \frac{1}{2 \cos \beta}
-    \dctiii{n}{N / 2}{X_1}{X_1 + X_3}{X_{N / 2 - 3} + X_{N / 2 - 1}},
+    \frac{1}{4 \cos \beta}
+    \dctiii{n}{N / 2}{X_1}{X_1 + X_3}{X_{N - 3} + X_{N - 1}},
 
     x_{N - 1 - n}
     &
     =
-    \dctiii{n}{N / 2}{X_0}{X_2}{X_{N / 2 - 2}}
+    \frac{1}{2}
+    \dctiii{n}{N / 2}{X_0}{X_2}{X_{N - 2}}
     -
-    \frac{1}{2 \cos \beta}
-    \dctiii{n}{N / 2}{X_1}{X_1 + X_3}{X_{N / 2 - 3} + X_{N / 2 - 1}},
+    \frac{1}{4 \cos \beta}
+    \dctiii{n}{N / 2}{X_1}{X_1 + X_3}{X_{N - 3} + X_{N - 1}},
 
 with :math:`\seq{n}{N / 2 - 1}`.
+Note that :math:`x_0 = X_0` for :math:`N = 1`.
 
 .. myliteralinclude:: /../../NumericalMethod/FourierTransform/DCT/Lee1984/src/dct.c
     :language: c
-    :tag: divide and conquer, backward
-
-Also we let
-
-.. math::
-
-    \beta
-    \equiv
-    2
-    \pi
-    \frac{
-        n + \frac{1}{2}
-    }{
-        2 N
-    }.
+    :tag: backward transform
 

@@ -36,6 +36,7 @@ int test_exec_b (
       const double phase = pi * (2. * j + 1.) * i / (2. * nitems);
       *y += 2. * xs[i] * cos(phase);
     }
+    *y /= 2. * nitems;
   }
   return 0;
 }

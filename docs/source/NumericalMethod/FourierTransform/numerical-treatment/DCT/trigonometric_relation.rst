@@ -1,3 +1,5 @@
+The following relations of the trigonometric function are useful in this section and thus are derived beforehand.
+
 Using
 
 .. math::

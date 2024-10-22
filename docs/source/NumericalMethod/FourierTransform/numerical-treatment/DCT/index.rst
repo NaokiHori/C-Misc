@@ -2,27 +2,13 @@
 Discrete Cosine Transform
 #########################
 
+.. _trigonometric_relation:
+
 **********************
 Trigonometric relation
 **********************
 
-The following relations of the trigonometric function are useful in this section and thus are derived beforehand.
-
-.. _trig_relation_phase:
-
-==========
-Relation 1
-==========
-
-.. include:: trigonometric_relation/1.rst
-
-.. _trig_relation_prod_sum:
-
-==========
-Relation 2
-==========
-
-.. include:: trigonometric_relation/2.rst
+.. include:: trigonometric_relation.rst
 
 *****************
 Forward transform

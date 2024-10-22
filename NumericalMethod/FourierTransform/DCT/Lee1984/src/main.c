@@ -22,12 +22,8 @@ static int test0 (
     return 1;
   }
   // self check, forward followed by backward
-  // x0s and x1s should be identical, up to rounding error
   dct_exec_f(plan, buffers[0]);
   dct_exec_b(plan, buffers[0]);
-  for (size_t i = 0; i < nitems; i++) {
-    buffers[0][i] /= 2. * nitems;
-  }
   test_compare("DCT2 followed by DCT3", nitems, buffers[0], buffers[1]);
   // clean-up plan
   dct_destroy_plan(&plan);
