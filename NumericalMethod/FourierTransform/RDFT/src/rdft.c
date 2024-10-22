@@ -100,7 +100,7 @@ static int dft (
       }
     }
   }
-	return 0;
+  return 0;
 }
 
 int rdft_exec_f (

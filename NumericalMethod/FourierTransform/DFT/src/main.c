@@ -6,7 +6,6 @@
 
 static int naive_dft (
     const size_t nitems,
-    const double sign,
     double complex * const xs
 ) {
   const double pi = 3.14159265358979324;
@@ -15,8 +14,29 @@ static int naive_dft (
     double complex * const y = ys + k;
     *y = 0. + I * 0.;
     for (size_t n = 0; n < nitems; n++) {
-      *y += xs[n] * cexp(sign * 2. * pi * n * k * I / nitems);
+      *y += xs[n] * cexp(- 2. * pi * n * k * I / nitems);
     }
+  }
+  for (size_t k = 0; k < nitems; k++) {
+    xs[k] = ys[k];
+  }
+  free(ys);
+  return 0;
+}
+
+static int naive_idft (
+    const size_t nitems,
+    double complex * const xs
+) {
+  const double pi = 3.14159265358979324;
+  double complex * const ys = malloc(nitems * sizeof(double complex));
+  for (size_t k = 0; k < nitems; k++) {
+    double complex * const y = ys + k;
+    *y = 0. + I * 0.;
+    for (size_t n = 0; n < nitems; n++) {
+      *y += xs[n] * cexp(2. * pi * n * k * I / nitems);
+    }
+    *y /= nitems;
   }
   for (size_t k = 0; k < nitems; k++) {
     xs[k] = ys[k];
@@ -50,15 +70,12 @@ static int test0 (
     puts("backward execution failed");
     goto abort;
   }
-  for (size_t i = 0; i < nitems; i++) {
-    xs[i] /= 1. * nitems;
-  }
   double dif = 0.;
   for (size_t i = 0; i < nitems; i++) {
     dif += cabs(ys[i] - xs[i]);
   }
   dif /= 1. * nitems;
-  printf("%zu % .15e\n", nitems, dif);
+  printf("DFT followed by iDFT: %zu % .15e\n", nitems, dif);
 abort:
   free(xs);
   free(ys);
@@ -90,13 +107,13 @@ static int test1 (
     puts("forward execution failed");
     goto abort;
   }
-  naive_dft(nitems, - 1., ys);
+  naive_dft(nitems, ys);
   double dif = 0.;
   for (size_t i = 0; i < nitems; i++) {
     dif += cabs(ys[i] - xs[i]);
   }
   dif /= 1. * nitems;
-  printf("%zu % .15e\n", nitems, dif);
+  printf("DFT compared with naive impl.: %zu % .15e\n", nitems, dif);
 abort:
   free(xs);
   free(ys);
@@ -128,13 +145,13 @@ static int test2 (
     puts("backward execution failed");
     goto abort;
   }
-  naive_dft(nitems, + 1., ys);
+  naive_idft(nitems, ys);
   double dif = 0.;
   for (size_t i = 0; i < nitems; i++) {
     dif += cabs(ys[i] - xs[i]);
   }
   dif /= 1. * nitems;
-  printf("%zu % .15e\n", nitems, dif);
+  printf("iDFT compared with naive impl.: %zu % .15e\n", nitems, dif);
 abort:
   free(xs);
   free(ys);

@@ -6,7 +6,17 @@ Discrete Fourier transform
 Formulation
 ***********
 
-.. include:: formulation.rst
+=================
+Forward transform
+=================
+
+.. include:: formulation/forward.rst
+
+==================
+Backward transform
+==================
+
+.. include:: formulation/backward.rst
 
 **************
 Implementation
