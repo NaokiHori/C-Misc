@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <complex.h>
-#include "dft.h"
+#include "sdft.h"
 
 static const double pi = 3.14159265358979324;
 
@@ -11,7 +11,7 @@ typedef struct {
   double sin;
 } trig_t;
 
-struct dft_plan_t {
+struct sdft_plan_t {
   // degree of freedom
   size_t nitems;
   // pre-computed trigonometric values
@@ -39,15 +39,15 @@ static void memory_free (
 
 /**
  * @brief Recursive radix-2 Cooley-Tukey FFT for complex input/output, forward transform
- * @param nitems Degree of freedom of the given signal ("N" in the definition of complex DFT)
+ * @param nitems Degree of freedom of the given signal ("N" in the definition of complex sdft)
  * @param stride Distance between two successive input elements: 2^(level of recursion)
  * @param trigs  Pre-computed twiddle factors (trigonometric functions)
  * @param xs     Input  signal ordered as Re(0), Im(0), Re(1), Im(1), ...
  * @param ys     Output signal ordered as Re(0), Im(0), Re(1), Im(1), ...
  * @return success (0) or failure (1)
  */
-// main function to perform discrete fourier transform | 38
-static int dft (
+// main function to perform discrete fourier transform | 41
+static int sdft (
     const size_t nitems,
     const size_t stride,
     const trig_t * const trigs,
@@ -59,27 +59,30 @@ static int dft (
   } else if (0 == nitems % 2) {
     const size_t nhalfs = nitems / 2;
     // divide-and-conquer
-    dft(nhalfs, stride * 2, trigs, xs         , ys         );
-    dft(nhalfs, stride * 2, trigs, xs + stride, ys + nhalfs);
+    sdft(nhalfs, stride * 2, trigs, xs         , ys         );
+    sdft(nhalfs, stride * 2, trigs, xs + stride, ys + nhalfs);
     // unify two sub problem results
     for (size_t i = 0; i < nhalfs; i++) {
       const size_t j = i + nhalfs;
       const trig_t * const trig = trigs + stride * i;
-      const double complex twiddle = trig->cos - I * trig->sin;
+      const double complex twiddle[2] = {
+        trig->cos + I * trig->sin,
+        trig->cos - I * trig->sin,
+      };
       double complex * const yi = ys + i;
       double complex * const yj = ys + j;
       const double complex ye = *yi;
-      const double complex yo = *yj * twiddle;
-      *yi = ye + yo;
-      *yj = ye - yo;
+      const double complex yo = *yj;
+      *yi =       twiddle[0] * ye +     twiddle[1] * yo;
+      *yj = - I * twiddle[0] * ye + I * twiddle[1] * yo;
     }
   } else {
-    // naive O(N^2) DFT
+    // naive O(N^2) sdft
     for (size_t k = 0; k < nitems; k++) {
       double complex * const y = ys + k;
       *y = 0. + I * 0.;
       for (size_t n = 0; n < nitems; n++) {
-        *y += xs[stride * n] * cexp(- 2. * pi * n * k * I / nitems);
+        *y += xs[stride * n] * cexp(- 2. * pi * (n + 0.5) * k * I / nitems);
       }
     }
   }
@@ -88,7 +91,7 @@ static int dft (
 
 /**
  * @brief Recursive radix-2 Cooley-Tukey FFT for complex input/output, backward transform
- * @param nitems Degree of freedom of the given signal ("N" in the definition of complex DFT)
+ * @param nitems Degree of freedom of the given signal ("N" in the definition of complex sdft)
  * @param stride Distance between two successive input elements: 2^(level of recursion)
  * @param trigs  Pre-computed twiddle factors (trigonometric functions)
  * @param xs     Input  signal ordered as Re(0), Im(0), Re(1), Im(1), ...
@@ -96,7 +99,7 @@ static int dft (
  * @return success (0) or failure (1)
  */
 // main function to perform inverse discrete fourier transform | 39
-static int idft (
+static int isdft (
     const size_t nitems,
     const size_t stride,
     const trig_t * const trigs,
@@ -108,27 +111,27 @@ static int idft (
   } else if (0 == nitems % 2) {
     const size_t nhalfs = nitems / 2;
     // divide-and-conquer
-    idft(nhalfs, stride * 2, trigs, xs         , ys         );
-    idft(nhalfs, stride * 2, trigs, xs + stride, ys + nhalfs);
+    isdft(nhalfs, stride * 2, trigs, xs         , ys         );
+    isdft(nhalfs, stride * 2, trigs, xs + stride, ys + nhalfs);
     // unify two sub problem results
     for (size_t i = 0; i < nhalfs; i++) {
       const size_t j = i + nhalfs;
-      const trig_t * const trig = trigs + stride * i;
+      const trig_t * const trig = trigs + (2 * i + 1) * stride;
       const double complex twiddle = trig->cos + I * trig->sin;
       double complex * const yi = ys + i;
       double complex * const yj = ys + j;
-      const double complex ye = 0.5 * *yi;
-      const double complex yo = 0.5 * *yj * twiddle;
-      *yi = ye + yo;
-      *yj = ye - yo;
+      const double complex ye = *yi;
+      const double complex yo = *yj;
+      *yi = 0.5 * ye + 0.5 * twiddle * yo;
+      *yj = 0.5 * ye - 0.5 * twiddle * yo;
     }
   } else {
-    // naive O(N^2) iDFT
+    // naive O(N^2) isdft
     for (size_t n = 0; n < nitems; n++) {
       double complex * const y = ys + n;
       *y = 0. + I * 0.;
       for (size_t k = 0; k < nitems; k++) {
-        *y += xs[stride * k] * cexp(+ 2. * pi * n * k * I / nitems);
+        *y += xs[stride * k] * cexp(2. * pi * (n + 0.5) * k * I / nitems);
       }
       *y /= nitems;
     }
@@ -136,8 +139,8 @@ static int idft (
   return 0;
 }
 
-int dft_exec_f (
-    dft_plan_t * const plan,
+int sdft_exec_f (
+    sdft_plan_t * const plan,
     double complex * const xs
 ) {
   if (NULL == plan) {
@@ -146,15 +149,15 @@ int dft_exec_f (
   }
   const size_t nitems = plan->nitems;
   double complex * const ys = plan->buf;
-  dft(nitems, 1, plan->trigs, xs, ys);
+  sdft(nitems, 1, plan->trigs, xs, ys);
   for (size_t i = 0; i < nitems; i++) {
     xs[i] = ys[i];
   }
   return 0;
 }
 
-int dft_exec_b (
-    dft_plan_t * const plan,
+int sdft_exec_b (
+    sdft_plan_t * const plan,
     double complex * const xs
 ) {
   if (NULL == plan) {
@@ -163,35 +166,35 @@ int dft_exec_b (
   }
   const size_t nitems = plan->nitems;
   double complex * const ys = plan->buf;
-  idft(nitems, 1, plan->trigs, xs, ys);
+  isdft(nitems, 1, plan->trigs, xs, ys);
   for (size_t i = 0; i < nitems; i++) {
     xs[i] = ys[i];
   }
   return 0;
 }
 
-int dft_init_plan (
+int sdft_init_plan (
     const size_t nitems,
-    dft_plan_t ** const plan
+    sdft_plan_t ** const plan
 ) {
-  *plan = memory_alloc(1 * sizeof(dft_plan_t));
+  *plan = memory_alloc(1 * sizeof(sdft_plan_t));
   (*plan)->nitems = nitems;
   trig_t ** const trigs = &(*plan)->trigs;
   double complex ** const buf = &(*plan)->buf;
-  *trigs = memory_alloc(nitems * sizeof(trig_t));
+  *trigs = memory_alloc((2 * nitems) * sizeof(trig_t));
   *buf = memory_alloc(nitems * sizeof(double complex));
   // prepare cosine / sine tables
-  for (size_t i = 0; i < nitems; i++) {
+  for (size_t i = 0; i < 2 * nitems; i++) {
     trig_t * const trig = *trigs + i;
-    trig->cos = cos(2. * pi * i / nitems);
-    trig->sin = sin(2. * pi * i / nitems);
+    trig->cos = cos(pi * i / nitems);
+    trig->sin = sin(pi * i / nitems);
   }
   return 0;
 }
 
 // clean-up a plan
-int dft_destroy_plan (
-    dft_plan_t ** const plan
+int sdft_destroy_plan (
+    sdft_plan_t ** const plan
 ) {
   memory_free((*plan)->trigs);
   memory_free((*plan)->buf);
