@@ -8,10 +8,9 @@ div.MathJax_Display {
 }
 
 details.derivation {
-  border-color: #000;
-  border-width: 1px;
-  border-style: dashed;
-  &[open] {
-    border-color: #fff;
-  }
+  background-color: #333;
+  padding-left: 1vw;
+  padding-right: 1vw;
+  padding-top: 1vh;
+  padding-bottom: 1vh;
 }
