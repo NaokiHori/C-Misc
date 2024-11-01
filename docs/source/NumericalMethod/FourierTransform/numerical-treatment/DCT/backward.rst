@@ -34,24 +34,15 @@ to write the inverse transform as
     \frac{1}{N}
     \sum_{k = 0}^{N - 1}
     X_k
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}.
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}
+    \equiv
+    \dctiii{n}{N}{X_0}{X_1}{X_{N - 1}}.
 
-We perform this conversion a priori:
+Note that we perform this conversion a priori:
 
 .. myliteralinclude:: /../../NumericalMethod/FourierTransform/DCT/Lee1984/src/dct.c
     :language: c
     :tag: normalize 0-th wave number before executing DCT3
-
-Furthermore, we introduce a symbol denoting the inverse transform for brevity:
-
-.. math::
-
-    \dctiii{n}{N}{X_0}{X_1}{X_{N - 1}}
-    \equiv
-    \frac{1}{N}
-    \sum_{k = 0}^{N - 1}
-    X_k
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}.
 
 Assuming that :math:`N` is a multiple of :math:`2`, we decompose the right-hand side into two components:
 
@@ -133,7 +124,7 @@ To decompose :math:`n` as well, we consider :math:`n \leftarrow N - 1 - n` to yi
     X_{2 k + 1}
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N},
 
-due to :ref:`one of the trigonometric relations derived before <trigonometric_relation>`.
+due to :ref:`one of the trigonometric relations derived before <dct_trigonometric_relation>`.
 By adopting the product-to-sum identity:
 
 .. math::

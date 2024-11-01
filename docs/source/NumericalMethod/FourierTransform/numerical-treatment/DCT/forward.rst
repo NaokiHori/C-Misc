@@ -7,18 +7,9 @@ We consider :ref:`the forward transform (discrete cosine transform of type II) <
     2
     \sum_{n = 0}^{N - 1}
     x_n
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}.
-
-Here we introduce a symbol for brevity:
-
-.. math::
-
-    \dctii{k}{N}{x_0}{x_1}{x_{N - 1}}
+    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}
     \equiv
-    2
-    \sum_{n = 0}^{N - 1}
-    x_n
-    \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}.
+    \dctii{k}{N}{x_0}{x_1}{x_{N - 1}}.
 
 Assuming that :math:`N` is a multiple of :math:`2`, we consider the even and odd wavenumbers separately:
 
@@ -149,20 +140,20 @@ and
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N},
 
 with :math:`\seq{k}{N / 2 - 1}`.
-Note that we adopt :ref:`the trigonometric relations derived before <trigonometric_relation>`.
+Note that we adopt :ref:`the trigonometric relations derived before <dct_trigonometric_relation>`.
 
 By utilizing the product-to-sum identity:
 
 .. math::
 
-    2 \cos \alpha
+    \cos \alpha
     \equiv
     \frac{
         \cos \left( \alpha + \beta \right)
         +
         \cos \left( \alpha - \beta \right)
     }{
-        \cos \beta
+        2 \cos \beta
     }
 
 with
@@ -178,25 +169,29 @@ with
         2 N
     },
 
-:math:`X_{2 k + 1}` leads to
+we obtain
 
 .. math::
 
+    X_{2 k + 1}
+    =
     &
+    2
     \sum_{n = 0}^{N / 2 - 1}
     \frac{
         x_n
         -
         x_{N - 1 - n}
-    }{\cos \beta}
+    }{2 \cos \beta}
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( k + 1 \right)}{2 \left( N / 2 \right)}
     +
+    2
     \sum_{n = 0}^{N / 2 - 1}
     \frac{
         x_n
         -
         x_{N - 1 - n}
-    }{\cos \beta}
+    }{2 \cos \beta}
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 \left( N / 2 \right)}
 
     =
@@ -210,19 +205,19 @@ with
             x_0
             -
             x_{N - 1}
-        }{\cos \beta}
+        }{2 \cos \beta}
     }{
         \frac{
             x_1
             -
             x_{N - 2}
-        }{\cos \beta}
+        }{2 \cos \beta}
     }{
         \frac{
             x_{N / 2 - 1}
             -
             x_{N / 2}
-        }{\cos \beta}
+        }{2 \cos \beta}
     }
     +
     \dctii{
@@ -234,19 +229,19 @@ with
             x_0
             -
             x_{N - 1}
-        }{\cos \beta}
+        }{2 \cos \beta}
     }{
         \frac{
             x_1
             -
             x_{N - 2}
-        }{\cos \beta}
+        }{2 \cos \beta}
     }{
         \frac{
             x_{N / 2 - 1}
             -
             x_{N / 2}
-        }{\cos \beta}
+        }{2 \cos \beta}
     },
 
 which can be applied directly for :math:`\seq{k}{N / 2 - 2}`.
@@ -254,7 +249,29 @@ For :math:`k = N / 2 - 1` (i.e. a corner case), assigning :math:`k = N / 2 - 1` 
 
 .. math::
 
-    \mathcal{C}_{N / 2}
+    \dctii{
+        N / 2
+    }{
+        N / 2
+    }{
+        \frac{
+            x_0
+            -
+            x_{N - 1}
+        }{2 \cos \beta}
+    }{
+        \frac{
+            x_1
+            -
+            x_{N - 2}
+        }{2 \cos \beta}
+    }{
+        \frac{
+            x_{N / 2 - 1}
+            -
+            x_{N / 2}
+        }{2 \cos \beta}
+    }
     &
     =
     \sum_{n = 0}^{N / 2 - 1}
@@ -262,7 +279,7 @@ For :math:`k = N / 2 - 1` (i.e. a corner case), assigning :math:`k = N / 2 - 1` 
         x_n
         -
         x_{N - 1 - n}
-    }{\cos \beta}
+    }{2 \cos \beta}
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) N / 2}{2 \left( N / 2 \right)}
 
     &
@@ -272,7 +289,7 @@ For :math:`k = N / 2 - 1` (i.e. a corner case), assigning :math:`k = N / 2 - 1` 
         x_n
         -
         x_{N - 1 - n}
-    }{\cos \beta}
+    }{2 \cos \beta}
     \cos
     \left(
         \frac{2 n + 1}{2}
@@ -304,19 +321,19 @@ In summary, we obtain the following recurrence relation:
             x_0
             -
             x_{N - 1}
-        }{\cos \beta}
+        }{2 \cos \beta}
     }{
         \frac{
             x_1
             -
             x_{N - 2}
-        }{\cos \beta}
+        }{2 \cos \beta}
     }{
         \frac{
             x_{N / 2 - 1}
             -
             x_{N / 2}
-        }{\cos \beta}
+        }{2 \cos \beta}
     }
 
     &
@@ -330,23 +347,52 @@ In summary, we obtain the following recurrence relation:
             x_0
             -
             x_{N - 1}
-        }{\cos \beta}
+        }{2 \cos \beta}
     }{
         \frac{
             x_1
             -
             x_{N - 2}
-        }{\cos \beta}
+        }{2 \cos \beta}
     }{
         \frac{
             x_{N / 2 - 1}
             -
             x_{N / 2}
-        }{\cos \beta}
+        }{2 \cos \beta}
     },
 
 which is valid for :math:`\seq{k}{N / 2 - 1}`.
-Recall that :math:`\mathcal{C}_{N / 2} \equiv 0`.
+Recall that
+
+.. math::
+
+    \dctii{
+        N / 2
+    }{
+        N / 2
+    }{
+        \frac{
+            x_0
+            -
+            x_{N - 1}
+        }{2 \cos \beta}
+    }{
+        \frac{
+            x_1
+            -
+            x_{N - 2}
+        }{2 \cos \beta}
+    }{
+        \frac{
+            x_{N / 2 - 1}
+            -
+            x_{N / 2}
+        }{2 \cos \beta}
+    }
+    =
+    0.
+
 Note that, :math:`X_0 = 2 x_0` for :math:`N = 1`.
 
 .. myliteralinclude:: /../../NumericalMethod/FourierTransform/DCT/Lee1984/src/dct.c

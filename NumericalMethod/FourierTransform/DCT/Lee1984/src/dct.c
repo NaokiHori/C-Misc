@@ -52,7 +52,7 @@ static int dct2 (
     double * const buf1 = ys + nhalfs;
     // create input buffers of DCT-II
     for (size_t n = 0; n < nhalfs; n++) {
-      // c: 1 / cos(beta)
+      // c: 1 / [ 2 cos(beta) ]
       const double c = table[(2 * n + 1) * stride];
       const double value0 = xs[             n];
       const double value1 = xs[nitems - 1 - n];
@@ -117,7 +117,7 @@ static int dct3 (
     dct3(nhalfs, stride * 2, table, buf1, xs);
     // combine results of sub problems
     for (size_t n = 0; n < nhalfs; n++) {
-      // c: 1 / cos(beta)
+      // c: 1 / [ 2 cos(beta) ]
       const double c = table[(2 * n + 1) * stride];
       const double value0 = 0.5 * buf0[n];
       const double value1 = 0.5 * c * buf1[n];

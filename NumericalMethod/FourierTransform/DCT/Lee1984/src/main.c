@@ -76,7 +76,8 @@ static int test2 (
   };
   // input signal
   for (size_t i = 0; i < nitems; i++) {
-    buffers[0][i] = - 0.5 + 1. * rand() / RAND_MAX;
+    // for fair comparison, multiply by nitems to make the resulting values O(1)
+    buffers[0][i] = (- 0.5 + 1. * rand() / RAND_MAX) * nitems;
     buffers[1][i] = buffers[0][i];
   }
   // make a plan

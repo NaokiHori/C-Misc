@@ -2,7 +2,7 @@
 Discrete Cosine Transform
 #########################
 
-.. _trigonometric_relation:
+.. _dct_trigonometric_relation:
 
 **********************
 Trigonometric relation
