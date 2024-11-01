@@ -115,7 +115,7 @@ where we use an identity with :math:`n \in \mathbb{Z}`:
     N
     \delta_{n0}.
 
-.. derivation_disclosure:: 
+.. derivation_disclosure::
 
     For :math:`n = 0` (or in general :math:`n = N m` with :math:`m \in \mathbb{Z}`), it is obvious that
 
