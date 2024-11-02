@@ -4,24 +4,24 @@ We consider :ref:`the inverse transform (discrete cosine transform of type III) 
 
     x_n
     =
-    \frac{1}{2 N}
+    \frac{1}{N}
     \left\{
-        \hat{X}_0
+        \frac{\hat{X}_0}{2}
         +
-        2
         \sum_{k = 1}^{N - 1}
         \hat{X}_k
         \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}
-    \right\}.
+    \right\}
 
-For notational simplicity, we define
+for :math:`\seq{n}{0}{1}{N - 1}`.
+For later convenience, we define
 
 .. math::
 
     X_k
     =
     \begin{cases}
-        \frac{1}{2} \hat{X}_0 & k = 0, \\
+        \frac{\hat{X}_0}{2} & k = 0, \\
         \hat{X}_k & \text{otherwise},
     \end{cases}
 
@@ -36,7 +36,9 @@ to write the inverse transform as
     X_k
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}
     \equiv
-    \dctiii{n}{N}{X_0}{X_1}{X_{N - 1}}.
+    \dctiii{n}{N}{X_0}{X_1}{X_{N - 1}}
+
+for :math:`\seq{n}{0}{1}{N - 1}`.
 
 Note that we perform this conversion a priori:
 
@@ -221,7 +223,7 @@ As a consequence, we obtain
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) \left( 2 k + 1 \right)}{2 N}
     =
     \frac{1}{4 \cos \beta}
-    \dctiii{n}{N / 2}{X_1}{X_1 + X_3}{X_{N - 3} + X_{N - 1}}.
+    \dctiii{n}{N / 2}{X_{-1} + X_1}{X_1 + X_3}{X_{N - 3} + X_{N - 1}}.
 
 In summary, we obtain the following recurrence relation:
 
@@ -234,7 +236,7 @@ In summary, we obtain the following recurrence relation:
     \dctiii{n}{N / 2}{X_0}{X_2}{X_{N - 2}}
     +
     \frac{1}{4 \cos \beta}
-    \dctiii{n}{N / 2}{X_1}{X_1 + X_3}{X_{N - 3} + X_{N - 1}},
+    \dctiii{n}{N / 2}{X_{-1} + X_1}{X_1 + X_3}{X_{N - 3} + X_{N - 1}},
 
     x_{N - 1 - n}
     &
@@ -243,9 +245,9 @@ In summary, we obtain the following recurrence relation:
     \dctiii{n}{N / 2}{X_0}{X_2}{X_{N - 2}}
     -
     \frac{1}{4 \cos \beta}
-    \dctiii{n}{N / 2}{X_1}{X_1 + X_3}{X_{N - 3} + X_{N - 1}},
+    \dctiii{n}{N / 2}{X_{-1} + X_1}{X_1 + X_3}{X_{N - 3} + X_{N - 1}},
 
-with :math:`\seq{n}{N / 2 - 1}`.
+for :math:`\seq{n}{0}{1}{N / 2 - 1}`.
 Note that :math:`x_0 = X_0` for :math:`N = 1`.
 
 .. myliteralinclude:: /../../NumericalMethod/FourierTransform/DCT/Lee1984/src/dct.c

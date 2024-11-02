@@ -47,5 +47,5 @@ By utilizing the decimation in time, the inverse transform leads to
         \idft{n}{N / 2}{Z_1}{Z_3}{Z_{N - 1}} \\
     \end{pmatrix}
 
-for :math:`\seq{n}{N / 2 - 1}`.
+for :math:`\seq{n}{0}{1}{N / 2 - 1}`.
 

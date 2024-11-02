@@ -11,7 +11,7 @@ The inverse transform is defined as an identical way with the opposite sign of t
     \equiv
     \idft{n}{N}{Z_0}{Z_1}{Z_{N - 1}}
 
-for :math:`\seq{n}{N - 1}`, and similarly we can deduce
+for :math:`\seq{n}{0}{1}{N - 1}`, and similarly we can deduce
 
 .. math::
 
@@ -29,7 +29,7 @@ for :math:`\seq{n}{N - 1}`, and similarly we can deduce
         \idft{n}{N / 2}{Z_1}{Z_3}{Z_{N - 1}} \\
     \end{pmatrix},
 
-for :math:`\seq{n}{N / 2 - 1}`.
+for :math:`\seq{n}{0}{1}{N / 2 - 1}`.
 
 .. derivation_disclosure::
 

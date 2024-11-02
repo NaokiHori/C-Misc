@@ -1,4 +1,4 @@
-For a sequence of :math:`N` complex numbers :math:`z_n` with :math:`\seq{n}{N - 1}`, the discrete Fourier transform is defined as
+For a sequence of :math:`N` complex numbers :math:`z_n` with :math:`\seq{n}{0}{1}{N - 1}`, the discrete Fourier transform is defined as
 
 .. math::
 
@@ -10,7 +10,7 @@ For a sequence of :math:`N` complex numbers :math:`z_n` with :math:`\seq{n}{N - 
     \equiv
     \dft{k}{N}{z_0}{z_1}{z_{N - 1}},
 
-where :math:`\seq{k}{N - 1}`.
+where :math:`\seq{k}{0}{1}{N - 1}`.
 
 Assuming that :math:`N` is a multiple of :math:`2`, we obtain the following relation which is known as the decimation in time:
 
@@ -30,7 +30,7 @@ Assuming that :math:`N` is a multiple of :math:`2`, we obtain the following rela
         \dft{k}{N / 2}{z_1}{z_3}{z_{N - 1}} \\
     \end{pmatrix}
 
-for :math:`\seq{k}{N / 2 - 1}`.
+for :math:`\seq{k}{0}{1}{N / 2 - 1}`.
 
 .. derivation_disclosure::
 
@@ -67,7 +67,7 @@ for :math:`\seq{k}{N / 2 - 1}`.
         \twiddle{- 2 \pi}{k}{N}
         \dft{k}{N / 2}{z_1}{z_3}{z_{N - 1}},
 
-    where :math:`\seq{k}{N - 1}`.
+    where :math:`\seq{k}{0}{1}{N - 1}`.
     Assigning :math:`k \leftarrow k + N / 2` to this relation yields
 
     .. math::
@@ -102,5 +102,5 @@ for :math:`\seq{k}{N / 2 - 1}`.
         \twiddle{- 2 \pi}{k}{N}
         \dft{k}{N / 2}{z_1}{z_3}{z_{N - 1}},
 
-    indicating that considering :math:`\seq{k}{N / 2 - 1}` is sufficient to obtain :math:`Z_k` for :math:`\left( \seq{k}{N - 1} \right)`.
+    indicating that considering :math:`\seq{k}{0}{1}{N / 2 - 1}` is sufficient to obtain :math:`Z_k` for :math:`\left( \seq{k}{0}{1}{N - 1} \right)`.
 

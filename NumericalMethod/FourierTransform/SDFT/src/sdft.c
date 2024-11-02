@@ -51,19 +51,19 @@ static int sdft (
     const size_t nitems,
     const size_t stride,
     const trig_t * const trigs,
-    const double complex * xs,
-    double complex * ys
+    const double complex * const xs,
+    double complex * const ys
 ) {
   if (1 == nitems) {
     ys[0] = xs[0];
   } else if (0 == nitems % 2) {
-    const size_t nhalfs = nitems / 2;
+    const size_t nh = nitems / 2;
     // divide-and-conquer
-    sdft(nhalfs, stride * 2, trigs, xs         , ys         );
-    sdft(nhalfs, stride * 2, trigs, xs + stride, ys + nhalfs);
+    sdft(nh, stride * 2, trigs, xs         , ys     );
+    sdft(nh, stride * 2, trigs, xs + stride, ys + nh);
     // unify two sub problem results
-    for (size_t i = 0; i < nhalfs; i++) {
-      const size_t j = i + nhalfs;
+    for (size_t i = 0; i < nh; i++) {
+      const size_t j = i + nh;
       const trig_t * const trig = trigs + stride * i;
       const double complex twiddle[2] = {
         trig->cos + I * trig->sin,
@@ -103,19 +103,19 @@ static int isdft (
     const size_t nitems,
     const size_t stride,
     const trig_t * const trigs,
-    const double complex * xs,
-    double complex * ys
+    const double complex * const xs,
+    double complex * const ys
 ) {
   if (1 == nitems) {
     ys[0] = xs[0];
   } else if (0 == nitems % 2) {
-    const size_t nhalfs = nitems / 2;
+    const size_t nh = nitems / 2;
     // divide-and-conquer
-    isdft(nhalfs, stride * 2, trigs, xs         , ys         );
-    isdft(nhalfs, stride * 2, trigs, xs + stride, ys + nhalfs);
+    isdft(nh, stride * 2, trigs, xs         , ys     );
+    isdft(nh, stride * 2, trigs, xs + stride, ys + nh);
     // unify two sub problem results
-    for (size_t i = 0; i < nhalfs; i++) {
-      const size_t j = i + nhalfs;
+    for (size_t i = 0; i < nh; i++) {
+      const size_t j = i + nh;
       const trig_t * const trig = trigs + (2 * i + 1) * stride;
       const double complex twiddle = trig->cos + I * trig->sin;
       double complex * const yi = ys + i;

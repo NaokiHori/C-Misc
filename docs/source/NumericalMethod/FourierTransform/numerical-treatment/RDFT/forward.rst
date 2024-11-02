@@ -10,7 +10,7 @@ We consider the forward transform:
     x_n
     \twiddle{- 2 \pi}{n k}{N}
 
-for :math:`\seq{k}{N - 1}`.
+for :math:`\seq{k}{0}{1}{N - 1}`.
 Although this can be computed as the discrete Fourier transform of a complex sequence having zero imaginary numbers, we aim at computing it with less computational effort here.
 
 By utilizing the decimation in time (assuming :math:`N` is a multiple of :math:`2`), we have
@@ -33,7 +33,7 @@ By utilizing the decimation in time (assuming :math:`N` is a multiple of :math:`
     \twiddle{- 2 \pi}{k}{N}
     \dft{k}{N / 2}{x_1}{x_3}{x_{N - 1}},
 
-with :math:`\seq{k}{N / 2 - 1}`.
+for :math:`\seq{k}{0}{1}{N / 2 - 1}`.
 Instead of taking this recurrence relation as it is, we introduce :math:`z_n` defined as
 
 .. math::
@@ -45,7 +45,7 @@ Instead of taking this recurrence relation as it is, we introduce :math:`z_n` de
     I
     x_{2 n + 1}
 
-for :math:`\seq{n}{N / 2 - 1}`, giving
+for :math:`\seq{n}{0}{1}{N / 2 - 1}`, giving
 
 .. math::
 
@@ -77,7 +77,7 @@ Their discrete Fourier transforms, due to the linearity, lead to
     \frac{I}{2}
     \dft{k}{N / 2}{z_0^*}{z_1^*}{z_{N / 2 - 1}^*},
 
-for :math:`\seq{k}{N / 2 - 1}`.
+for :math:`\seq{k}{0}{1}{N / 2 - 1}`.
 
 Now two discrete Fourier transforms are involved, and we focus on the latter:
 
@@ -196,7 +196,7 @@ to find
     \frac{I}{2}
     \left( \dft{N / 2 - k}{N / 2}{z_0}{z_1}{z_{N / 2 - 1}} \right)^*,
 
-for :math:`\seq{k}{N / 2 - 1}`.
+for :math:`\seq{k}{0}{1}{N / 2 - 1}`.
 
 For the corner case :math:`k = 0`, we see
 
@@ -230,7 +230,7 @@ First, we create a signal :math:`z_n` composed of :math:`N / 2` complex numbers:
     +
     I x_{2 n + 1},
 
-where :math:`\seq{n}{N / 2 - 1}`.
+where :math:`\seq{n}{0}{1}{N / 2 - 1}`.
 Practically, this can be achieved merely by casting the user input as a series of complex numbers; namely no data manipulations are needed.
 
 Next, the discrete Fourier transform of :math:`z_n` is evaluated to find
@@ -241,7 +241,7 @@ Next, the discrete Fourier transform of :math:`z_n` is evaluated to find
     \equiv
     \dft{k}{N / 2}{z_0}{z_1}{z_{N / 2 - 1}}
 
-for :math:`\seq{k}{N / 2 - 1}`:
+for :math:`\seq{k}{0}{1}{N / 2 - 1}`:
 
 .. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
     :language: c
@@ -283,7 +283,7 @@ The result is used to compute
     \frac{I}{2}
     Z_{N / 2 - k}^*,
 
-where :math:`\seq{k}{N / 2 - 1}`:
+where :math:`\seq{k}{0}{1}{N / 2 - 1}`:
 
 .. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
     :language: c
@@ -313,7 +313,8 @@ Finally they are adopted to calculate
     \twiddle{- 2 \pi}{k}{N}
     X_k^o,
 
-with :math:`\seq{k}{N / 2 - 1}`:
+for :math:`\seq{k}{0}{1}{N / 2 - 1}`.
+
 Due to :ref:`the order of signals <rdft_order_of_signals>`, it is worthwhile to decompose the real and the imaginary parts:
 
 .. math::

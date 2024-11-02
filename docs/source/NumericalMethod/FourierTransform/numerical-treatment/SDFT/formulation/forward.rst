@@ -10,7 +10,7 @@ We define the shifted discrete Fourier transform as
     \equiv
     \dft{k}{N}{z_0}{z_1}{z_{N - 1}},
 
-where :math:`\seq{k}{N - 1}`.
+where :math:`\seq{k}{0}{1}{N - 1}`.
 
 .. note::
 
@@ -45,5 +45,5 @@ By utilizing the decimation in time, the forward transform leads to
         \dft{k}{N / 2}{z_1}{z_3}{z_{N - 1}} \\
     \end{pmatrix}
 
-for :math:`\seq{k}{N / 2 - 1}`.
+for :math:`\seq{k}{0}{1}{N / 2 - 1}`.
 

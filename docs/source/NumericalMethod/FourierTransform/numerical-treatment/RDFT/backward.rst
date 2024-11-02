@@ -11,7 +11,7 @@ We consider the inverse transform:
     X_k
     \twiddle{2 \pi}{n k}{N}
 
-for :math:`\seq{n}{N - 1}`, where :math:`X_k` should satisfy the Hermitian symmetry:
+for :math:`\seq{n}{0}{1}{N - 1}`, where :math:`X_k` should satisfy the Hermitian symmetry:
 
 .. math::
 
@@ -45,7 +45,7 @@ To start, we calculate :math:`X_k^e` and :math:`X_k^o` following
     \frac{1}{2}
     \dft{k + N / 2}{N}{x_0}{x_1}{x_{N - 1}},
 
-for :math:`\seq{k}{N / 2 - 1}`.
+for :math:`\seq{k}{0}{1}{N / 2 - 1}`.
 
 Note that, since :math:`X_k` does not store the entire signal, we need to recover the series of complex numbers:
 
@@ -151,7 +151,7 @@ From the result, we obtain
 
     x_{2 n + 1} &= \imag{z_n},
 
-for :math:`\seq{n}{N / 2 - 1}`.
+for :math:`\seq{n}{0}{1}{N / 2 - 1}`.
 Since the output signal is already ordered in a desired manner, no additional manipulation is necessary here.
 
 The whole process is given below for completeness:

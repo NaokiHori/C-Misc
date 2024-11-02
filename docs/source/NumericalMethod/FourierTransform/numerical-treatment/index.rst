@@ -9,4 +9,5 @@ Numerical treatment
     SDFT/index.rst
     RDFT/index.rst
     DCT/index.rst
+    DST/index.rst
 

@@ -26,7 +26,7 @@ We consider :ref:`a shifted discrete Fourier transform <shifted_discrete_fourier
     x_n
     \twiddle{- 2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}
 
-with :math:`\seq{k}{2 N - 1}`, and the corresponding inverse transform:
+for :math:`\seq{k}{0}{1}{2 N - 1}`, and the corresponding inverse transform:
 
 .. math::
 
@@ -50,7 +50,7 @@ with :math:`\seq{k}{2 N - 1}`, and the corresponding inverse transform:
     X_k
     \twiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}
 
-with :math:`\seq{n}{2 N - 1}`.
+for :math:`\seq{n}{0}{1}{2 N - 1}`.
 Although :math:`x_n` can be arbitrary, here we request the signal to satisfy
 
 .. math::
@@ -59,7 +59,7 @@ Although :math:`x_n` can be arbitrary, here we request the signal to satisfy
     =
     x_n
 
-with :math:`\seq{n}{2 N - 1}`.
+for :math:`\seq{n}{0}{1}{2 N - 1}`.
 Due to
 
 .. math::
@@ -163,7 +163,7 @@ Note that
         -
         X_k.
 
-and thus it is sufficient to consider :math:`\seq{k}{N - 1}`.
+and thus it is sufficient to consider :math:`\seq{k}{0}{1}{N - 1}`.
 Also by utilizing this relation, we find
 
 .. math::
@@ -244,11 +244,10 @@ from which the inverse transform leads to
 
     &
     =
-    \frac{1}{2 N}
+    \frac{1}{N}
     \left\{
-        X_0
+        \frac{X_0}{2}
         +
-        2
         \sum_{k = 1}^{N - 1}
         X_k
         \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}
@@ -265,22 +264,21 @@ To summarize, the discrete cosine transform of type II and type III are defined 
     x_n
     \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}
 
-with :math:`\seq{k}{N - 1}`, and
+for :math:`\seq{k}{0}{1}{N - 1}`, and
 
 .. math::
 
     x_n
     \equiv
-    \frac{1}{2 N}
+    \frac{1}{N}
     \left\{
-        X_0
+        \frac{X_0}{2}
         +
-        2
         \sum_{k = 1}^{N - 1}
         X_k
         \ctwiddle{2 \pi}{\left( n + \frac{1}{2} \right) k}{2 N}
     \right\}
 
-with :math:`\seq{n}{N - 1}`, respectively.
+for :math:`\seq{n}{0}{1}{N - 1}`, respectively.
 Note that both transforms are :math:`\mathbb{R}^N \rightarrow \mathbb{R}^N`.
 

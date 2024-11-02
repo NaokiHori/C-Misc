@@ -131,8 +131,8 @@ static int test2 (
   double complex * const xs = malloc(nitems * sizeof(double complex));
   double complex * const ys = malloc(nitems * sizeof(double complex));
   for (size_t i = 0; i < nitems; i++) {
-    const double real = - 0.5 + 1. * rand() / RAND_MAX;
-    const double imag = - 0.5 + 1. * rand() / RAND_MAX;
+    const double real = (- 0.5 + 1. * rand() / RAND_MAX) * nitems;
+    const double imag = (- 0.5 + 1. * rand() / RAND_MAX) * nitems;
     xs[i] = real + I * imag;
     ys[i] = real + I * imag;
   }

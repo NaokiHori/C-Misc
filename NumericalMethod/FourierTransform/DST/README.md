@@ -1,6 +1,6 @@
-# Fast Cosine Transform
+# Fast Sine Transform
 
-Discrete cosine transforms (type 2 and 3) in O(N log N) operations, based on Lee 1984.
+Discrete sine transforms (type 2 and 3) in O(N log N) operations, based on Lee 1984.
 
 ## Caveat
 

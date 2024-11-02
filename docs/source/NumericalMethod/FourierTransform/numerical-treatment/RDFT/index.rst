@@ -1,5 +1,5 @@
 ######################################
-Real-valued Discrete Fourier Transform
+Real-valued discrete Fourier transform
 ######################################
 
 .. include:: preface.rst

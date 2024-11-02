@@ -1,7 +1,7 @@
 #if !defined(DCT_H)
 #define DCT_H
 
-#include <stddef.h>  // size_t
+#include <stddef.h> // size_t
 
 // planner
 typedef struct dct_plan_t dct_plan_t;

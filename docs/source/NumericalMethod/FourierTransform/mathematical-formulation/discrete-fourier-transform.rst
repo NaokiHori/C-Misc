@@ -166,6 +166,6 @@ In summary, the discrete Fourier transform and its inverse transform are given b
     \equiv
     \idft{n}{N}{F_0}{F_1}{F_{N - 1}},
 
-where :math:`\seq{k}{N - 1}` and :math:`\seq{n}{N - 1}`, respectively.
+where :math:`\seq{k}{0}{1}{N - 1}` and :math:`\seq{n}{0}{1}{N - 1}`, respectively.
 Note that both transforms are linear operators yielding linear maps: :math:`\mathbb{C}^N \rightarrow \mathbb{C}^N`.
 

@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "dct.h"
+#include "dst.h"
 
 static const double pi = 3.141592653589793;
 
-struct dct_plan_t {
+struct dst_plan_t {
   // size of the input / output signals
   size_t nitems;
   // trigonometric table
@@ -21,7 +21,7 @@ static void * memory_alloc (
 ) {
   void * const ptr = malloc(size);
   if (NULL == ptr) {
-    fprintf(stderr, "[dct FATAL] failed to allocate %zu bytes\n", size);
+    fprintf(stderr, "[dst FATAL] failed to allocate %zu bytes\n", size);
     return NULL;
   }
   return ptr;
@@ -34,7 +34,7 @@ static void memory_free (
 }
 
 // forward transform | 54
-static int dct2 (
+static int dst2 (
     const size_t nitems,
     const size_t stride,
     const double * const restrict table,
@@ -50,36 +50,36 @@ static int dct2 (
     const size_t nh = nitems / 2;
     double * const buf0 = ys +  0;
     double * const buf1 = ys + nh;
-    // create input buffers of DCT-II
+    // create input buffers of DST-II
     for (size_t n = 0; n < nh; n++) {
       // c: 1 / [ 2 cos(beta) ]
       const double c = table[(2 * n + 1) * stride];
       const double value0 = xs[             n];
       const double value1 = xs[nitems - 1 - n];
-      buf0[n] = 1. * (value0 + value1);
-      buf1[n] = c  * (value0 - value1);
+      buf0[n] = c  * (value0 + value1);
+      buf1[n] = 1. * (value0 - value1);
     }
     // solve two sub problems
-    dct2(nh, stride * 2, table, buf0, xs);
-    dct2(nh, stride * 2, table, buf1, xs);
+    dst2(nh, stride * 2, table, buf0, xs);
+    dst2(nh, stride * 2, table, buf1, xs);
     // distribute results
     for (size_t k = 0; k < nh; k++) {
       // to even frequencies
-      xs[k * 2 + 0] = buf0[k];
-      // to odd frequencies
-      // for the last element, "k+1"-th element is zero
-      const double value0 =                    buf1[k    ];
-      const double value1 = nh - 1 == k ? 0. : buf1[k + 1];
-      xs[k * 2 + 1] = value0 + value1;
+      // for the first element, "-1"-th element is zero
+      const double value0 = 0 == k ? 0. : buf0[k - 1];
+      const double value1 =               buf0[k    ];
+      xs[k * 2 + 0] = value0 + value1;
+      // to even frequencies
+      xs[k * 2 + 1] = buf1[k];
     }
   } else {
-    // fallback to N^2 DCT2
+    // fallback to N^2 DST2
     for (size_t k = 0; k < nitems; k++) {
       double * const y = ys + k;
       *y = 0.;
       for (size_t n = 0; n < nitems; n++) {
-        const double phase = pi * (2 * n + 1) * k / (2 * nitems);
-        *y += 2. * xs[n] * cos(phase);
+        const double phase = 2. * pi * (n + 0.5) * (k + 1) / (2 * nitems);
+        *y += 2. * xs[n] * sin(phase);
       }
     }
     for (size_t k = 0; k < nitems; k++) {
@@ -90,7 +90,7 @@ static int dct2 (
 }
 
 // backward transform | 51
-static int dct3 (
+static int dst3 (
     const size_t nitems,
     const size_t stride,
     const double * const restrict table,
@@ -105,33 +105,33 @@ static int dct3 (
     const size_t nh = nitems / 2;
     double * const buf0 = ys +  0;
     double * const buf1 = ys + nh;
-    // create input buffers of DCT-III
+    // create input buffers of DST-III
     for (size_t k = 0; k < nh; k++) {
-      buf0[k] = xs[k * 2];
-      const double value0 = 0 == k ? 0. : xs[k * 2 - 1];
-      const double value1 =               xs[k * 2 + 1];
-      buf1[k] = value0 + value1;
+      const double value0 =                    xs[k * 2    ];
+      const double value1 = nh - 1 == k ? 0. : xs[k * 2 + 2];
+      buf0[k] = value0 + value1;
+      buf1[k] = xs[k * 2 + 1];
     }
     // solve two sub problems
-    dct3(nh, stride * 2, table, buf0, xs);
-    dct3(nh, stride * 2, table, buf1, xs);
+    dst3(nh, stride * 2, table, buf0, xs);
+    dst3(nh, stride * 2, table, buf1, xs);
     // combine results of sub problems
     for (size_t n = 0; n < nh; n++) {
       // c: 1 / [ 2 cos(beta) ]
       const double c = table[(2 * n + 1) * stride];
-      const double value0 = 0.5 * buf0[n];
-      const double value1 = 0.5 * c * buf1[n];
+      const double value0 = 0.5 * c * buf0[n];
+      const double value1 = 0.5     * buf1[n];
       xs[             n] = value0 + value1;
       xs[nitems - 1 - n] = value0 - value1;
     }
   } else {
-    // fallback to N^2 DCT3
+    // fallback to N^2 DST3
     for (size_t n = 0; n < nitems; n++) {
       double * const y = ys + n;
       *y = 0.;
       for (size_t k = 0; k < nitems; k++) {
-        const double phase = pi * (2 * n + 1) * k / (2 * nitems);
-        *y += xs[k] * cos(phase);
+        const double phase = 2. * pi * (n + 0.5) * (k + 1) / (2 * nitems);
+        *y += xs[k] * sin(phase);
       }
       *y /= 1. * nitems;
     }
@@ -142,12 +142,12 @@ static int dct3 (
   return 0;
 }
 
-int dct_init_plan (
+int dst_init_plan (
     const size_t nitems,
-    dct_plan_t ** const plan
+    dst_plan_t ** const plan
 ) {
   // allocate, initalise, and pack
-  *plan = memory_alloc(1 * sizeof(dct_plan_t));
+  *plan = memory_alloc(1 * sizeof(dst_plan_t));
   if (NULL == *plan) {
     return 1;
   }
@@ -171,8 +171,8 @@ int dct_init_plan (
   return 0;
 }
 
-int dct_destroy_plan (
-    dct_plan_t ** const plan
+int dst_destroy_plan (
+    dst_plan_t ** const plan
 ) {
   if (NULL == *plan) {
     fprintf(stderr, "the plan is NULL\n");
@@ -185,8 +185,8 @@ int dct_destroy_plan (
   return 0;
 }
 
-int dct_exec_f (
-    dct_plan_t * const plan,
+int dst_exec_f (
+    dst_plan_t * const plan,
     double * const xs
 ){
   if (NULL == plan) {
@@ -196,12 +196,12 @@ int dct_exec_f (
   const size_t nitems = plan->nitems;
   const double * const restrict table = plan->table;
   double * const restrict ys = plan->buf;
-  dct2(nitems, 1, table, xs, ys);
+  dst2(nitems, 1, table, xs, ys);
   return 0;
 }
 
-int dct_exec_b (
-    dct_plan_t * const plan,
+int dst_exec_b (
+    dst_plan_t * const plan,
     double * const xs
 ) {
   if (NULL == plan) {
@@ -211,9 +211,9 @@ int dct_exec_b (
   const size_t nitems = plan->nitems;
   const double * const restrict table = plan->table;
   double * const restrict ys = plan->buf;
-  // normalize 0-th wave number before executing DCT3 | 2
-  xs[0] *= 0.5;
-  dct3(nitems, 1, table, xs, ys);
+  // normalize (N-1)-th wave number before executing DST3 | 2
+  xs[nitems - 1] *= 0.5;
+  dst3(nitems, 1, table, xs, ys);
   return 0;
 }
 

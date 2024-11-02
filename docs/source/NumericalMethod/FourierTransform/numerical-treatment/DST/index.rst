@@ -1,8 +1,8 @@
-#########################
-Discrete cosine transform
-#########################
+#######################
+Discrete sine transform
+#######################
 
-.. _dct_trigonometric_relation:
+.. _dst_trigonometric_relation:
 
 **********************
 Trigonometric relation
