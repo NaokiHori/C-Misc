@@ -21,8 +21,12 @@ for :math:`\seq{n}{0}{1}{N - 1}`, and similarly we can deduce
     \end{pmatrix}
     =
     \begin{pmatrix}
-        \frac{1}{2} &   \frac{1}{2} \twiddle{2 \pi}{n}{N} \\
-        \frac{1}{2} & - \frac{1}{2} \twiddle{2 \pi}{n}{N} \\
+        1 &   1 \\
+        1 & - 1 \\
+    \end{pmatrix}
+    \begin{pmatrix}
+        \frac{1}{2} & 0 \\
+        0 & \frac{1}{2} \twiddle{2 \pi}{n}{N} \\
     \end{pmatrix}
     \begin{pmatrix}
         \idft{n}{N / 2}{Z_0}{Z_2}{Z_{N - 2}} \\
@@ -142,4 +146,62 @@ for :math:`\seq{n}{0}{1}{N / 2 - 1}`.
         \frac{1}{2}
         \twiddle{2 \pi}{n}{N}
         \idft{n}{N / 2}{Z_1}{Z_3}{Z_{N - 1}}.
+
+Similarly, when :math:`N` is a multiple of :math:`3`, we have
+
+.. math::
+
+    \begin{pmatrix}
+        z_{n          } \\
+        z_{n +   N / 3} \\
+        z_{n + 2 N / 3} \\
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        1
+        &
+        1
+        &
+        1
+        \\
+        1
+        &
+        \twiddle{2 \pi}{1}{3}
+        &
+        \twiddle{- 2 \pi}{1}{3}
+        \\
+        1
+        &
+        \twiddle{- 2 \pi}{1}{3}
+        &
+        \twiddle{2 \pi}{1}{3}
+        \\
+    \end{pmatrix}
+    \begin{pmatrix}
+        \frac{1}{3}
+        &
+        0
+        &
+        0
+        \\
+        0
+        &
+        \frac{1}{3} \twiddle{- 2 \pi}{k}{N}
+        &
+        0
+        \\
+        0
+        &
+        0
+        &
+        \frac{1}{3} \twiddle{- 2 \pi}{2 k}{N}
+        \\
+    \end{pmatrix}
+    \begin{pmatrix}
+        \idft{n}{N / 3}{Z_0}{Z_3}{Z_{N - 3}} \\
+        \idft{n}{N / 3}{Z_1}{Z_4}{Z_{N - 2}} \\
+        \idft{n}{N / 3}{Z_2}{Z_5}{Z_{N - 1}} \\
+    \end{pmatrix}
+
+for :math:`\seq{n}{0}{1}{N / 3 - 1}`.
 

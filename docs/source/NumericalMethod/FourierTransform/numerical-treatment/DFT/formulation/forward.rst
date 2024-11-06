@@ -22,8 +22,12 @@ Assuming that :math:`N` is a multiple of :math:`2`, we obtain the following rela
     \end{pmatrix}
     =
     \begin{pmatrix}
-        1 &   \twiddle{- 2 \pi}{k}{N} \\
-        1 & - \twiddle{- 2 \pi}{k}{N} \\
+        1 &   1 \\
+        1 & - 1 \\
+    \end{pmatrix}
+    \begin{pmatrix}
+        1 & 0 \\
+        0 & \twiddle{- 2 \pi}{k}{N} \\
     \end{pmatrix}
     \begin{pmatrix}
         \dft{k}{N / 2}{z_0}{z_2}{z_{N - 2}} \\
@@ -103,4 +107,62 @@ for :math:`\seq{k}{0}{1}{N / 2 - 1}`.
         \dft{k}{N / 2}{z_1}{z_3}{z_{N - 1}},
 
     indicating that considering :math:`\seq{k}{0}{1}{N / 2 - 1}` is sufficient to obtain :math:`Z_k` for :math:`\left( \seq{k}{0}{1}{N - 1} \right)`.
+
+Similarly, when :math:`N` is a multiple of :math:`3`, we have
+
+.. math::
+
+    \begin{pmatrix}
+        Z_{k          } \\
+        Z_{k +   N / 3} \\
+        Z_{k + 2 N / 3} \\
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        1
+        &
+        1
+        &
+        1
+        \\
+        1
+        &
+        \twiddle{- 2 \pi}{1}{3}
+        &
+        \twiddle{2 \pi}{1}{3}
+        \\
+        1
+        &
+        \twiddle{2 \pi}{1}{3}
+        &
+        \twiddle{- 2 \pi}{1}{3}
+        \\
+    \end{pmatrix}
+    \begin{pmatrix}
+        1
+        &
+        0
+        &
+        0
+        \\
+        0
+        &
+        \twiddle{- 2 \pi}{k}{N}
+        &
+        0
+        \\
+        0
+        &
+        0
+        &
+        \twiddle{- 2 \pi}{2 k}{N}
+        \\
+    \end{pmatrix}
+    \begin{pmatrix}
+        \dft{k}{N / 3}{z_0}{z_3}{z_{N - 3}} \\
+        \dft{k}{N / 3}{z_1}{z_4}{z_{N - 2}} \\
+        \dft{k}{N / 3}{z_2}{z_5}{z_{N - 1}} \\
+    \end{pmatrix}
+
+for :math:`\seq{k}{0}{1}{N / 3 - 1}`.
 

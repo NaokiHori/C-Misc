@@ -46,7 +46,7 @@ static void memory_free (
  * @param ys     Output signal ordered as Re(0), Im(0), Re(1), Im(1), ...
  * @return success (0) or failure (1)
  */
-// main function to perform discrete fourier transform | 38
+// main function to perform discrete fourier transform | 64
 static int dft (
     const size_t nitems,
     const size_t stride,
@@ -57,21 +57,46 @@ static int dft (
   if (1 == nitems) {
     ys[0] = xs[0];
   } else if (0 == nitems % 2) {
-    const size_t nh = nitems / 2;
+    // size of sub problem
+    const size_t nitems_sub = nitems / 2;
     // divide-and-conquer
-    dft(nh, stride * 2, trigs, xs         , ys     );
-    dft(nh, stride * 2, trigs, xs + stride, ys + nh);
-    // unify two sub problem results
-    for (size_t i = 0; i < nh; i++) {
-      const size_t j = i + nh;
-      const trig_t * const trig = trigs + stride * i;
-      const double complex twiddle = trig->cos - I * trig->sin;
-      double complex * const yi = ys + i;
-      double complex * const yj = ys + j;
-      const double complex ye = *yi;
-      const double complex yo = *yj * twiddle;
-      *yi = ye + yo;
-      *yj = ye - yo;
+    dft(nitems_sub, stride * 2, trigs, xs + 0 * stride, ys + 0 * nitems_sub);
+    dft(nitems_sub, stride * 2, trigs, xs + 1 * stride, ys + 1 * nitems_sub);
+    // unify sub problem results
+    for (size_t k = 0; k < nitems_sub; k++) {
+      const trig_t * const trig_y1 = trigs + stride * 1 * k;
+      const double complex c_y1 = trig_y1->cos - I * trig_y1->sin;
+      double complex * const y0_ptr = ys + k + 0 * nitems_sub;
+      double complex * const y1_ptr = ys + k + 1 * nitems_sub;
+      const double complex y0 = *y0_ptr;
+      const double complex y1 = *y1_ptr * c_y1;
+      *y0_ptr = 1. * y0 + 1. * y1;
+      *y1_ptr = 1. * y0 - 1. * y1;
+    }
+  } else if (0 == nitems % 3) {
+    // size of sub problem
+    const size_t nitems_sub = nitems / 3;
+    // divide-and-conquer
+    dft(nitems_sub, stride * 3, trigs, xs + 0 * stride, ys + 0 * nitems_sub);
+    dft(nitems_sub, stride * 3, trigs, xs + 1 * stride, ys + 1 * nitems_sub);
+    dft(nitems_sub, stride * 3, trigs, xs + 2 * stride, ys + 2 * nitems_sub);
+    // unify sub problem results
+    for (size_t k = 0; k < nitems_sub; k++) {
+      const trig_t * const trig_y1 = trigs + stride * 1 * k;
+      const trig_t * const trig_y2 = trigs + stride * 2 * k;
+      const double complex c_y1 = trig_y1->cos - I * trig_y1->sin;
+      const double complex c_y2 = trig_y2->cos - I * trig_y2->sin;
+      double complex * const y0_ptr = ys + k + 0 * nitems_sub;
+      double complex * const y1_ptr = ys + k + 1 * nitems_sub;
+      double complex * const y2_ptr = ys + k + 2 * nitems_sub;
+      const double complex y0 = *y0_ptr;
+      const double complex y1 = *y1_ptr * c_y1;
+      const double complex y2 = *y2_ptr * c_y2;
+      const double complex m = - 0.5 - 0.8660254037844386 * I;
+      const double complex p = - 0.5 + 0.8660254037844386 * I;
+      *y0_ptr = y0 +     y1 +     y2;
+      *y1_ptr = y0 + m * y1 + p * y2;
+      *y2_ptr = y0 + p * y1 + m * y2;
     }
   } else {
     // naive O(N^2) DFT
@@ -79,7 +104,8 @@ static int dft (
       double complex * const y = ys + k;
       *y = 0. + I * 0.;
       for (size_t n = 0; n < nitems; n++) {
-        *y += xs[stride * n] * cexp(- 2. * pi * n * k * I / nitems);
+        const size_t index = n * k % nitems;
+        *y += xs[stride * n] * cexp(- 2. * pi * index * I / nitems);
       }
     }
   }
@@ -95,7 +121,7 @@ static int dft (
  * @param ys     Output signal ordered as Re(0), Im(0), Re(1), Im(1), ...
  * @return success (0) or failure (1)
  */
-// main function to perform inverse discrete fourier transform | 39
+// main function to perform inverse discrete fourier transform | 63
 static int idft (
     const size_t nitems,
     const size_t stride,
@@ -106,21 +132,44 @@ static int idft (
   if (1 == nitems) {
     ys[0] = xs[0];
   } else if (0 == nitems % 2) {
-    const size_t nh = nitems / 2;
+    const size_t nitems_sub = nitems / 2;
     // divide-and-conquer
-    idft(nh, stride * 2, trigs, xs         , ys     );
-    idft(nh, stride * 2, trigs, xs + stride, ys + nh);
-    // unify two sub problem results
-    for (size_t i = 0; i < nh; i++) {
-      const size_t j = i + nh;
-      const trig_t * const trig = trigs + stride * i;
-      const double complex twiddle = trig->cos + I * trig->sin;
-      double complex * const yi = ys + i;
-      double complex * const yj = ys + j;
-      const double complex ye = 0.5 * *yi;
-      const double complex yo = 0.5 * *yj * twiddle;
-      *yi = ye + yo;
-      *yj = ye - yo;
+    idft(nitems_sub, stride * 2, trigs, xs + 0 * stride, ys + 0 * nitems_sub);
+    idft(nitems_sub, stride * 2, trigs, xs + 1 * stride, ys + 1 * nitems_sub);
+    // unify sub problem results
+    for (size_t k = 0; k < nitems_sub; k++) {
+      const trig_t * const trig_y1 = trigs + stride * 1 * k;
+      const double complex c_y1 = trig_y1->cos + I * trig_y1->sin;
+      double complex * const y0_ptr = ys + k + 0 * nitems_sub;
+      double complex * const y1_ptr = ys + k + 1 * nitems_sub;
+      const double complex y0 = *y0_ptr        / 2.;
+      const double complex y1 = *y1_ptr * c_y1 / 2.;
+      *y0_ptr = y0 + y1;
+      *y1_ptr = y0 - y1;
+    }
+  } else if (0 == nitems % 3) {
+    const size_t nitems_sub = nitems / 3;
+    // divide-and-conquer
+    idft(nitems_sub, stride * 3, trigs, xs + 0 * stride, ys + 0 * nitems_sub);
+    idft(nitems_sub, stride * 3, trigs, xs + 1 * stride, ys + 1 * nitems_sub);
+    idft(nitems_sub, stride * 3, trigs, xs + 2 * stride, ys + 2 * nitems_sub);
+    // unify sub problem results
+    for (size_t k = 0; k < nitems_sub; k++) {
+      const trig_t * const trig_y1 = trigs + stride * 1 * k;
+      const trig_t * const trig_y2 = trigs + stride * 2 * k;
+      const double complex c_y1 = trig_y1->cos + I * trig_y1->sin;
+      const double complex c_y2 = trig_y2->cos + I * trig_y2->sin;
+      double complex * const y0_ptr = ys + k + 0 * nitems_sub;
+      double complex * const y1_ptr = ys + k + 1 * nitems_sub;
+      double complex * const y2_ptr = ys + k + 2 * nitems_sub;
+      const double complex y0 = *y0_ptr        / 3.;
+      const double complex y1 = *y1_ptr * c_y1 / 3.;
+      const double complex y2 = *y2_ptr * c_y2 / 3.;
+      const double complex m = - 0.5 - 0.8660254037844386 * I;
+      const double complex p = - 0.5 + 0.8660254037844386 * I;
+      *y0_ptr = y0 +     y1 +     y2;
+      *y1_ptr = y0 + p * y1 + m * y2;
+      *y2_ptr = y0 + m * y1 + p * y2;
     }
   } else {
     // naive O(N^2) iDFT
@@ -128,7 +177,8 @@ static int idft (
       double complex * const y = ys + n;
       *y = 0. + I * 0.;
       for (size_t k = 0; k < nitems; k++) {
-        *y += xs[stride * k] * cexp(+ 2. * pi * n * k * I / nitems);
+        const size_t index = n * k % nitems;
+        *y += xs[stride * k] * cexp(+ 2. * pi * index * I / nitems);
       }
       *y /= nitems;
     }
