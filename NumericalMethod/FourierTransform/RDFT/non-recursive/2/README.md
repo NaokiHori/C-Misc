@@ -4,16 +4,16 @@ Discrete Fourier transforms of real-valued signals and the corresponding inverse
 Due to the complex-conjugate nature of the resulting signal, the output signal `X_k` is ordered as follows.
 
 ```
-0: Re(X_0)
-1: Re(X_1)
+        0 : Re(X_{        0})
+        1 : Re(X_{        1})
 ...
-N / 2 - 1: Re(X_{N / 2 - 1})
-N / 2: Re(X_{N / 2})
-N / 2 + 1: Im(X_{N / 2 + 1})
-N / 2 + 2: Im(X_{N / 2 + 2})
+N / 2 - 1 : Re(X_{N / 2 - 1})
+N / 2     : Re(X_{N / 2    })
+N / 2 + 1 : Im(X_{N / 2 + 1})
+N / 2 + 2 : Im(X_{N / 2 + 2})
 ...
-N - 2: Im(X_{N - 2})
-N - 1: Im(X_{N - 1})
+N     - 2 : Im(X_{N     - 2})
+N     - 1 : Im(X_{N     - 1})
 ```
 
 ## Caveat
