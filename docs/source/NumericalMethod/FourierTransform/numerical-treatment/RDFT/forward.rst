@@ -243,15 +243,15 @@ Next, the discrete Fourier transform of :math:`z_n` is evaluated to find
 
 for :math:`\seq{k}{0}{1}{N / 2 - 1}`:
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: compute complex dft to find Z_k
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: compute 1/2 Z_k
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: compute 1/2 Z_{N / 2 - k}
 
@@ -285,11 +285,11 @@ The result is used to compute
 
 where :math:`\seq{k}{0}{1}{N / 2 - 1}`:
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: compute X_k^e = + 1/2 Z_k + 1/2 Z_{N / 2 - k}^*
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: compute X_k^o = - I/2 Z_k + I/2 Z_{N / 2 - k}^*
 
@@ -347,7 +347,7 @@ Due to :ref:`the order of signals <rdft_order_of_signals>`, it is worthwhile to 
         \ctwiddle{- 2 \pi}{k}{N}
     \right\}:
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: real and imaginary parts are stored separately
 
@@ -391,13 +391,13 @@ and as a consequence:
     -
     X_0^o:
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: compute FFT of the original real signal, corner cases
 
 The whole process is given below for completeness:
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: compute forward transform
 

@@ -49,21 +49,21 @@ for :math:`\seq{k}{0}{1}{N / 2 - 1}`.
 
 Note that, since :math:`X_k` does not store the entire signal, we need to recover the series of complex numbers:
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: compute 1/2 X_k
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: compute 1/2 X_{k + N / 2}
 
 They are combined to yield :math:`X_k^e` and :math:`X_k^o`:
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: X_k^e = (+ 1/2 X_k + 1/2 X_{k + N / 2})
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: X_k^o = (+ 1/2 X_k - 1/2 X_{k + N / 2}) * exp(arg)
 
@@ -78,7 +78,7 @@ Using these values, :math:`Z_k` is recovered following
     I
     X_k^o:
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: Z_k = X_k^e + X_k^o * I
 
@@ -127,7 +127,7 @@ and due to :math:`\imag{X_0} = \imag{X_{N / 2}} = 0`, we obtain
     I
     X_0^o.
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: create a complex signal, edge cases
 
@@ -139,7 +139,7 @@ An inverse transform with respect to :math:`Z_k` is performed to yield :math:`z_
     =
     \idft{n}{N / 2}{Z_0}{Z_1}{Z_{N / 2 - 1}}:
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: compute complex idft to find z_n
 
@@ -156,7 +156,7 @@ Since the output signal is already ordered in a desired manner, no additional ma
 
 The whole process is given below for completeness:
 
-.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/src/rdft.c
+.. myliteralinclude:: /../../NumericalMethod/FourierTransform/RDFT/normal/src/rdft.c
     :language: c
     :tag: compute backward transform
 
