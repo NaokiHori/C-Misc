@@ -36,6 +36,7 @@ static int add_edge_to_contour(
     new_point->next = *first_point;
     *first_point = new_point;
   }
+  contour->npoints += 1;
   return 0;
 }
 
@@ -77,6 +78,7 @@ static int march(
     // check termination
     if (triangle_start == triangle) {
       // now we are at the original triangle: a closed loop is found
+      contour->is_closed = true;
       break;
     }
     if (NULL == triangle) {
@@ -84,6 +86,7 @@ static int march(
       if (reverse) {
         // second hit, indicating that
         //   a contour which connects two boundaries is found
+        contour->is_closed = false;
         break;
       } else {
         // first hit, indicating that this contour is not closed
@@ -139,6 +142,8 @@ int contouring_exec(
     // now it turned out that this triangle contains an unvisited arrow,
     //   indicating a new contour is found
     contour_t * const new_contour = memory_alloc(1 * sizeof(contour_t));
+    new_contour->is_closed = false;
+    new_contour->npoints = 0;
     new_contour->point = NULL;
     new_contour->internal = memory_alloc(1 * sizeof(contour_internal_t));
     new_contour->internal->last_point = NULL;

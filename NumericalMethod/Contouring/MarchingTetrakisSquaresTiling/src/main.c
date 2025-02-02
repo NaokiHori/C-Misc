@@ -66,11 +66,14 @@ static int check(
     perror(file_name);
     return 1;
   }
+  size_t contour_id = 0;
   while (contour) {
+    printf("contour %zu: %zu points, %s\n", contour_id, contour->npoints, contour->is_closed ? "Closed" : "Opened");
     for (const contouring_point_t * point = contour->point; point; point = point->next) {
       fprintf(fp, "% .15e % .15e\n", point->x, point->y);
     }
     fprintf(fp, "\n");
+    contour_id += 1;
     contour = contour->next;
   }
   fclose(fp);

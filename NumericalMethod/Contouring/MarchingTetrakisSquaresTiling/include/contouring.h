@@ -2,6 +2,7 @@
 #define CONTOURING_H
 
 #include <stddef.h> // size_t
+#include <stdbool.h> // bool
 
 typedef struct contouring_point_internal_t contouring_point_internal_t;
 typedef struct contouring_contour_internal_t contouring_contour_internal_t;
@@ -20,6 +21,10 @@ typedef struct contouring_point_t {
 
 // datatype to store a contour
 typedef struct contouring_contour_t {
+  // if this is a closed contour
+  bool is_closed;
+  // number of points consisting this contour
+  size_t npoints;
   // pointer to the first point of the contour
   contouring_point_t * point;
   // pointer to the next contour
