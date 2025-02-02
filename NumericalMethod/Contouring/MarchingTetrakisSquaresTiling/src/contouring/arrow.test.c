@@ -2,12 +2,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../internal.h"
-#include "../arrow.h"
-#include "../edge.h"
-#include "../triangle.h"
+#include "./types.h"
+#include "./arrow.h"
+#include "./edge.h"
+#include "./triangle.h"
 
-static int report (
+static int report(
     const char func[],
     const arrow_t * const expect,
     const arrow_t * const result
@@ -22,16 +22,16 @@ static int report (
     return 1;
   }
   // both non-NULL, investigate members
-  int retval = 0;
+  int error_code = 0;
   if (expect->edge_tail != result->edge_tail) {
     printf("%-10s failed, expect->edge_tail %p, result->edge_tail %p\n", func, expect->edge_tail, result->edge_tail);
-    retval += 1;
+    error_code += 1;
   }
   if (expect->edge_head != result->edge_head) {
     printf("%-10s failed, expect->edge_head %p, result->edge_head %p\n", func, expect->edge_head, result->edge_head);
-    retval += 1;
+    error_code += 1;
   }
-  return retval;
+  return error_code;
 }
 
 #define CHECK() \
@@ -39,16 +39,16 @@ static int report (
     arrow_t * result = NULL; \
     triangle_t * triangles[NUM_TRIANGLE_EDGES] = {NULL, NULL, NULL}; \
     find_arrow_in_triangle(threshold, vertex_values, (const edge_t * const *)edges, triangles, &result); \
-    const int retval = report(__func__, expect, result); \
-    if (0 == retval) { \
+    const int error_code = report(__func__, expect, result); \
+    if (0 == error_code) { \
       printf("%-10s passed\n", __func__); \
     } \
-    return retval; \
+    return error_code; \
   } while (0)
 
 static const double threshold = 0.5;
 
-static int test0 (
+static int test0(
     edge_t * const edges[NUM_TRIANGLE_EDGES]
 ) {
   const double vertex_values[] = {0., 0., 0.};
@@ -56,7 +56,7 @@ static int test0 (
   CHECK();
 }
 
-static int test1 (
+static int test1(
     edge_t * const edges[NUM_TRIANGLE_EDGES]
 ) {
   const double vertex_values[] = {1., 0., 0.};
@@ -67,7 +67,7 @@ static int test1 (
   CHECK();
 }
 
-static int test2 (
+static int test2(
     edge_t * const edges[NUM_TRIANGLE_EDGES]
 ) {
   const double vertex_values[] = {0., 1., 0.};
@@ -78,7 +78,7 @@ static int test2 (
   CHECK();
 }
 
-static int test3 (
+static int test3(
     edge_t * const edges[NUM_TRIANGLE_EDGES]
 ) {
   const double vertex_values[] = {1., 1., 0.};
@@ -89,7 +89,7 @@ static int test3 (
   CHECK();
 }
 
-static int test4 (
+static int test4(
     edge_t * const edges[NUM_TRIANGLE_EDGES]
 ) {
   const double vertex_values[] = {0., 0., 1.};
@@ -100,7 +100,7 @@ static int test4 (
   CHECK();
 }
 
-static int test5 (
+static int test5(
     edge_t * const edges[NUM_TRIANGLE_EDGES]
 ) {
   const double vertex_values[] = {1., 0., 1.};
@@ -111,7 +111,7 @@ static int test5 (
   CHECK();
 }
 
-static int test6 (
+static int test6(
     edge_t * const edges[NUM_TRIANGLE_EDGES]
 ) {
   const double vertex_values[] = {0., 1., 1.};
@@ -122,7 +122,7 @@ static int test6 (
   CHECK();
 }
 
-static int test7 (
+static int test7(
     edge_t * const edges[NUM_TRIANGLE_EDGES]
 ) {
   const double vertex_values[] = {1., 1., 1.};
@@ -130,27 +130,27 @@ static int test7 (
   CHECK();
 }
 
-int main (
+int main(
     void
 ) {
-  int retval = 0;
+  int error_code = 0;
   edge_t * const edges[NUM_TRIANGLE_EDGES] = {
     malloc(1 * sizeof(edge_t)),
     malloc(1 * sizeof(edge_t)),
     malloc(1 * sizeof(edge_t)),
   };
-  retval += test0(edges);
-  retval += test1(edges);
-  retval += test2(edges);
-  retval += test3(edges);
-  retval += test4(edges);
-  retval += test5(edges);
-  retval += test6(edges);
-  retval += test7(edges);
+  error_code += test0(edges);
+  error_code += test1(edges);
+  error_code += test2(edges);
+  error_code += test3(edges);
+  error_code += test4(edges);
+  error_code += test5(edges);
+  error_code += test6(edges);
+  error_code += test7(edges);
   for (size_t n = 0; n < NUM_TRIANGLE_EDGES; n++) {
     free(edges[n]);
   }
-  return retval;
+  return error_code;
 }
 
 #else

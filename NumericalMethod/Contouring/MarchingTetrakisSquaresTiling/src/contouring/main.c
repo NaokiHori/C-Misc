@@ -2,17 +2,22 @@
 #include <stddef.h> // size_t
 #include <stdbool.h> // bool
 #include "contouring.h"
-#include "./internal.h"
+#include "./types.h"
 #include "./memory.h"
 #include "./edge.h"
 #include "./arrow.h"
 #include "./square.h"
 
-static int add_edge_to_contour (
+static int add_edge_to_contour(
     const bool to_tail,
     contour_t * const contour,
     const edge_t * const edge
 ) {
+  if (edge->is_diagonal) {
+    // intersections with diagonal edge are for implementation ease
+    //   and are not included in the resulting series of points
+    return 0;
+  }
   point_t * const new_point = memory_alloc(1 * sizeof(point_t));
   new_point->x = edge->x;
   new_point->y = edge->y;
@@ -34,7 +39,7 @@ static int add_edge_to_contour (
   return 0;
 }
 
-static int march (
+static int march(
     triangle_t * const triangle_start,
     arrow_t * const arrow_start,
     contour_t * const contour
@@ -94,7 +99,7 @@ static int march (
   return 0;
 }
 
-int contouring_exec (
+int contouring_exec(
     const double threshold,
     const size_t * sizes,
     double * const * const grids,
@@ -108,7 +113,6 @@ int contouring_exec (
   const size_t n_squares = nx * ny;
   const size_t n_triangles = NUM_SQUARE_EDGES * n_squares;
   // find all intersections on square / triangle edges a priori
-  // TODO: this can be done while marching, update later
   edge_t ** const square_x_edges = memory_alloc((nx + 1) * (ny + 0) * sizeof(edge_t *));
   edge_t ** const square_y_edges = memory_alloc((nx + 0) * (ny + 1) * sizeof(edge_t *));
   edge_t ** const diagonal_edges = memory_alloc(NUM_SQUARE_VERTICES * n_squares * sizeof(edge_t *));
@@ -170,7 +174,7 @@ abort:
   return 0;
 }
 
-int contouring_cleanup (
+int contouring_cleanup(
     contouring_contour_t ** const contour
 ) {
   while (*contour) {

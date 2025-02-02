@@ -1,6 +1,6 @@
 #include <stdio.h> // FILE, fprintf, fclose
 #include <stdbool.h> // bool
-#include "./internal.h"
+#include "./types.h"
 #include "./arrow.h" // arrow_t, NMAXARROWS
 #include "./square.h"
 #include "./triangle.h"

@@ -1,5 +1,5 @@
-#if !defined(INTERNAL_H)
-#define INTERNAL_H
+#if !defined(TYPES_H)
+#define TYPES_H
 
 #include "contouring.h" // contouring_contour_t, contouring_point_t
 
@@ -21,4 +21,4 @@ struct contouring_contour_internal_t {
   struct contouring_point_t * last_point;
 };
 
-#endif // INTERNAL_H
+#endif // TYPES_H

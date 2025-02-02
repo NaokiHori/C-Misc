@@ -1,7 +1,7 @@
 #if !defined(TRIANGLE_H)
 #define TRIANGLE_H
 
-#include "./internal.h" // arrow_t
+#include "./types.h" // arrow_t
 
 #define NUM_TRIANGLE_VERTICES 3
 #define NUM_TRIANGLE_EDGES 3

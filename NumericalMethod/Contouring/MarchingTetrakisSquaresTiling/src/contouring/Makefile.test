@@ -3,10 +3,10 @@ TARGET := a.out
 find_arrow:
 	cc \
 		-std=c99 \
-		-I../../../include \
+		-I../../include \
 		-Wall -Wextra \
 		-DTEST_MARCHING_SQUARE \
-		../memory.c main.c test_find_arrow_in_triangle.c \
+		./memory.c arrow.c arrow.test.c \
 		-o $(TARGET)
 
 clean:

@@ -4,7 +4,7 @@
 #include <math.h>
 #include "contouring.h"
 
-static int construct_dataset (
+static int construct_dataset(
     const size_t nx,
     const size_t ny,
     double * const xs,
@@ -23,7 +23,7 @@ static int construct_dataset (
   for (size_t j = 0; j < ny; j++) {
     ys[j] = ly * j / (ny - 1);
   }
-  const double pi = 3.14159265358932384626;
+  const double pi = 3.1415926535897932384626;
   // superpose sinusoidal waves to create a random field
   const size_t nfreqx = 12;
   const size_t nfreqy = 12;
@@ -56,12 +56,12 @@ static int construct_dataset (
   return 0;
 }
 
-static int check (
+static int check(
     const contouring_contour_t * contour
 ) {
-  const char file_name[] = {"contours-gnuplot.dat"};
+  const char file_name[] = "contours-gnuplot.dat";
   errno = 0;
-  FILE * fp = fopen(file_name, "w");
+  FILE * const fp = fopen(file_name, "w");
   if (NULL == fp) {
     perror(file_name);
     return 1;
@@ -77,10 +77,10 @@ static int check (
   return 0;
 }
 
-int main (
+int main(
     void
 ) {
-  int retval = 0;
+  int error_code = 0;
   // prepare
   const double threshold = 0.;
   const size_t sizes[] = {129, 129};
@@ -92,13 +92,13 @@ int main (
   contouring_contour_t * contour = NULL;
   if (0 != construct_dataset(sizes[0], sizes[1], grids[0], grids[1], field)) {
     puts("failed to prepare dataset");
-    retval = 1;
+    error_code = 1;
     goto abort;
   }
   // extract contours
   if (0 != contouring_exec(threshold, sizes, grids, field, &contour)) {
     puts("failed to extract contours");
-    retval = 1;
+    error_code = 1;
     goto abort;
   }
   check(contour);
@@ -108,6 +108,6 @@ abort:
   free(grids[0]);
   free(grids[1]);
   free(field);
-  return retval;
+  return error_code;
 }
 

@@ -2,11 +2,11 @@
 #include <stddef.h> // size_t
 #include <stdbool.h> // bool
 #include <stdint.h> // uint_fast8_t
-#include "../internal.h"
-#include "../memory.h"
-#include "../arrow.h" // arrow_t
-#include "../edge.h" // edge_t
-#include "../triangle.h"
+#include "./types.h"
+#include "./memory.h"
+#include "./arrow.h" // arrow_t
+#include "./edge.h" // edge_t
+#include "./triangle.h"
 
 static int define_arrow (
     const edge_t * const edges[NUM_TRIANGLE_EDGES],

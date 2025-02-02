@@ -29,7 +29,7 @@ typedef struct contouring_contour_t {
   contouring_contour_internal_t * internal;
 } contouring_contour_t;
 
-extern int contouring_exec (
+extern int contouring_exec(
     const double threshold,
     const size_t * const sizes,
     double * const * const grids,
@@ -37,7 +37,7 @@ extern int contouring_exec (
     contouring_contour_t ** const contour
 );
 
-extern int contouring_cleanup (
+extern int contouring_cleanup(
     contouring_contour_t ** const contour
 );
 

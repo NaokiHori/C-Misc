@@ -4,7 +4,7 @@
 #include "./edge.h"
 #include "./square.h"
 
-static double find_intersection (
+static double find_intersection(
     const double yt,
     const double * const xs,
     const double * const ys
@@ -17,7 +17,7 @@ static double find_intersection (
   );
 }
 
-static bool is_between (
+static bool is_between(
     const double p,
     const double qs[2]
 ) {
@@ -28,7 +28,7 @@ static bool is_between (
   }
 }
 
-int init_square_x_edges (
+int init_square_x_edges(
     const double threshold,
     const size_t nx,
     const size_t ny,
@@ -51,6 +51,7 @@ int init_square_x_edges (
       const double y = find_intersection(threshold, ylim, vertex_values);
       if (is_between(y, ylim)) {
         *edge = memory_alloc(1 * sizeof(edge_t));
+        (*edge)->is_diagonal = false;
         (*edge)->x = x;
         (*edge)->y = y;
       } else {
@@ -61,7 +62,7 @@ int init_square_x_edges (
   return 0;
 }
 
-int init_square_y_edges (
+int init_square_y_edges(
     const double threshold,
     const size_t nx,
     const size_t ny,
@@ -84,6 +85,7 @@ int init_square_y_edges (
       const double x = find_intersection(threshold, xlim, vertex_values);
       if (is_between(x, xlim)) {
         *edge = memory_alloc(1 * sizeof(edge_t));
+        (*edge)->is_diagonal = false;
         (*edge)->x = x;
         (*edge)->y = y;
       } else {
@@ -94,7 +96,7 @@ int init_square_y_edges (
   return 0;
 }
 
-int init_diagonal_edges (
+int init_diagonal_edges(
     const double threshold,
     const size_t nx,
     const size_t ny,
@@ -134,6 +136,7 @@ int init_diagonal_edges (
         const double y = find_intersection(threshold, ylim, vertex_values);
         if (is_between(x, xlim) && is_between(y, ylim)) {
           *edge = memory_alloc(1 * sizeof(edge_t));
+          (*edge)->is_diagonal = true;
           (*edge)->x = x;
           (*edge)->y = y;
         } else {
