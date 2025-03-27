@@ -20,4 +20,6 @@ macros["dctiii"] = ["\\mathcal{C}_{#1}^{-1} \\left[ {#2}; {#3}, {#4}, \\cdots, {
 macros["dstii"]  = ["\\mathcal{S}_{#1}      \\left[ {#2}; {#3}, {#4}, \\cdots, {#5} \\right]", 5]
 macros["dstiii"] = ["\\mathcal{S}_{#1}^{-1} \\left[ {#2}; {#3}, {#4}, \\cdots, {#5} \\right]", 5]
 
+macros["der"] = ["\\frac{d {#1}}{d {#2}}", 2]
+
 mathjax3_config = {"TeX": {"Macros": macros}}

@@ -7,5 +7,6 @@ C Misc
 
     NumericalMethod/FourierTransform/index.rst
     NumericalMethod/LinearSystem/index.rst
+    NumericalMethod/time_marcher.rst
     Optimization/index.rst
 

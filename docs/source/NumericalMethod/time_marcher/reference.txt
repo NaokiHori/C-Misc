@@ -1,0 +1,1 @@
+.. |WILLIAMSON1980| replace:: Williamson, *J. Comput. Phys.* (**35**), 1980
