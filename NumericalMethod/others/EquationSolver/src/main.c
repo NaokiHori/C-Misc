@@ -68,21 +68,30 @@ static int use_quadratic_solver(
   };
   {
     // Two distinct real roots
-    const double complex answers[2] = {1., 2.};
+    const double complex answers[2] = {
+      1.,
+      2.,
+    };
     set_quadratic_coefficients(answers, coefs);
     solve_quadratic_equation(coefs[0], coefs[1], roots);
     check(2, answers, roots);
   }
   {
     // Two repeated real roots
-    const double complex answers[2] = {1., 1.};
+    const double complex answers[2] = {
+      1.,
+      1.,
+    };
     set_quadratic_coefficients(answers, coefs);
     solve_quadratic_equation(coefs[0], coefs[1], roots);
     check(2, answers, roots);
   }
   {
     // Two real roots very close to each other
-    const double complex answers[2] = {1. + DBL_EPSILON, 1.};
+    const double complex answers[2] = {
+      1. + DBL_EPSILON,
+      1.,
+    };
     set_quadratic_coefficients(answers, coefs);
     solve_quadratic_equation(coefs[0], coefs[1], roots);
     check(2, answers, roots);
@@ -98,7 +107,17 @@ static int use_quadratic_solver(
     check(2, answers, roots);
   }
   {
-    // A case prone to rounding error
+    // Two imaginary roots
+    const double complex answers[2] = {
+      - 3.14 * I,
+      + 3.14 * I,
+    };
+    set_quadratic_coefficients(answers, coefs);
+    solve_quadratic_equation(coefs[0], coefs[1], roots);
+    check(2, answers, roots);
+  }
+  {
+    // Two real roots which are totally different in ratio
     const double complex answers[2] = {
          0.001223991124941416117107294,
       1633.998776008875058583882892705,
@@ -126,21 +145,33 @@ static int use_cubic_solver(
   };
   {
     // Three distinct real roots
-    const double complex answers[3] = {3., 2., 1.};
+    const double complex answers[3] = {
+      3.,
+      2.,
+      1.,
+    };
     set_cubic_coefficients(answers, coefs);
     solve_cubic_equation(coefs[0], coefs[1], coefs[2], roots);
     check(3, answers, roots);
   }
   {
     // One distinct and two repeated real roots
-    const double complex answers[3] = {2., 2., 1.};
+    const double complex answers[3] = {
+      2.,
+      2.,
+      1.,
+    };
     set_cubic_coefficients(answers, coefs);
     solve_cubic_equation(coefs[0], coefs[1], coefs[2], roots);
     check(3, answers, roots);
   }
   {
     // Three repeated real roots
-    const double complex answers[3] = {1., 1., 1.};
+    const double complex answers[3] = {
+      1.,
+      1.,
+      1.,
+    };
     set_cubic_coefficients(answers, coefs);
     solve_cubic_equation(coefs[0], coefs[1], coefs[2], roots);
     check(3, answers, roots);
