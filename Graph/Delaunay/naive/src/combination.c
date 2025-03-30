@@ -1,16 +1,15 @@
-#include <stddef.h>
-#include "combinations.h"
+#include "./combination.h"
 
-static inline size_t max (
+static inline size_t max(
     const size_t n,
     const size_t i
 ) {
   return n - 1 - i;
 }
 
-int init_combination (
+int init_combination(
     const size_t r,
-    size_t * combination
+    size_t * const combination
 ) {
   for (size_t i = 0; i < r; i++) {
     combination[i] = r - 1 - i;
@@ -18,10 +17,10 @@ int init_combination (
   return 0;
 }
 
-int find_next_combination (
+int find_next_combination(
     const size_t n,
     const size_t r,
-    size_t * combination
+    size_t * const combination
 ) {
   if (combination[0] < max(n, 0)) {
     combination[0] += 1;
