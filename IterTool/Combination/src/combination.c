@@ -1,8 +1,7 @@
-#include <stddef.h>
-#include "combinations.h"
+#include "combination.h"
 
 // maximum possible value at index "i"
-static inline size_t max (
+static size_t max(
     const size_t n,
     const size_t i
 ) {
@@ -10,9 +9,9 @@ static inline size_t max (
 }
 
 // set (r - 1, r - 2, ..., 1, 0)
-int init_combination (
+int init_combination(
     const size_t r,
-    size_t * combination
+    size_t * const combination
 ) {
   for (size_t i = 0; i < r; i++) {
     combination[i] = r - 1 - i;
@@ -20,10 +19,10 @@ int init_combination (
   return 0;
 }
 
-int find_next_combination (
+int find_next_combination(
     const size_t n,
     const size_t r,
-    size_t * combination
+    size_t * const combination
 ) {
   // simply try to increase the first element
   // e.g., (2, 1, 0) -> (3, 1, 0)
@@ -51,7 +50,7 @@ int find_next_combination (
   return 1;
 }
 
-#if defined(TEST_COMBINATIONS)
+#if defined(TEST_COMBINATION)
 
 #include <stdio.h>
 
@@ -63,7 +62,7 @@ int find_next_combination (
 
 #define REPORT_SUCCESS(objective) fprintf(stderr, "Test success: %s (%s)\n", __func__, objective);
 
-static int test0 (
+static int test0(
     void
 ) {
   const char objective[] = {"init_combination"};
@@ -96,7 +95,7 @@ static int test0 (
   return 0;
 }
 
-static int test1 (
+static int test1(
     void
 ) {
   const char objective[] = {"find_next_combination"};
@@ -127,7 +126,7 @@ static int test1 (
   return 0;
 }
 
-int main (
+int main(
     void
 ) {
   test0();
@@ -135,5 +134,5 @@ int main (
   return 0;
 }
 
-#endif // TEST_COMBINATIONS
+#endif // TEST_COMBINATION
 
