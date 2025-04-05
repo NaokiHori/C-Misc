@@ -2,8 +2,8 @@ import numpy as np
 from matplotlib import pyplot
 from tqdm import tqdm
 
-nodes = np.load("nodes.npy")
-edges = np.load("edges.npy")
+nodes = np.loadtxt("nodes.dat")
+edges = np.loadtxt("edges.dat", dtype=np.uint64)
 
 color = "#000"
 keywords = {

@@ -4,60 +4,40 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "delaunay.h"
-#include "./snpyio.h"
 
 static int output(
     const size_t nnodes,
     const node_t * const nodes,
-    const size_t nedges,
     const edge_t * const edges
 ) {
   // nodes
   {
-    const char file_name[] = {"nodes.npy"};
-    double * const buf = malloc(2 * nnodes * sizeof(double));
-    for (size_t i = 0; i < nnodes; i++) {
-      const node_t * const node = nodes + i;
-      buf[2 * i + 0] = node->x;
-      buf[2 * i + 1] = node->y;
-    }
+    const char file_name[] = {"nodes.dat"};
     errno = 0;
     FILE * const fp = fopen(file_name, "w");
     if (NULL == fp) {
       perror(file_name);
       return 1;
     }
-    size_t header_size = 0;
-    if (0 != snpyio_w_header(2, (size_t []){nnodes, 2}, "'<f8'", false, fp, &header_size)) {
-      return 1;
+    for (size_t i = 0; i < nnodes; i++) {
+      const node_t * const node = nodes + i;
+      fprintf(fp, "% .15e % .15e\n", node->x, node->y);
     }
-    fwrite(buf, sizeof(double), 2 * nnodes, fp);
     fclose(fp);
-    free(buf);
   }
   // edges
   {
-    const char file_name[] = {"edges.npy"};
-    size_t * const buf = malloc(2 * nedges * sizeof(size_t));
-    size_t i = 0;
-    for (const edge_t * edge = edges; edge; edge = edge->next) {
-      buf[2 * i + 0] = edge->i0;
-      buf[2 * i + 1] = edge->i1;
-      i += 1;
-    }
+    const char file_name[] = {"edges.dat"};
     errno = 0;
     FILE * const fp = fopen(file_name, "w");
     if (NULL == fp) {
       perror(file_name);
       return 1;
     }
-    size_t header_size = 0;
-    if (0 != snpyio_w_header(2, (size_t []){nedges, 2}, "'<u8'", false, fp, &header_size)) {
-      return 1;
+    for (const edge_t * edge = edges; edge; edge = edge->next) {
+      fprintf(fp, "%zu %zu\n", edge->i0, edge->i1);
     }
-    fwrite(buf, sizeof(size_t), 2 * nedges, fp);
     fclose(fp);
-    free(buf);
   }
   return 0;
 }
@@ -86,7 +66,7 @@ int main(
     nedges += 1;
   }
   printf("%zu nodes, %zu edges\n", nnodes, nedges);
-  output(nnodes, nodes, nedges, first_edge);
+  output(nnodes, nodes, first_edge);
   free(nodes);
   while (first_edge) {
     edge_t * const next_edge = first_edge->next;
