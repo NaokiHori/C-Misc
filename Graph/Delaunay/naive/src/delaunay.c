@@ -14,22 +14,22 @@ static double pow2(
 }
 
 static int append_new_edge_to_list(
-    const size_t node_pair[2],
+    const node_t * const nodes[2],
     edge_t ** const edges
 ) {
   // do not append this edge
   //   if the combination of the nodes is already registered
   for (const edge_t * edge = *edges; edge; edge = edge->next) {
-    if (node_pair[0] == edge->i0 && node_pair[1] == edge->i1) {
+    if (nodes[0] == edge->nodes[0] && nodes[1] == edge->nodes[1]) {
       return 0;
     }
-    if (node_pair[0] == edge->i1 && node_pair[1] == edge->i0) {
+    if (nodes[0] == edge->nodes[1] && nodes[1] == edge->nodes[0]) {
       return 0;
     }
   }
   edge_t * const new_edge = malloc(sizeof(edge_t));
-  new_edge->i0 = node_pair[0];
-  new_edge->i1 = node_pair[1];
+  new_edge->nodes[0] = nodes[0];
+  new_edge->nodes[1] = nodes[1];
   new_edge->next = *edges;
   *edges = new_edge;
   return 0;
@@ -38,27 +38,24 @@ static int append_new_edge_to_list(
 static int process(
     const size_t nnodes,
     const node_t * const nodes,
-    const size_t node_indices[N_TRI_VERTICES],
+    const node_t * const selected_nodes[N_TRI_VERTICES],
     edge_t ** const edges
 ) {
   // check the set of three nodes serves as a valid triangle element
-  const size_t i0 = node_indices[0];
-  const size_t i1 = node_indices[1];
-  const size_t i2 = node_indices[2];
-  const node_t * const n0 = nodes + i0;
-  const node_t * const n1 = nodes + i1;
-  const node_t * const n2 = nodes + i2;
+  const node_t * const n0 = selected_nodes[0];
+  const node_t * const n1 = selected_nodes[1];
+  const node_t * const n2 = selected_nodes[2];
   const double cross =
     + (n1->x - n0->x) * (n2->y - n0->y)
     - (n2->x - n0->x) * (n1->y - n0->y);
   const bool reverse = 0. < cross;
   // we consider a triangle to be valid if no other points are inside
   for (size_t i3 = 0; i3 < nnodes; i3++) {
-    if (i0 == i3 || i1 == i3 || i2 == i3) {
+    const node_t * const n3 = nodes + i3;
+    if (n0 == n3 || n1 == n3 || n2 == n3) {
       continue;
     }
     // ref: https://en.wikipedia.org/wiki/Delaunay_triangulation#Algorithms
-    const node_t * const n3 = nodes + i3;
     const double a00 = n0->x - n3->x;
     const double a01 = n0->y - n3->y;
     const double a02 = pow2(a00) + pow2(a01);
@@ -80,9 +77,9 @@ static int process(
     }
   }
   // add three edges composed of the three nodes to list of Delaunay edges
-  append_new_edge_to_list((size_t [2]){i0, i1}, edges);
-  append_new_edge_to_list((size_t [2]){i1, i2}, edges);
-  append_new_edge_to_list((size_t [2]){i0, i2}, edges);
+  append_new_edge_to_list((const node_t * [2]){n0, n1}, edges);
+  append_new_edge_to_list((const node_t * [2]){n1, n2}, edges);
+  append_new_edge_to_list((const node_t * [2]){n0, n2}, edges);
   return 0;
 }
 
@@ -91,17 +88,25 @@ int delaunay_triangulate(
     const node_t * const nodes,
     edge_t ** const first_edge
 ) {
-  // get initial combination
   // three nodes are chosen from the whole nodes
-  size_t node_indices[N_TRI_VERTICES] = {SIZE_MAX, SIZE_MAX, SIZE_MAX};
-  init_combination(N_TRI_VERTICES, node_indices);
-  process(nnodes, nodes, node_indices, first_edge);
-  // find next combination until reached the last pair
+  // namely check the entire "n C r" combinations
+  size_t selected_node_indices[N_TRI_VERTICES] = {SIZE_MAX, SIZE_MAX, SIZE_MAX};
+  init_combination(N_TRI_VERTICES, selected_node_indices);
   while (1) {
-    if (0 != find_next_combination(nnodes, N_TRI_VERTICES, node_indices)) {
+    process(
+        nnodes,
+        nodes,
+        (const node_t * [N_TRI_VERTICES]){
+          nodes + selected_node_indices[0],
+          nodes + selected_node_indices[1],
+          nodes + selected_node_indices[2],
+        },
+        first_edge
+    );
+    // move on to the next combination, until reached the last pair
+    if (0 != find_next_combination(nnodes, N_TRI_VERTICES, selected_node_indices)) {
       break;
     }
-    process(nnodes, nodes, node_indices, first_edge);
   }
   return 0;
 }

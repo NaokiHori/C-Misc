@@ -4,13 +4,13 @@
 #include <stddef.h>
 
 typedef struct {
+  size_t index;
   double x;
   double y;
 } node_t;
 
 typedef struct edge_t {
-  size_t i0;
-  size_t i1;
+  const node_t * nodes[2];
   struct edge_t * next;
 } edge_t;
 

@@ -35,7 +35,16 @@ static int output(
       return 1;
     }
     for (const edge_t * edge = edges; edge; edge = edge->next) {
-      fprintf(fp, "%zu %zu\n", edge->i0, edge->i1);
+      fprintf(
+          fp,
+          "%zu %zu % .15e % .15e % .15e % .15e\n",
+          edge->nodes[0]->index,
+          edge->nodes[1]->index,
+          edge->nodes[0]->x,
+          edge->nodes[0]->y,
+          edge->nodes[1]->x,
+          edge->nodes[1]->y
+      );
     }
     fclose(fp);
   }
@@ -45,14 +54,16 @@ static int output(
 int main(
     void
 ) {
-  srand(1 << 10);
+  srand(0);
   const size_t nnodes = 16;
   // initialize position of nodes
   node_t * const nodes = malloc(nnodes * sizeof(node_t));
   for (size_t i = 0; i < nnodes; i++) {
     node_t * const node = nodes + i;
+    size_t * const index = &node->index;
     double * const x = &node->x;
     double * const y = &node->y;
+    *index = i;
     *x = - 0.5 + 1. * rand() / RAND_MAX;
     *y = - 0.5 + 1. * rand() / RAND_MAX;
   }
@@ -61,11 +72,6 @@ int main(
     puts("failed to triangulate");
     return 1;
   }
-  size_t nedges = 0;
-  for (const edge_t * edge = first_edge; edge; edge = edge->next) {
-    nedges += 1;
-  }
-  printf("%zu nodes, %zu edges\n", nnodes, nedges);
   output(nnodes, nodes, first_edge);
   free(nodes);
   while (first_edge) {
