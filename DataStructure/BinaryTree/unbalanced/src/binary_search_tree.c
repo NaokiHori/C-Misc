@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
-#include "mybst.h"
+#include "binary_search_tree.h"
 
 // memory manager
 
-static void * memory_alloc (
+static void * memory_alloc(
     const size_t size
 ) {
   void * ptr = malloc(size);
@@ -16,7 +15,7 @@ static void * memory_alloc (
   return ptr;
 }
 
-static void memory_free (
+static void memory_free(
     void * ptr
 ) {
   free(ptr);
@@ -30,30 +29,30 @@ typedef struct node_t {
   struct node_t * rnode;
 } node_t;
 
-struct mybst_t {
+struct binary_search_tree_t {
   size_t nitems;
   node_t * root;
 };
 
 // operations
 
-int mybst_init (
-    mybst_t ** mybst
+int binary_search_tree_init(
+    binary_search_tree_t ** const binary_search_tree
 ) {
-  *mybst = memory_alloc(sizeof(mybst_t));
-  (*mybst)->nitems = 0;
-  (*mybst)->root = NULL;
+  *binary_search_tree = memory_alloc(sizeof(binary_search_tree_t));
+  (*binary_search_tree)->nitems = 0;
+  (*binary_search_tree)->root = NULL;
   return 0;
 }
 
-int mybst_insert (
-    mybst_t * mybst,
+int binary_search_tree_insert(
+    binary_search_tree_t * const binary_search_tree,
     const size_t item
 ) {
-  if (NULL == mybst) {
+  if (NULL == binary_search_tree) {
     return 1;
   }
-  node_t ** pnode = &mybst->root;
+  node_t ** pnode = &binary_search_tree->root;
   while (*pnode) {
     const size_t pitem = (*pnode)->item;
     if (item == pitem) {
@@ -70,18 +69,18 @@ int mybst_insert (
   (*pnode)->item = item;
   (*pnode)->lnode = NULL;
   (*pnode)->rnode = NULL;
-  mybst->nitems += 1;
+  binary_search_tree->nitems += 1;
   return 0;
 }
 
-int mybst_search (
-    const mybst_t * mybst,
+int binary_search_tree_search(
+    const binary_search_tree_t * const binary_search_tree,
     const size_t item
 ) {
-  if (NULL == mybst) {
+  if (NULL == binary_search_tree) {
     return 1;
   }
-  node_t * node = mybst->root;
+  node_t * node = binary_search_tree->root;
   while (node) {
     if (item == node->item) {
       return 0;
@@ -94,14 +93,14 @@ int mybst_search (
   return 1;
 }
 
-int mybst_delete (
-    mybst_t * mybst,
+int binary_search_tree_delete(
+    binary_search_tree_t * const binary_search_tree,
     const size_t item
 ) {
-  if (NULL == mybst) {
+  if (NULL == binary_search_tree) {
     return 1;
   }
-  node_t ** pnode = &mybst->root;
+  node_t ** pnode = &binary_search_tree->root;
   while (*pnode) {
     const size_t pitem = (*pnode)->item;
     if (item < pitem) {
@@ -130,7 +129,7 @@ int mybst_delete (
         node = *rnode;
         *rnode = node->rnode;
       }
-      mybst->nitems -= 1;
+      binary_search_tree->nitems -= 1;
       memory_free(node);
       return 0;
     }
@@ -139,17 +138,17 @@ int mybst_delete (
   return 1;
 }
 
-int mybst_finalise (
-    mybst_t ** mybst
+int binary_search_tree_finalize(
+    binary_search_tree_t ** const binary_search_tree
 ) {
-  if (NULL == *mybst) {
+  if (NULL == *binary_search_tree) {
     return 1;
   }
-  while ((*mybst)->root) {
-    mybst_delete(*mybst, (*mybst)->root->item);
+  while ((*binary_search_tree)->root) {
+    binary_search_tree_delete(*binary_search_tree, (*binary_search_tree)->root->item);
   }
-  memory_free(*mybst);
-  *mybst = NULL;
+  memory_free(*binary_search_tree);
+  *binary_search_tree = NULL;
   return 0;
 }
 
