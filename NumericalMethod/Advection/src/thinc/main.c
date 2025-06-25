@@ -62,7 +62,7 @@ static int compute_flux (
     const size_t ii = is_negative_velocity ?     i : i - 1;
     const double  x = is_negative_velocity ? - 0.5 : + 0.5;
     if (vof[ii] < vof_min || 1. - vof_min < vof[ii]) {
-      flux[i] = vof[ii];
+      flux[i] = velocity * vof[ii];
     } else {
       flux[i] = velocity * indicator_function(beta, a[ii], b[ii], x);
     }
