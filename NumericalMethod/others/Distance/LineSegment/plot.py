@@ -17,7 +17,6 @@ ax = fig.add_subplot()
 vmin = 0.
 vmax = 1.5
 levels = np.linspace(vmin, vmax, 1 + int((vmax - vmin) * 10))
-print(levels)
 ax.contourf(xs, ys, zs, vmin=vmin, vmax=vmax, levels=levels)
 ax.plot(line_xs, line_ys, marker="o", color="#fff")
 keyword = {
