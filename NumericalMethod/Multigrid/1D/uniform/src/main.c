@@ -21,6 +21,17 @@ static int get_local_ps(
   return 0;
 }
 
+static int compute_laplace_operator(
+  const size_t nitems,
+  double * const coefficients
+) {
+  const double dx = LENGTH / nitems;
+  coefficients[0] = 1. / dx / dx;
+  coefficients[2] = 1. / dx / dx;
+  coefficients[1] = - coefficients[0] - coefficients[2];
+  return 0;
+}
+
 static int compute_laplacian(
   const double dx,
   const double * const local_ps,
@@ -36,17 +47,23 @@ static int compute_residual(
   const double * const qs,
   double * const residual
 ) {
-  const double dx = LENGTH / nitems;
   *residual = 0.;
   for (size_t i = 0; i < nitems; i++) {
+    double laplace_operator[3] = {0., 0., 0.};
+    if (0 != compute_laplace_operator(
+      nitems,
+      laplace_operator
+    )) {
+      return 1;
+    }
     double local_ps[3] = {0., 0., 0.};
     if (0 != get_local_ps(nitems, ps, i, local_ps)) {
       return 1;
     }
-    double laplacian = 0.;
-    if (0 != compute_laplacian(dx, local_ps, &laplacian)) {
-      return 1;
-    }
+    const double laplacian =
+      + laplace_operator[0] * local_ps[0]
+      + laplace_operator[1] * local_ps[1]
+      + laplace_operator[2] * local_ps[2];
     *residual += pow(qs[i] - laplacian, 2.);
   }
   *residual = sqrt(*residual / nitems);
@@ -58,16 +75,23 @@ static int gauss_seidel(
   const double * const qs,
   double * const ps
 ) {
-  const double dx = LENGTH / nitems;
   for (size_t i = 0; i < nitems; i++) {
+    double laplace_operator[3] = {0., 0., 0.};
+    if (0 != compute_laplace_operator(
+      nitems,
+      laplace_operator
+    )) {
+      return 1;
+    }
     double local_ps[3] = {0., 0., 0.};
     if (0 != get_local_ps(nitems, ps, i, local_ps)) {
       return 1;
     }
-    ps[i] =
-      + 0.5 * local_ps[0]
-      + 0.5 * local_ps[2]
-      - 0.5 * qs[i] * dx * dx;
+    ps[i] = 1. / laplace_operator[1] * (
+      + qs[i]
+      - laplace_operator[0] * local_ps[0]
+      - laplace_operator[2] * local_ps[2]
+    );
   }
   return 0;
 }
