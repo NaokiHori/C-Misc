@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include "rdft.h"
-#include "ref.h"
 #include "test.h"
 
 static const double pi = 3.141592653589793238462643383;
