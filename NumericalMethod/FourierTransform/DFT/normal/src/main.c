@@ -4,7 +4,7 @@
 #include <complex.h>
 #include "dft.h"
 
-static int naive_dft (
+static int naive_dft(
     const size_t nitems,
     double complex * const xs
 ) {
@@ -24,7 +24,7 @@ static int naive_dft (
   return 0;
 }
 
-static int naive_idft (
+static int naive_idft(
     const size_t nitems,
     double complex * const xs
 ) {
@@ -46,39 +46,41 @@ static int naive_idft (
 }
 
 // dft followed by idft should recover original
-static int test0 (
+static int test0(
     const size_t nitems
 ) {
   double complex * const xs = malloc(nitems * sizeof(double complex));
   double complex * const ys = malloc(nitems * sizeof(double complex));
+  double complex * const zs = malloc(nitems * sizeof(double complex));
   for (size_t i = 0; i < nitems; i++) {
     const double real = - 0.5 + 1. * rand() / RAND_MAX;
     const double imag = - 0.5 + 1. * rand() / RAND_MAX;
     xs[i] = real + I * imag;
-    ys[i] = real + I * imag;
+    zs[i] = real + I * imag;
   }
   dft_plan_t * plan = NULL;
   if (0 != dft_init_plan(nitems, &plan)) {
     puts("failed to init a plan");
     return 1;
   }
-  if (0 != dft_exec_f(plan, xs)) {
+  if (0 != dft_exec_f(plan, xs, ys)) {
     puts("forward execution failed");
     goto abort;
   }
-  if (0 != dft_exec_b(plan, xs)) {
+  if (0 != dft_exec_b(plan, ys, xs)) {
     puts("backward execution failed");
     goto abort;
   }
   double dif = 0.;
   for (size_t i = 0; i < nitems; i++) {
-    dif += cabs(ys[i] - xs[i]);
+    dif += cabs(zs[i] - xs[i]);
   }
   dif /= 1. * nitems;
   printf("DFT followed by iDFT: %zu % .15e\n", nitems, dif);
 abort:
   free(xs);
   free(ys);
+  free(zs);
   if (0 != dft_destroy_plan(&plan)) {
     puts("failed to destroy a plan");
     return 1;
@@ -87,36 +89,38 @@ abort:
 }
 
 // compare dft with naive implementation
-static int test1 (
+static int test1(
     const size_t nitems
 ) {
   double complex * const xs = malloc(nitems * sizeof(double complex));
   double complex * const ys = malloc(nitems * sizeof(double complex));
+  double complex * const zs = malloc(nitems * sizeof(double complex));
   for (size_t i = 0; i < nitems; i++) {
     const double real = - 0.5 + 1. * rand() / RAND_MAX;
     const double imag = - 0.5 + 1. * rand() / RAND_MAX;
     xs[i] = real + I * imag;
-    ys[i] = real + I * imag;
+    zs[i] = real + I * imag;
   }
   dft_plan_t * plan = NULL;
   if (0 != dft_init_plan(nitems, &plan)) {
     puts("failed to init a plan");
     return 1;
   }
-  if (0 != dft_exec_f(plan, xs)) {
+  if (0 != dft_exec_f(plan, xs, ys)) {
     puts("forward execution failed");
     goto abort;
   }
-  naive_dft(nitems, ys);
+  naive_dft(nitems, zs);
   double dif = 0.;
   for (size_t i = 0; i < nitems; i++) {
-    dif += cabs(ys[i] - xs[i]);
+    dif += cabs(zs[i] - ys[i]);
   }
   dif /= 1. * nitems;
   printf("DFT compared with naive impl.: %zu % .15e\n", nitems, dif);
 abort:
   free(xs);
   free(ys);
+  free(zs);
   if (0 != dft_destroy_plan(&plan)) {
     puts("failed to destroy a plan");
     return 1;
@@ -125,36 +129,38 @@ abort:
 }
 
 // compare idft with naive implementation
-static int test2 (
+static int test2(
     const size_t nitems
 ) {
   double complex * const xs = malloc(nitems * sizeof(double complex));
   double complex * const ys = malloc(nitems * sizeof(double complex));
+  double complex * const zs = malloc(nitems * sizeof(double complex));
   for (size_t i = 0; i < nitems; i++) {
     const double real = (- 0.5 + 1. * rand() / RAND_MAX) * nitems;
     const double imag = (- 0.5 + 1. * rand() / RAND_MAX) * nitems;
     xs[i] = real + I * imag;
-    ys[i] = real + I * imag;
+    zs[i] = real + I * imag;
   }
   dft_plan_t * plan = NULL;
   if (0 != dft_init_plan(nitems, &plan)) {
     puts("failed to init a plan");
     return 1;
   }
-  if (0 != dft_exec_b(plan, xs)) {
+  if (0 != dft_exec_b(plan, xs, ys)) {
     puts("backward execution failed");
     goto abort;
   }
-  naive_idft(nitems, ys);
+  naive_idft(nitems, zs);
   double dif = 0.;
   for (size_t i = 0; i < nitems; i++) {
-    dif += cabs(ys[i] - xs[i]);
+    dif += cabs(zs[i] - ys[i]);
   }
   dif /= 1. * nitems;
   printf("iDFT compared with naive impl.: %zu % .15e\n", nitems, dif);
 abort:
   free(xs);
   free(ys);
+  free(zs);
   if (0 != dft_destroy_plan(&plan)) {
     puts("failed to destroy a plan");
     return 1;
@@ -162,7 +168,7 @@ abort:
   return 0;
 }
 
-int main (
+int main(
     void
 ) {
   int retval = 0;

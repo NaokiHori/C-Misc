@@ -7,26 +7,28 @@
 typedef struct dft_plan_t dft_plan_t;
 
 // create a plan
-extern int dft_init_plan (
+extern int dft_init_plan(
     const size_t nitems,
     dft_plan_t ** const plan
 );
 
 // clean-up a plan
-extern int dft_destroy_plan (
+extern int dft_destroy_plan(
     dft_plan_t ** const plan
 );
 
 // perform forward transform
-extern int dft_exec_f (
+extern int dft_exec_f(
     dft_plan_t * const plan,
-    double complex * const xs
+    const double complex * const xs,
+    double complex * const ys
 );
 
 // perform backward transform
-extern int dft_exec_b (
+extern int dft_exec_b(
     dft_plan_t * const plan,
-    double complex * const xs
+    const double complex * const xs,
+    double complex * const ys
 );
 
 #endif // DFT_H

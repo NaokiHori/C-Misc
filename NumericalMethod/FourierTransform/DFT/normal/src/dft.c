@@ -16,11 +16,9 @@ struct dft_plan_t {
   size_t nitems;
   // pre-computed trigonometric values
   trig_t * trigs;
-  // internal buffer
-  double complex * buf;
 };
 
-static void * memory_alloc (
+static void * memory_alloc(
     const size_t size
 ) {
   void * const ptr = malloc(size);
@@ -31,7 +29,7 @@ static void * memory_alloc (
   return ptr;
 }
 
-static void memory_free (
+static void memory_free(
     void * const ptr
 ) {
   free(ptr);
@@ -47,7 +45,7 @@ static void memory_free (
  * @return success (0) or failure (1)
  */
 // main function to perform discrete fourier transform | 64
-static int dft (
+static int dft(
     const size_t nitems,
     const size_t stride,
     const trig_t * const trigs,
@@ -122,7 +120,7 @@ static int dft (
  * @return success (0) or failure (1)
  */
 // main function to perform inverse discrete fourier transform | 63
-static int idft (
+static int idft(
     const size_t nitems,
     const size_t stride,
     const trig_t * const trigs,
@@ -186,50 +184,42 @@ static int idft (
   return 0;
 }
 
-int dft_exec_f (
+int dft_exec_f(
     dft_plan_t * const plan,
-    double complex * const xs
+    const double complex * const xs,
+    double complex * const ys
 ) {
   if (NULL == plan) {
     puts("uninitialized plan is passed");
     return 1;
   }
   const size_t nitems = plan->nitems;
-  double complex * const ys = plan->buf;
   dft(nitems, 1, plan->trigs, xs, ys);
-  for (size_t i = 0; i < nitems; i++) {
-    xs[i] = ys[i];
-  }
   return 0;
 }
 
-int dft_exec_b (
+int dft_exec_b(
     dft_plan_t * const plan,
-    double complex * const xs
+    const double complex * const xs,
+    double complex * const ys
 ) {
   if (NULL == plan) {
     puts("uninitialized plan is passed");
     return 1;
   }
   const size_t nitems = plan->nitems;
-  double complex * const ys = plan->buf;
   idft(nitems, 1, plan->trigs, xs, ys);
-  for (size_t i = 0; i < nitems; i++) {
-    xs[i] = ys[i];
-  }
   return 0;
 }
 
-int dft_init_plan (
+int dft_init_plan(
     const size_t nitems,
     dft_plan_t ** const plan
 ) {
   *plan = memory_alloc(1 * sizeof(dft_plan_t));
   (*plan)->nitems = nitems;
   trig_t ** const trigs = &(*plan)->trigs;
-  double complex ** const buf = &(*plan)->buf;
   *trigs = memory_alloc(nitems * sizeof(trig_t));
-  *buf = memory_alloc(nitems * sizeof(double complex));
   // prepare cosine / sine tables
   for (size_t i = 0; i < nitems; i++) {
     trig_t * const trig = *trigs + i;
@@ -240,11 +230,10 @@ int dft_init_plan (
 }
 
 // clean-up a plan
-int dft_destroy_plan (
+int dft_destroy_plan(
     dft_plan_t ** const plan
 ) {
   memory_free((*plan)->trigs);
-  memory_free((*plan)->buf);
   memory_free(*plan);
   *plan = NULL;
   return 0;
