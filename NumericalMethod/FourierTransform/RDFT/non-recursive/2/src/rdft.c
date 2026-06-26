@@ -80,7 +80,7 @@ static size_t get_reversed_bit_index(
   return reversed_index;
 }
 
-static int bit_reverse(
+static int bit_reverse_in_place(
     const size_t nitems,
     const size_t * const reversed_bit_indices,
     double * const xs
@@ -94,6 +94,22 @@ static int bit_reverse(
       *xi = *xj;
       *xj = tmp;
     }
+  }
+  return 0;
+}
+
+static int bit_reverse_out_of_place(
+    const size_t nitems,
+    const size_t * const reversed_bit_indices,
+    const double * const xs,
+    double * const ys
+) {
+  for (size_t i = 0; i < nitems; i++) {
+    const size_t j = reversed_bit_indices[i];
+    const double xi = *(xs + i);
+    const double xj = *(xs + j);
+    *(ys + i) = xj;
+    *(ys + j) = xi;
   }
   return 0;
 }
@@ -143,14 +159,19 @@ int rdft_destroy_plan(
 
 int rdft_exec_f(
     rdft_plan_t * const plan,
-    double * const xs
+    double * const xs,
+    double * const ys
 ) {
   const size_t nitems = plan->nitems;
   const size_t * const reversed_bit_indices = plan->reversed_bit_indices;
   const trig_t * const trigs = plan->trigs;
   // pre-process
   const size_t nstages = get_nbits(nitems);
-  bit_reverse(nitems, reversed_bit_indices, xs);
+  if (xs == ys) {
+    bit_reverse_in_place(nitems, reversed_bit_indices, ys);
+  } else {
+    bit_reverse_out_of_place(nitems, reversed_bit_indices, xs, ys);
+  }
   // each stage of the butterfly operations
   for (size_t stage = 0; stage < nstages; stage++) {
     // stride: pointer difference of two elements
@@ -167,12 +188,12 @@ int rdft_exec_f(
       {
         const size_t i = block_head;
         const size_t j = block_head + stride;
-        double * const xi = xs + i;
-        double * const xj = xs + j;
-        const double new_xi = *xi + *xj;
-        const double new_xj = *xi - *xj;
-        *xi = new_xi;
-        *xj = new_xj;
+        double * const yi = ys + i;
+        double * const yj = ys + j;
+        const double new_yi = *yi + *yj;
+        const double new_yj = *yi - *yj;
+        *yi = new_yi;
+        *yj = new_yj;
       }
       // other wave numbers (k = 1, 2, ...): between two complex numbers
       // considered up to stride / 2 due to symmetry
@@ -181,25 +202,25 @@ int rdft_exec_f(
         const size_t i_imag = block_head + 1 * stride - k;
         const size_t j_real = block_head + 1 * stride + k;
         const size_t j_imag = block_head + 2 * stride - k;
-        double * const xi_real = xs + i_real;
-        double * const xi_imag = xs + i_imag;
-        double * const xj_real = xs + j_real;
-        double * const xj_imag = xs + j_imag;
+        double * const yi_real = ys + i_real;
+        double * const yi_imag = ys + i_imag;
+        double * const yj_real = ys + j_real;
+        double * const yj_imag = ys + j_imag;
         const size_t twiddle_index = nitems / block_size * k;
         const double twiddle_real = + trigs[twiddle_index].cos;
         const double twiddle_imag = - trigs[twiddle_index].sin;
-        const double txj_real = + twiddle_real * *xj_real
-                                + twiddle_imag * *xj_imag;
-        const double txj_imag = - twiddle_real * *xj_imag
-                                + twiddle_imag * *xj_real;
-        const double new_xi_real = + *xi_real + txj_real;
-        const double new_xi_imag = - *xi_imag + txj_imag;
-        const double new_xj_real = + *xi_real - txj_real;
-        const double new_xj_imag = - *xi_imag - txj_imag;
-        *xi_real = + new_xi_real;
-        *xi_imag = + new_xj_real;
-        *xj_real = + new_xj_imag;
-        *xj_imag = - new_xi_imag;
+        const double tyj_real = + twiddle_real * *yj_real
+                                + twiddle_imag * *yj_imag;
+        const double tyj_imag = - twiddle_real * *yj_imag
+                                + twiddle_imag * *yj_real;
+        const double new_yi_real = + *yi_real + tyj_real;
+        const double new_yi_imag = - *yi_imag + tyj_imag;
+        const double new_yj_real = + *yi_real - tyj_real;
+        const double new_yj_imag = - *yi_imag - tyj_imag;
+        *yi_real = + new_yi_real;
+        *yi_imag = + new_yj_real;
+        *yj_real = + new_yj_imag;
+        *yj_imag = - new_yi_imag;
       }
     }
   }
@@ -208,7 +229,8 @@ int rdft_exec_f(
 
 int rdft_exec_b(
     rdft_plan_t * const plan,
-    double * const xs
+    double * const xs,
+    double * const ys
 ) {
   const size_t nitems = plan->nitems;
   const size_t * const reversed_bit_indices = plan->reversed_bit_indices;
@@ -269,7 +291,11 @@ int rdft_exec_b(
     }
   }
   // post-process
-  bit_reverse(nitems, reversed_bit_indices, xs);
+  if (xs == ys) {
+    bit_reverse_in_place(nitems, reversed_bit_indices, ys);
+  } else {
+    bit_reverse_out_of_place(nitems, reversed_bit_indices, xs, ys);
+  }
   return 0;
 }
 

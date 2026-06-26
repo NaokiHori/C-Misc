@@ -18,32 +18,56 @@ static int set_values(
   return 0;
 }
 
-static int test_0(
+static int test_0_in_place(
     const size_t nitems,
-    rdft_plan_t * const plan,
-    double * const xs,
-    double * const ys
+    rdft_plan_t * const plan
 ) {
+  double * const xs = malloc(nitems * sizeof(double));
+  double * const ys = malloc(nitems * sizeof(double));
   set_values(nitems, xs, ys);
-  rdft_exec_f(plan, xs);
-  rdft_exec_b(plan, xs);
+  rdft_exec_f(plan, xs, xs);
+  rdft_exec_b(plan, xs, xs);
   double error = 0.;
   for (size_t i = 0; i < nitems; i++) {
     error += pow(xs[i] - ys[i], 2.);
   }
   error = sqrt(error / nitems);
   printf("residual: % .7e\n", error);
+  free(xs);
+  free(ys);
   return 0;
 }
 
-static int test_1(
+static int test_0_out_of_place(
     const size_t nitems,
-    rdft_plan_t * const plan,
-    double * const xs,
-    double * const ys
+    rdft_plan_t * const plan
 ) {
+  double * const xs = malloc(nitems * sizeof(double));
+  double * const ys = malloc(nitems * sizeof(double));
+  double * const zs = malloc(nitems * sizeof(double));
   set_values(nitems, xs, ys);
-  rdft_exec_f(plan, xs);
+  rdft_exec_f(plan, xs, zs);
+  rdft_exec_b(plan, zs, xs);
+  double error = 0.;
+  for (size_t i = 0; i < nitems; i++) {
+    error += pow(xs[i] - ys[i], 2.);
+  }
+  error = sqrt(error / nitems);
+  printf("residual: % .7e\n", error);
+  free(xs);
+  free(ys);
+  free(zs);
+  return 0;
+}
+
+static int test_1_in_place(
+    const size_t nitems,
+    rdft_plan_t * const plan
+) {
+  double * const xs = malloc(nitems * sizeof(double));
+  double * const ys = malloc(nitems * sizeof(double));
+  set_values(nitems, xs, ys);
+  rdft_exec_f(plan, xs, xs);
   rdft_naive_exec_f(nitems, ys);
   double error = 0.;
   for (size_t i = 0; i < nitems; i++) {
@@ -51,17 +75,41 @@ static int test_1(
   }
   error = sqrt(error / nitems);
   printf("residual: % .7e\n", error);
+  free(xs);
+  free(ys);
   return 0;
 }
 
-static int test_2(
+static int test_1_out_of_place(
     const size_t nitems,
-    rdft_plan_t * const plan,
-    double * const xs,
-    double * const ys
+    rdft_plan_t * const plan
 ) {
+  double * const xs = malloc(nitems * sizeof(double));
+  double * const ys = malloc(nitems * sizeof(double));
+  double * const zs = malloc(nitems * sizeof(double));
   set_values(nitems, xs, ys);
-  rdft_exec_b(plan, xs);
+  rdft_exec_f(plan, xs, zs);
+  rdft_naive_exec_f(nitems, ys);
+  double error = 0.;
+  for (size_t i = 0; i < nitems; i++) {
+    error += pow(zs[i] - ys[i], 2.);
+  }
+  error = sqrt(error / nitems);
+  printf("residual: % .7e\n", error);
+  free(xs);
+  free(ys);
+  free(zs);
+  return 0;
+}
+
+static int test_2_in_place(
+    const size_t nitems,
+    rdft_plan_t * const plan
+) {
+  double * const xs = malloc(nitems * sizeof(double));
+  double * const ys = malloc(nitems * sizeof(double));
+  set_values(nitems, xs, ys);
+  rdft_exec_b(plan, xs, xs);
   rdft_naive_exec_b(nitems, ys);
   double error = 0.;
   for (size_t i = 0; i < nitems; i++) {
@@ -69,6 +117,30 @@ static int test_2(
   }
   error = sqrt(error / nitems);
   printf("residual: % .7e\n", error);
+  free(xs);
+  free(ys);
+  return 0;
+}
+
+static int test_2_out_of_place(
+    const size_t nitems,
+    rdft_plan_t * const plan
+) {
+  double * const xs = malloc(nitems * sizeof(double));
+  double * const ys = malloc(nitems * sizeof(double));
+  double * const zs = malloc(nitems * sizeof(double));
+  set_values(nitems, xs, ys);
+  rdft_exec_b(plan, xs, zs);
+  rdft_naive_exec_b(nitems, ys);
+  double error = 0.;
+  for (size_t i = 0; i < nitems; i++) {
+    error += pow(zs[i] - ys[i], 2.);
+  }
+  error = sqrt(error / nitems);
+  printf("residual: % .7e\n", error);
+  free(xs);
+  free(ys);
+  free(zs);
   return 0;
 }
 
@@ -80,13 +152,12 @@ int main(
   if (0 != rdft_init_plan(nitems, &plan)) {
     return 1;
   }
-  double * const xs = malloc(nitems * sizeof(double));
-  double * const ys = malloc(nitems * sizeof(double));
-  test_0(nitems, plan, xs, ys);
-  test_1(nitems, plan, xs, ys);
-  test_2(nitems, plan, xs, ys);
-  free(xs);
-  free(ys);
+  test_0_in_place(nitems, plan);
+  test_0_out_of_place(nitems, plan);
+  test_1_in_place(nitems, plan);
+  test_1_out_of_place(nitems, plan);
+  test_2_in_place(nitems, plan);
+  test_2_out_of_place(nitems, plan);
   if (0 != rdft_destroy_plan(&plan)) {
     return 1;
   }

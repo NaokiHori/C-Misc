@@ -14,14 +14,26 @@ extern int rdft_destroy_plan(
     rdft_plan_t ** const plan
 );
 
+/**
+ * xs == ys: in-place transform
+ * xs != ys: out-of-place transform
+ * NOTE: xs is modified
+ */
 extern int rdft_exec_f(
     rdft_plan_t * const plan,
-    double * const xs
+    double * const xs,
+    double * const ys
 );
 
+/**
+ * xs == ys: in-place transform
+ * xs != ys: out-of-place transform
+ * NOTE: xs is modified
+ */
 extern int rdft_exec_b(
     rdft_plan_t * const plan,
-    double * const xs
+    double * const xs,
+    double * const ys
 );
 
 #endif // RDFT_H
