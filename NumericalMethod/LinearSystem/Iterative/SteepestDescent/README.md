@@ -12,7 +12,7 @@ We aim to solve a linear system
 A_{ij} x_j = b_i,
 ```
 
-where `A` is a symmetric and positive-definite matrix.
+where $A$ is a symmetric and positive-definite matrix.
 Instead of directly treating this linear system, we consider the quadratic form:
 
 ```math
@@ -64,7 +64,7 @@ b_i
 b_k.
 ```
 
-Since the indices are dummy and `A` is symmetric, this relation can be simplified as
+Since the indices are dummy and $A$ is symmetric, this relation can be simplified as
 
 ```math
 \frac{\partial f}{\partial x_i}
@@ -74,14 +74,14 @@ A_{ij} x_j
 b_i.
 ```
 
-As a result, the original problem can be considered differently: finding the extremum of `f`.
+As a result, the original problem can be considered differently: finding the extremum of $f$.
 
 ### Numerical treatment
 
-We aim to find `x_i` at which the gradient of `f` is zero.
+We aim to find $x_i$ at which the gradient of $f$ is zero.
 To this end, we rely on an iterative process.
 
-Given `x_i^n` (with the superscript being the step), we would like find `x_i^{n + 1}` which is "better" in terms of the error.
+Given $x_i^n$ (with the superscript being the step), we would like find $x_i^{n + 1}$ which is "better" in terms of the error.
 The error is quantitatively defined as the e.g. L2 norm of the residual vector:
 
 ```math
@@ -92,7 +92,7 @@ A_{ij} x_j^n
 b_i.
 ```
 
-To update `x_i`, we need to find the increment vector
+To update $x_i$, we need to find the increment vector
 
 ```math
 \Delta x_i
@@ -150,6 +150,7 @@ the scalar quantity is given by
     A_{ij} r_i^n r_j^n
 }.
 ```
+
 ## Reference
 
 - [Gradient descent - Wikipedia](https://en.wikipedia.org/wiki/Gradient_descent#Solution_of_a_linear_system)

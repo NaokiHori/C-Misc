@@ -10,8 +10,7 @@ static int solve(
 ) {
   const double tolerance = 1e-8;
   double * const r = malloc(nitems * sizeof(double));
-  for (;;) {
-    static size_t step = 0;
+  for (size_t step = 0; ; step += 1) {
     // compute residual vector
     // r = a * x - b
     for (size_t i = 0; i < nitems; i++) {
@@ -29,7 +28,7 @@ static int solve(
     if (r_dot_r < tolerance) {
       break;
     }
-    double r_dot_a_dot_r = 0;
+    double r_dot_a_dot_r = 0.;
     for (size_t i = 0; i < nitems; i++) {
       for (size_t j = 0; j < nitems; j++) {
         r_dot_a_dot_r += r[i] * a[i * nitems + j] * r[j];
@@ -41,7 +40,6 @@ static int solve(
     for (size_t i = 0; i < nitems; i++) {
       x[i] += eta * r[i];
     }
-    step += 1;
   }
   free(r);
   return 0;
