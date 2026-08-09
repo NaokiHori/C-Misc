@@ -5,8 +5,6 @@
 
 #define PI 3.14159265358979324
 
-static const double LENGTH = 1.;
-
 static int get_centers(
   const size_t nitems,
   const double * const faces,
@@ -31,6 +29,7 @@ static int get_local_faces(
 
 // extract three cell-center positions used to evaluate laplacian
 static int get_local_centers(
+  const double length,
   const size_t nitems,
   const double * const centers,
   const size_t i,
@@ -38,7 +37,7 @@ static int get_local_centers(
 ) {
   local_centers[0] = 0 == i ? 0. : centers[i - 1];
   local_centers[1] = centers[i];
-  local_centers[2] = nitems - 1 == i ? LENGTH : centers[i + 1];
+  local_centers[2] = nitems - 1 == i ? length : centers[i + 1];
   return 0;
 }
 
@@ -58,6 +57,7 @@ static int get_local_ps(
 }
 
 static int compute_laplace_operator(
+  const double length,
   const size_t nitems,
   const double * const faces,
   const double * const centers,
@@ -69,7 +69,7 @@ static int compute_laplace_operator(
     return 1;
   }
   double local_centers[3] = {0., 0., 0.};
-  if (0 != get_local_centers(nitems, centers, i, local_centers)) {
+  if (0 != get_local_centers(length, nitems, centers, i, local_centers)) {
     return 1;
   }
   coefficients[0] = 1. / (local_faces[1] - local_faces[0]) / (local_centers[1] - local_centers[0]);
@@ -79,6 +79,7 @@ static int compute_laplace_operator(
 }
 
 static int compute_residual(
+  const double length,
   const size_t nitems,
   const double * const faces,
   const double * const centers,
@@ -90,6 +91,7 @@ static int compute_residual(
   for (size_t i = 0; i < nitems; i++) {
     double laplace_operator[3] = {0., 0., 0.};
     if (0 != compute_laplace_operator(
+      length,
       nitems,
       faces,
       centers,
@@ -113,6 +115,7 @@ static int compute_residual(
 }
 
 static int gauss_seidel(
+  const double length,
   const size_t nitems,
   const double * const faces,
   const double * const centers,
@@ -120,16 +123,9 @@ static int gauss_seidel(
   double * const ps
 ) {
   for (size_t i = 0; i < nitems; i++) {
-    double local_faces[2] = {0., 0.};
-    if (0 != get_local_faces(faces, i, local_faces)) {
-      return 1;
-    }
-    double local_centers[3] = {0., 0., 0.};
-    if (0 != get_local_centers(nitems, centers, i, local_centers)) {
-      return 1;
-    }
     double laplace_operator[3] = {0., 0., 0.};
     if (0 != compute_laplace_operator(
+      length,
       nitems,
       faces,
       centers,
@@ -152,6 +148,7 @@ static int gauss_seidel(
 }
 
 static int solve(
+  const double length,
   const size_t nitems,
   const double * const faces,
   const double * const centers,
@@ -160,7 +157,7 @@ static int solve(
 ) {
   const size_t niters = 16;
   for (size_t n = 0; n < niters; n++) {
-    if (0 != gauss_seidel(nitems, faces, centers, qs, ps)) {
+    if (0 != gauss_seidel(length, nitems, faces, centers, qs, ps)) {
       return 1;
     }
   }
@@ -168,6 +165,7 @@ static int solve(
 }
 
 static int smooth(
+  const double length,
   const size_t nitems,
   const double * const faces,
   const double * const centers,
@@ -176,7 +174,7 @@ static int smooth(
 ) {
   const size_t niters = 4;
   for (size_t n = 0; n < niters; n++) {
-    if (0 != gauss_seidel(nitems, faces, centers, qs, ps)) {
+    if (0 != gauss_seidel(length, nitems, faces, centers, qs, ps)) {
       return 1;
     }
   }
@@ -218,6 +216,7 @@ static int refine(
 }
 
 static int cycle(
+  const double length,
   const size_t nitems,
   const double * const faces,
   const double * const centers,
@@ -225,9 +224,9 @@ static int cycle(
   double * const ps
 ) {
   if (nitems <= 4) {
-    return solve(nitems, faces, centers, qs, ps);
+    return solve(length, nitems, faces, centers, qs, ps);
   }
-  if (0 != smooth(nitems, faces, centers, qs, ps)) {
+  if (0 != smooth(length, nitems, faces, centers, qs, ps)) {
     return 1;
   }
   if (0 != nitems % 2) {
@@ -249,6 +248,7 @@ static int cycle(
   for (size_t i = 0; i < nitems; i++) {
     double laplace_operator[3] = {0., 0., 0.};
     if (0 != compute_laplace_operator(
+      length,
       nitems,
       faces,
       centers,
@@ -270,7 +270,7 @@ static int cycle(
   if (0 != coarsen(nitems / 2, faces, coarse_faces, rs)) {
     return 1;
   }
-  if (0 != cycle(nitems / 2, coarse_faces, coarse_centers, rs, es)) {
+  if (0 != cycle(length, nitems / 2, coarse_faces, coarse_centers, rs, es)) {
     return 1;
   }
   if (0 != refine(nitems / 2, es)) {
@@ -283,7 +283,7 @@ static int cycle(
   free(coarse_centers);
   free(rs);
   free(es);
-  if (0 != smooth(nitems, faces, centers, qs, ps)) {
+  if (0 != smooth(length, nitems, faces, centers, qs, ps)) {
     return 1;
   }
   return 0;
@@ -308,6 +308,7 @@ static int output(
 int main(
     void
 ) {
+  const double length = 1.;
   const size_t nitems = 1 << 6;
   double * const faces = malloc((nitems + 1) * sizeof(double));
   double * const centers = malloc(nitems * sizeof(double));
@@ -316,7 +317,7 @@ int main(
     // 0: extremely stretched
     // 1: uniform
     const double grad = 0.25;
-    const double x = 1. * i * LENGTH / nitems;
+    const double x = 1. * i * length / nitems;
     faces[i] =
       + (2. * grad - 2.) * (x * x * x)
       + (- 3. * grad + 3.) * (x * x)
@@ -336,12 +337,12 @@ int main(
   }
   while (1) {
     static size_t n_cycles = 0;
-    if (0 != cycle(nitems, faces, centers, qs, ps)) {
+    if (0 != cycle(length, nitems, faces, centers, qs, ps)) {
       return 1;
     }
     n_cycles += 1;
     double residual = 0.;
-    if (0 != compute_residual(nitems, faces, centers, ps, qs, &residual)) {
+    if (0 != compute_residual(length, nitems, faces, centers, ps, qs, &residual)) {
       return 1;
     }
     printf("%zu % .7e\n", n_cycles, residual);
