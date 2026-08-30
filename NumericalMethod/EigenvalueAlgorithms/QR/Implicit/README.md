@@ -60,6 +60,26 @@ At k = 4, rotation angle is determined to eliminate B, applied to the 4th and 5t
 [ .  .  .  .  e  D ]
 ```
 
+## Deflation with bulge chasing
+
+We consider the same system `N = 6`, whose starting (`n_start`) / ending (`n_end`) indices are `0` and `N`, respectively.
+After some iterations, the system may lead to
+
+```
+[ D  e  .  .  .  . ]
+[ e  D  e  .  .  . ]
+[ .  e  D  .  .  . ]
+[ .  .  .  D  e  . ]
+[ .  .  .  e  D  e ]
+[ .  .  .  .  e  D ]
+```
+
+Here `n = M = 2` (notice the index notation of sub-diagonal elements) has zero sub-diagonal item.
+Now this system has two decoupled sub systems which can be treated independently:
+
+- (n_start, n_end) = (0, M + 1)
+- (n_start, n_end) = (M + 1, N)
+
 ## Reference
 
 - [QR algorithm - Wikipedia](https://en.wikipedia.org/wiki/QR_algorithm)
