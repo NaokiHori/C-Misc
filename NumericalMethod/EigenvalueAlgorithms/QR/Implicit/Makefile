@@ -1,6 +1,6 @@
 CC     := cc
 CFLAG  := -std=c99 -Wall -Wextra -Wpedantic -O3
-INC    :=
+INC    := -Iinclude
 LIB    := -lm
 SRCDIR := src
 OBJDIR := obj
