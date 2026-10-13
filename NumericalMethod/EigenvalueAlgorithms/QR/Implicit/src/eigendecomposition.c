@@ -270,3 +270,35 @@ int compute_eigendecomposition(
   return result;
 }
 
+int sort_eigendecomposition(
+    const size_t nitems,
+    int (* const compare)(
+      const void * const eigen_pair_a,
+      const void * const eigen_pair_b
+    ),
+    double * const eigenvalues,
+    double * const eigenvectors_transposed
+) {
+  eigen_pair_t * const pairs = malloc(nitems * sizeof(eigen_pair_t));
+  double * const sorted_eigenvectors_transposed = malloc(nitems * nitems * sizeof(double));
+  for (size_t i = 0; i < nitems; i++) {
+    eigen_pair_t * const pair = pairs + i;
+    pair->eigenvalue = eigenvalues[i];
+    pair->eigenvector = eigenvectors_transposed + i * nitems;
+  }
+  qsort(pairs, nitems, sizeof(eigen_pair_t), compare);
+  for (size_t i = 0; i < nitems; i++) {
+    const eigen_pair_t * const pair = pairs + i;
+    eigenvalues[i] = pair->eigenvalue;
+    for (size_t j = 0; j < nitems; j++) {
+      sorted_eigenvectors_transposed[i * nitems + j] = pair->eigenvector[j];
+    }
+  }
+  for (size_t n = 0; n < nitems * nitems; n++) {
+    eigenvectors_transposed[n] = sorted_eigenvectors_transposed[n];
+  }
+  free(pairs);
+  free(sorted_eigenvectors_transposed);
+  return 0;
+}
+

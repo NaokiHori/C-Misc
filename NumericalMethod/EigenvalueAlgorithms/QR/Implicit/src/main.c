@@ -8,9 +8,22 @@ static int compare_double_values(
     const void * const a,
     const void * const b
 ) {
-  const double double_a = *(double *)a;
-  const double double_b = *(double *)b;
-  if (double_a < double_b) {
+  const double * const double_a = a;
+  const double * const double_b = b;
+  if (*double_a < *double_b) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
+
+static int compare_eigen_pairs(
+    const void * const a,
+    const void * const b
+) {
+  const eigen_pair_t * const eigen_pair_a = a;
+  const eigen_pair_t * const eigen_pair_b = b;
+  if (eigen_pair_a->eigenvalue < eigen_pair_b->eigenvalue) {
     return -1;
   } else {
     return 1;
@@ -51,22 +64,13 @@ static int check_eigendecomposition(
 ) {
   // assert eigenvalues by comparing with the reference result
   {
-    // sort eigenvalues
-    double * const sorted_eigenvalues = malloc(nitems * sizeof(double));
-    for (size_t i = 0; i < nitems; i++) {
-      sorted_eigenvalues[i] = eigenvalues[i];
-    }
-    qsort(sorted_eigenvalues, nitems, sizeof(double), compare_double_values);
-    qsort(expected_eigenvalues, nitems, sizeof(double), compare_double_values);
     // compare
     double error = 0.;
     for (size_t i = 0; i < nitems; i++) {
-      error += pow(sorted_eigenvalues[i] - expected_eigenvalues[i], 2.);
+      error += pow(eigenvalues[i] - expected_eigenvalues[i], 2.);
     }
     error = sqrt(error / nitems);
     printf("|| lambda - lambda^ref ||_2: % .1e\n", error);
-    // clean-up
-    free(sorted_eigenvalues);
   }
   // assert eigenvectors (orthogonality)
   {
@@ -138,6 +142,12 @@ int main(
       NITEMS,
       main_diagonals,
       sub_diagonals,
+      eigenvectors_transposed
+  );
+  sort_eigendecomposition(
+      NITEMS,
+      compare_eigen_pairs,
+      main_diagonals,
       eigenvectors_transposed
   );
   check_eigendecomposition(
