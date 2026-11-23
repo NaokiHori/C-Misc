@@ -17,11 +17,10 @@ extern int rdft_destroy_plan(
 /**
  * xs == ys: in-place transform
  * xs != ys: out-of-place transform
- * NOTE: xs is modified
  */
 extern int rdft_exec_f(
-    rdft_plan_t * const plan,
-    double * const xs,
+    const rdft_plan_t * const plan,
+    const double * const xs,
     double * const ys
 );
 
@@ -31,7 +30,7 @@ extern int rdft_exec_f(
  * NOTE: xs is modified
  */
 extern int rdft_exec_b(
-    rdft_plan_t * const plan,
+    const rdft_plan_t * const plan,
     double * const xs,
     double * const ys
 );

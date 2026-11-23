@@ -32,7 +32,7 @@ typedef struct {
 } trig_t;
 
 struct rdft_plan_t {
-  // degree of freedom
+  // degrees of freedom
   size_t nitems;
   // pre-computed trigonometric values
   trig_t * trigs;
@@ -40,18 +40,18 @@ struct rdft_plan_t {
   size_t * reversed_bit_indices;
 };
 
-static void * memory_alloc (
+static void * memory_alloc(
     const size_t size
 ) {
   void * const ptr = malloc(size);
   if (NULL == ptr) {
     fprintf(stderr, "[FATAL %s:%d] failed to allocate %zu bytes\n", __FILE__, __LINE__, size);
-    return NULL;
+    exit(EXIT_FAILURE);
   }
   return ptr;
 }
 
-static void memory_free (
+static void memory_free(
     void * const ptr
 ) {
   free(ptr);
@@ -106,10 +106,7 @@ static int bit_reverse_out_of_place(
 ) {
   for (size_t i = 0; i < nitems; i++) {
     const size_t j = reversed_bit_indices[i];
-    const double xi = *(xs + i);
-    const double xj = *(xs + j);
-    *(ys + i) = xj;
-    *(ys + j) = xi;
+    ys[i] = xs[j];
   }
   return 0;
 }
@@ -120,7 +117,7 @@ int rdft_init_plan(
 ) {
   *plan = NULL;
   if (nitems < 2) {
-    printf("nitems (%zu) should be larger than 2\n", nitems);
+    printf("nitems (%zu) should be at least 2\n", nitems);
     return 1;
   }
   if (nitems & (nitems - 1)) {
@@ -131,10 +128,10 @@ int rdft_init_plan(
   (*plan)->nitems = nitems;
   trig_t ** trigs = &(*plan)->trigs;
   size_t ** reversed_bit_indices = &(*plan)->reversed_bit_indices;
-  *trigs = memory_alloc(nitems / 2 * sizeof(trig_t));
+  *trigs = memory_alloc(nitems / 4 * sizeof(trig_t));
   *reversed_bit_indices = memory_alloc(nitems * sizeof(size_t));
-  // compute twiddle factors (wave numbers up to nitems / 2) a priori
-  for (size_t k = 0; k < nitems / 2; k++) {
+  // compute twiddle factors (wavenumbers up to nitems / 4) a priori
+  for (size_t k = 0; k < nitems / 4; k++) {
     trig_t * const trig = *trigs + k;
     trig->cos = cos(2. * pi * k / nitems);
     trig->sin = sin(2. * pi * k / nitems);
@@ -158,8 +155,8 @@ int rdft_destroy_plan(
 }
 
 int rdft_exec_f(
-    rdft_plan_t * const plan,
-    double * const xs,
+    const rdft_plan_t * const plan,
+    const double * const xs,
     double * const ys
 ) {
   const size_t nitems = plan->nitems;
@@ -176,15 +173,14 @@ int rdft_exec_f(
   for (size_t stage = 0; stage < nstages; stage++) {
     // stride: pointer difference of two elements
     //   between which butterfly operations are performed
-    // stride = pow(2, stage)
-    const size_t stride = 1 << stage;
+    const size_t stride = (size_t)1 << stage;
     // there are several sub-systems called blocks,
-    //   which are smaller systems in which DFTs aree performed
+    //   which are smaller systems in which DFTs are performed
     const size_t block_size = stride << 1;
     const size_t n_block = nitems / block_size;
     for (size_t block_index = 0; block_index < n_block; block_index++) {
       const size_t block_head = block_size * block_index;
-      // first wave number (k = 0): between two real numbers
+      // first wavenumber (k = 0): between two real numbers
       {
         const size_t i = block_head;
         const size_t j = block_head + stride;
@@ -195,7 +191,7 @@ int rdft_exec_f(
         *yi = new_yi;
         *yj = new_yj;
       }
-      // other wave numbers (k = 1, 2, ...): between two complex numbers
+      // other wavenumbers (k = 1, 2, ...): between two complex numbers
       // considered up to stride / 2 due to symmetry
       for (size_t k = 1; k < (stride >> 1); k++) {
         const size_t i_real = block_head + 0 * stride + k;
@@ -228,7 +224,7 @@ int rdft_exec_f(
 }
 
 int rdft_exec_b(
-    rdft_plan_t * const plan,
+    const rdft_plan_t * const plan,
     double * const xs,
     double * const ys
 ) {
@@ -240,15 +236,14 @@ int rdft_exec_b(
   for (size_t stage = 0; stage < nstages; stage++) {
     // stride: pointer difference of two elements
     //   between which butterfly operations are performed
-    // stride = pow(2, nstages - stage - 1)
-    const size_t stride = 1 << (nstages - stage - 1);
+    const size_t stride = (size_t)1 << (nstages - stage - 1);
     // there are several sub-systems called blocks,
-    //   which are smaller systems in which DFTs aree performed
+    //   which are smaller systems in which DFTs are performed
     const size_t block_size = stride << 1;
     const size_t n_block = nitems / block_size;
     for (size_t block_index = 0; block_index < n_block; block_index++) {
       const size_t block_head = block_size * block_index;
-      // first wave number (k = 0): between two real numbers
+      // first wavenumber (k = 0): between two real numbers
       {
         const size_t i = block_head;
         const size_t j = block_head + stride;
@@ -259,7 +254,7 @@ int rdft_exec_b(
         *xi = 0.5 * new_xi;
         *xj = 0.5 * new_xj;
       }
-      // other wave numbers (k = 1, 2, ...): between two complex numbers
+      // other wavenumbers (k = 1, 2, ...): between two complex numbers
       // considered up to stride / 2 due to symmetry
       for (size_t k = 1; k < (stride >> 1); k++) {
         // real and imaginary parts are stored separately
