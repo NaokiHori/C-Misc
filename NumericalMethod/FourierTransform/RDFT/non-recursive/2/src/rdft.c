@@ -225,7 +225,7 @@ int rdft_exec_f(
 
 int rdft_exec_b(
     const rdft_plan_t * const plan,
-    double * const xs,
+    const double * const xs,
     double * const ys
 ) {
   const size_t nitems = plan->nitems;
@@ -234,6 +234,8 @@ int rdft_exec_b(
   // each stage of the butterfly operations
   const size_t nstages = get_nbits(nitems);
   for (size_t stage = 0; stage < nstages; stage++) {
+    const double * const inputs = 0 == stage ? xs : ys;
+    double * const outputs = ys;
     // stride: pointer difference of two elements
     //   between which butterfly operations are performed
     const size_t stride = (size_t)1 << (nstages - stage - 1);
@@ -247,12 +249,10 @@ int rdft_exec_b(
       {
         const size_t i = block_head;
         const size_t j = block_head + stride;
-        double * const xi = xs + i;
-        double * const xj = xs + j;
-        const double new_xi = *xi + *xj;
-        const double new_xj = *xi - *xj;
-        *xi = 0.5 * new_xi;
-        *xj = 0.5 * new_xj;
+        const double input_i = inputs[i];
+        const double input_j = inputs[j];
+        outputs[i] = 0.5 * (input_i + input_j);
+        outputs[j] = 0.5 * (input_i - input_j);
       }
       // other wavenumbers (k = 1, 2, ...): between two complex numbers
       // considered up to stride / 2 due to symmetry
@@ -263,34 +263,31 @@ int rdft_exec_b(
         const size_t i_imag = block_head + 1 * stride - k;
         const size_t j_real = block_head + 1 * stride + k;
         const size_t j_imag = block_head + 2 * stride - k;
-        double * const xi_real = xs + i_real;
-        double * const xi_imag = xs + i_imag;
-        double * const xj_real = xs + j_real;
-        double * const xj_imag = xs + j_imag;
+        const double input_i_real = inputs[i_real];
+        const double input_i_imag = inputs[i_imag];
+        const double input_j_real = inputs[j_real];
+        const double input_j_imag = inputs[j_imag];
         const size_t twiddle_index = nitems / block_size * k;
         const double twiddle_real = + trigs[twiddle_index].cos;
         const double twiddle_imag = + trigs[twiddle_index].sin;
-        const double new_xi_real = + *xi_real + *xi_imag;
-        const double new_xi_imag = - *xj_real + *xj_imag;
-        const double real = + *xi_real - *xi_imag;
-        const double imag = + *xj_real + *xj_imag;
-        const double new_xj_real = + twiddle_real * real
-                                   + twiddle_imag * imag;
-        const double new_xj_imag = + twiddle_real * imag
-                                   - twiddle_imag * real;
-        *xi_real = 0.5 * new_xi_real;
-        *xi_imag = 0.5 * new_xi_imag;
-        *xj_real = 0.5 * new_xj_real;
-        *xj_imag = 0.5 * new_xj_imag;
+        const double real = + input_i_real - input_i_imag;
+        const double imag = + input_j_real + input_j_imag;
+        outputs[i_real] = 0.5 * (+ input_i_real        + input_i_imag       );
+        outputs[i_imag] = 0.5 * (- input_j_real        + input_j_imag       );
+        outputs[j_real] = 0.5 * (+ twiddle_real * real + twiddle_imag * imag);
+        outputs[j_imag] = 0.5 * (+ twiddle_real * imag - twiddle_imag * real);
+      }
+      // nyquist wavenumber: just copy
+      if (0 == stage) {
+        const size_t i = block_head + (stride >> 1);
+        const size_t j = i + stride;
+        outputs[i] = inputs[i];
+        outputs[j] = inputs[j];
       }
     }
   }
   // post-process
-  if (xs == ys) {
-    bit_reverse_in_place(nitems, reversed_bit_indices, ys);
-  } else {
-    bit_reverse_out_of_place(nitems, reversed_bit_indices, xs, ys);
-  }
+  bit_reverse_in_place(nitems, reversed_bit_indices, ys);
   return 0;
 }
 

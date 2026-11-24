@@ -27,11 +27,10 @@ extern int rdft_exec_f(
 /**
  * xs == ys: in-place transform
  * xs != ys: out-of-place transform
- * NOTE: xs is modified
  */
 extern int rdft_exec_b(
     const rdft_plan_t * const plan,
-    double * const xs,
+    const double * const xs,
     double * const ys
 );
 
