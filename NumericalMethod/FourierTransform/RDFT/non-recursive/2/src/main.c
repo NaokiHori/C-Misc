@@ -147,19 +147,20 @@ static int test_2_out_of_place(
 int main(
     void
 ) {
-  const size_t nitems = 512;
-  rdft_plan_t * plan = NULL;
-  if (0 != rdft_init_plan(nitems, &plan)) {
-    return 1;
-  }
-  test_0_in_place(nitems, plan);
-  test_0_out_of_place(nitems, plan);
-  test_1_in_place(nitems, plan);
-  test_1_out_of_place(nitems, plan);
-  test_2_in_place(nitems, plan);
-  test_2_out_of_place(nitems, plan);
-  if (0 != rdft_destroy_plan(&plan)) {
-    return 1;
+  for (size_t nitems = (1 << 1); nitems < (1 << 10); nitems <<= 2) {
+    rdft_plan_t * plan = NULL;
+    if (0 != rdft_init_plan(nitems, &plan)) {
+      return 1;
+    }
+    test_0_in_place(nitems, plan);
+    test_0_out_of_place(nitems, plan);
+    test_1_in_place(nitems, plan);
+    test_1_out_of_place(nitems, plan);
+    test_2_in_place(nitems, plan);
+    test_2_out_of_place(nitems, plan);
+    if (0 != rdft_destroy_plan(&plan)) {
+      return 1;
+    }
   }
   return 0;
 }

@@ -12,7 +12,7 @@
 //   F0(0,2,4,6)
 //   F1(0,2,4,6) <-+
 //   F2(0,2,4,6)   |
-//   F3(0,2,4,6) <-+-+
+//   F3(0,2,4,6) <---+
 //   F0(1,3,5,7)   | |
 //   F1(1,3,5,7) <-+ |
 //   F2(1,3,5,7)     |
@@ -107,6 +107,17 @@ static int bit_reverse_out_of_place(
   for (size_t i = 0; i < nitems; i++) {
     const size_t j = reversed_bit_indices[i];
     ys[i] = xs[j];
+  }
+  return 0;
+}
+
+static int scale(
+    const size_t nitems,
+    const double prefactor,
+    double * const values
+) {
+  for (size_t i = 0; i < nitems; i++) {
+    values[i] *= prefactor;
   }
   return 0;
 }
@@ -251,8 +262,8 @@ int rdft_exec_b(
         const size_t j = block_head + stride;
         const double input_i = inputs[i];
         const double input_j = inputs[j];
-        outputs[i] = 0.5 * (input_i + input_j);
-        outputs[j] = 0.5 * (input_i - input_j);
+        outputs[i] = input_i + input_j;
+        outputs[j] = input_i - input_j;
       }
       // other wavenumbers (k = 1, 2, ...): between two complex numbers
       // considered up to stride / 2 due to symmetry
@@ -272,22 +283,23 @@ int rdft_exec_b(
         const double twiddle_imag = + trigs[twiddle_index].sin;
         const double real = + input_i_real - input_i_imag;
         const double imag = + input_j_real + input_j_imag;
-        outputs[i_real] = 0.5 * (+ input_i_real        + input_i_imag       );
-        outputs[i_imag] = 0.5 * (- input_j_real        + input_j_imag       );
-        outputs[j_real] = 0.5 * (+ twiddle_real * real + twiddle_imag * imag);
-        outputs[j_imag] = 0.5 * (+ twiddle_real * imag - twiddle_imag * real);
+        outputs[i_real] = + input_i_real        + input_i_imag       ;
+        outputs[i_imag] = - input_j_real        + input_j_imag       ;
+        outputs[j_real] = + twiddle_real * real + twiddle_imag * imag;
+        outputs[j_imag] = + twiddle_real * imag - twiddle_imag * real;
       }
-      // nyquist wavenumber: just copy
-      if (0 == stage) {
+      // nyquist wavenumber
+      if (1 < stride) {
         const size_t i = block_head + (stride >> 1);
         const size_t j = i + stride;
-        outputs[i] = inputs[i];
-        outputs[j] = inputs[j];
+        outputs[i] = 2. * inputs[i];
+        outputs[j] = 2. * inputs[j];
       }
     }
   }
   // post-process
   bit_reverse_in_place(nitems, reversed_bit_indices, ys);
+  scale(nitems, 1. / nitems, ys);
   return 0;
 }
 
