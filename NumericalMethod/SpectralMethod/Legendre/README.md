@@ -192,6 +192,90 @@ P_{i, k}^{\prime}
 
 Higher-order derivatives can be computed in the same manner.
 
+An alternative is to compute the derivative coefficients $\alpha_k^{\prime}$:
+
+```math
+\frac{
+  da
+}{
+  dx
+}
+\left( x \right)
+=
+\sum_k
+\alpha_k^{\prime}
+P_k
+\left( x \right).
+```
+
+By using
+
+```math
+\left(
+  2 k + 1
+\right)
+P_k
+=
+P_{k + 1}^{\prime}
+-
+P_{k - 1}^{\prime},
+```
+
+we obtain
+
+```math
+\sum_k
+\alpha_k^{\prime}
+P_k
+\left( x \right)
+=
+\sum_k
+\alpha_k^{\prime}
+\frac{
+  P_{k + 1}^{\prime}
+  -
+  P_{k - 1}^{\prime}
+}{
+  2 k + 1
+}
+=
+\sum_k
+\left(
+  \frac{
+    \alpha_{k - 1}^{\prime}
+  }{
+    2 k - 1
+  }
+  -
+  \frac{
+    \alpha_{k + 1}^{\prime}
+  }{
+    2 k + 3
+  }
+\right)
+P_k^{\prime}.
+```
+
+Equating coefficients of $P_k$ yields
+
+```math
+\alpha_k^{\prime}
+=
+\left(
+  2 k + 1
+\right)
+\alpha_{k + 1}
++
+\frac{
+  2 k + 1
+}{
+  2 k + 5
+}
+\alpha_{k + 2}^{\prime}.
+```
+
+This backward recurrence relation can be used to compute derivatives in spectral space.
+
 ## Reference
 
 - [Legendre polynomials - Wikipedia](https://en.wikipedia.org/w/index.php?title=Legendre_polynomials&oldid=1370673668)

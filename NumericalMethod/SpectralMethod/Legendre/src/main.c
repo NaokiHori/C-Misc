@@ -165,6 +165,43 @@ static int check_derivative_2(
   return 0;
 }
 
+static int check_derivative_recursive(
+    const size_t nitems,
+    const double * const backward,
+    const double * const roots
+) {
+  double * const spectral_values = malloc((nitems + 1) * sizeof(double));
+  double * const differentiated_spectral_values = malloc((nitems + 2) * sizeof(double));
+  double * const physical_values = malloc(nitems * sizeof(double));
+  for (size_t i = 0; i < nitems + 1; i++) {
+    spectral_values[i] = 3 == i ? 1. : 0.;
+  }
+  for (size_t i = 0; i < nitems + 2; i++) {
+    differentiated_spectral_values[i] = 0.;
+  }
+  for (int k = nitems - 1; 0 <= k; k -= 1) {
+    differentiated_spectral_values[k] =
+      + (2. * k + 1.) * spectral_values[k + 1]
+      + (2. * k + 1.) / (2. * k + 5.) * differentiated_spectral_values[k + 2];
+  }
+  compute_matrix_vector_multiplication(nitems, backward, differentiated_spectral_values, physical_values);
+  double errors[2] = {0., 0.};
+  for (size_t i = 0; i < nitems; i++) {
+    const double root = roots[i];
+    const double expected = 7.5 * root * root - 1.5;
+    const double obtained = physical_values[i];
+    const double error = obtained - expected;
+    errors[0] += pow(error, 2.);
+    errors[1] = fmax(errors[1], fabs(error));
+  }
+  errors[0] = sqrt(errors[0] / nitems);
+  printf("% .1e % .1e\n", errors[0], errors[1]);
+  free(spectral_values);
+  free(differentiated_spectral_values);
+  free(physical_values);
+  return 0;
+}
+
 int main(
     void
 ) {
@@ -218,6 +255,7 @@ int main(
   check_round_trip(nitems, forward, backward);
   check_derivative(nitems, derivative, roots);
   check_derivative_2(nitems, derivative_2, roots);
+  check_derivative_recursive(nitems, backward, roots);
   free(forward);
   free(backward);
   free(derivative);
