@@ -176,7 +176,10 @@ int main(
 ) {
   int retval = 0;
   const size_t nitems_list[] = {
-    1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+    11, 12, 13, 14, 15, 16, 18, 20, 21,
+    22, 24, 25, 26, 27, 28, 30, 32, 36,
+    48, 64, 96, 128, 192, 256, 384, 512, 768, 1024,
   };
   for (size_t n = 0; n < sizeof(nitems_list) / sizeof(nitems_list[0]); n++) {
     retval += test0(nitems_list[n]);

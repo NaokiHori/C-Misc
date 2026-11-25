@@ -1,7 +1,10 @@
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "dft.h"
+
+#define RADIX_MAX 13
 
 static const double pi = 3.14159265358979324;
 
@@ -13,10 +16,13 @@ typedef struct {
 struct dft_plan_t {
   // degrees of freedom
   size_t nitems;
+  size_t nfactors;
+  size_t * factors;
   // pre-computed trigonometric values
   trig_t * trigs;
-  // pre-computed bit-reversed indices
-  size_t * reversed_bit_indices;
+  // reorder input buffer
+  size_t nswap_list;
+  size_t (* swap_list)[2];
 };
 
 static void * memory_alloc(
@@ -24,7 +30,13 @@ static void * memory_alloc(
 ) {
   void * const ptr = malloc(size);
   if (NULL == ptr) {
-    fprintf(stderr, "[FATAL %s:%d] failed to allocate %zu bytes\n", __FILE__, __LINE__, size);
+    fprintf(
+        stderr,
+        "[FATAL %s:%d] failed to allocate %zu bytes\n",
+        __FILE__,
+        __LINE__,
+        size
+    );
     exit(EXIT_FAILURE);
   }
   return ptr;
@@ -36,70 +48,221 @@ static void memory_free(
   free(ptr);
 }
 
-static size_t get_reversed_bit_index(
-    const size_t nitems,
-    size_t index
+static const size_t singly_linked_node_dummy_value = SIZE_MAX;
+
+typedef struct singly_linked_node_t {
+  // NOTE: only the first item is used by prime factorization
+  size_t items[2];
+  struct singly_linked_node_t * next;
+} singly_linked_node_t;
+
+typedef struct {
+  size_t nitems;
+  singly_linked_node_t * root;
+} singly_linked_list_t;
+
+static int add_node(
+    singly_linked_list_t * const list,
+    const size_t items[2]
 ) {
-  size_t nbits = 0;
-  {
-    size_t n = nitems;
-    while (n >>= 1) {
-      nbits += 1;
-    }
-  }
-  size_t reversed_index = 0;
-  for (size_t bit = 0; bit < nbits; bit++) {
-    reversed_index <<= 1;
-    reversed_index |= index & 1;
-    index >>= 1;
-  }
-  return reversed_index;
+  singly_linked_node_t * const node = malloc(sizeof(singly_linked_node_t));
+  node->items[0] = items[0];
+  node->items[1] = items[1];
+  node->next = list->root;
+  list->root = node;
+  list->nitems += 1;
+  return 0;
 }
 
-static int bit_reverse_inplace(
-    const size_t nitems,
-    const size_t * const reversed_bit_indices,
-    double * const values
+static int pop_node(
+    singly_linked_list_t * const list,
+    size_t (* const items)[2]
 ) {
+  if (NULL == list->root || 0 == list->nitems) {
+    return 1;
+  }
+  singly_linked_node_t * const node = list->root;
+  (*items)[0] = node->items[0];
+  (*items)[1] = node->items[1];
+  list->root = node->next;
+  list->nitems -= 1;
+  memory_free(node);
+  return 0;
+}
+
+static int prime_factorize(
+    const size_t nitems,
+    size_t * const nfactors,
+    size_t ** const factors
+) {
+  // add factors to a singly-linked list
+  singly_linked_list_t list = {0};
+  size_t n = nitems;
+  size_t d = 2;
+  while (d * d <= n) {
+    while (0 == n % d) {
+      add_node(&list, (size_t [2]){d, singly_linked_node_dummy_value});
+      n /= d;
+    }
+    d += 1;
+  }
+  if (1 < n) {
+    add_node(&list, (size_t [2]){n, singly_linked_node_dummy_value});
+  }
+  *nfactors = list.nitems;
+  *factors = memory_alloc(*nfactors * sizeof(size_t));
+  for (size_t i = 0; i < *nfactors; i++) {
+    size_t buffer[2] = {
+      singly_linked_node_dummy_value,
+      singly_linked_node_dummy_value,
+    };
+    pop_node(&list, &buffer);
+    // sort by ascending order
+    size_t * const factor = *factors + *nfactors - i - 1;
+    *factor = buffer[0];
+  }
+  return 0;
+}
+
+static int rearrange_indices(
+    const size_t nitems,
+    const size_t nfactors,
+    const size_t * const factors,
+    const size_t stride,
+    const size_t * const inputs,
+    size_t * const outputs
+) {
+  if (nfactors < 1) {
+    *outputs = inputs[0];
+    return 0;
+  }
+  const size_t factor = factors[nfactors - 1];
+  for (size_t i = 0; i < factor; i++) {
+    rearrange_indices(
+        nitems / factor,
+        nfactors - 1,
+        factors,
+        stride * factor,
+        inputs + stride * i,
+        outputs + i * nitems / factor
+    );
+  }
+  return 0;
+}
+
+static int construct_swap_list(
+    const size_t nitems,
+    const size_t nfactors,
+    const size_t * const factors,
+    size_t * const nswap_list,
+    size_t (** const swap_list)[2]
+) {
+  size_t * const ordered = memory_alloc(nitems * sizeof(size_t));
+  size_t * const arranged = memory_alloc(nitems * sizeof(size_t));
   for (size_t i = 0; i < nitems; i++) {
-    const size_t j = reversed_bit_indices[i];
-    if (i < j) {
-      const double tmp = values[i];
-      values[i] = values[j];
-      values[j] = tmp;
+    ordered[i] = i;
+  }
+  rearrange_indices(nitems, nfactors, factors, 1, ordered, arranged);
+  singly_linked_list_t list = {0};
+  for (size_t i = 0; i < nitems; i++) {
+    if (ordered[i] == arranged[i]) {
+      continue;
+    }
+    for (size_t j = i + 1; j < nitems; j++) {
+      if (ordered[j] == arranged[i]) {
+        const size_t tmp = ordered[i];
+        ordered[i] = ordered[j];
+        ordered[j] = tmp;
+        add_node(&list, (size_t [2]){i, j});
+      }
     }
   }
+  *nswap_list = list.nitems;
+  *swap_list = memory_alloc(*nswap_list * sizeof(size_t [2]));
+  for (size_t i = 0; i < *nswap_list; i++) {
+    size_t buffer[2] = {
+      singly_linked_node_dummy_value,
+      singly_linked_node_dummy_value,
+    };
+    pop_node(&list, &buffer);
+    (*swap_list)[*nswap_list - i - 1][0] = buffer[0];
+    (*swap_list)[*nswap_list - i - 1][1] = buffer[1];
+  }
+  memory_free(ordered);
+  memory_free(arranged);
+  return 0;
+}
+
+static int apply_swap_list(
+    const size_t nswap_list,
+    size_t (* const swap_list)[2],
+    double * const values
+) {
+  for (size_t i = 0; i < nswap_list; i++) {
+    size_t (* const indices)[2] = swap_list + i;
+    const double tmp = values[(*indices)[0]];
+    values[(*indices)[0]] = values[(*indices)[1]];
+    values[(*indices)[1]] = tmp;
+  }
+  return 0;
+}
+
+static int compute_complex_multiplication_and_add(
+    const double real_in_0,
+    const double imag_in_0,
+    const double real_in_1,
+    const double imag_in_1,
+    double * const real_out,
+    double * const imag_out
+) {
+  *real_out += real_in_0 * real_in_1 - imag_in_0 * imag_in_1;
+  *imag_out += real_in_0 * imag_in_1 + imag_in_0 * real_in_1;
   return 0;
 }
 
 static int execute_stage(
     const size_t nitems,
     const trig_t * const trigs,
+    const size_t factor,
     const size_t stride,
     const double sign,
     double * const restrict reals,
     double * const restrict imags
 ) {
-  const size_t block_size = 2 * stride;
+  const size_t block_size = factor * stride;
   const size_t nblocks = nitems / block_size;
   for (size_t block_index = 0; block_index < nblocks; block_index++) {
     const size_t block_head = block_size * block_index;
     for (size_t k = 0; k < stride; k++) {
-      const trig_t * const trig = trigs + nblocks * k;
-      const double twiddle_real = trig->cos;
-      const double twiddle_imag = trig->sin * sign;
-      const size_t i = block_head + k;
-      const size_t j = block_head + k + stride;
-      const double real_i = reals[i];
-      const double real_j = reals[j];
-      const double imag_i = imags[i];
-      const double imag_j = imags[j];
-      const double real_j_twiddled = twiddle_real * real_j - twiddle_imag * imag_j;
-      const double imag_j_twiddled = twiddle_imag * real_j + twiddle_real * imag_j;
-      reals[i] = real_i + real_j_twiddled;
-      reals[j] = real_i - real_j_twiddled;
-      imags[i] = imag_i + imag_j_twiddled;
-      imags[j] = imag_i - imag_j_twiddled;
+      // butterfly
+      double rs[RADIX_MAX] = {0.};
+      double is[RADIX_MAX] = {0.};
+      for (size_t l = 0; l < factor; l++) {
+        const size_t m = block_head + k + l * stride;
+        // W_{block_size}^{k * l}
+        const trig_t * const trig = trigs + ((k * l) % block_size) * (nitems / block_size);
+        compute_complex_multiplication_and_add(
+          reals[m], imags[m],
+          trig->cos, trig->sin * sign,
+          rs + l, is + l
+        );
+      }
+      for (size_t l = 0; l < factor; l++) {
+        double r = 0.;
+        double i = 0.;
+        for (size_t m = 0; m < factor; m++) {
+          // W_{factor}^{l * m}
+          const trig_t * const trig = trigs + ((l * m) % factor) * (nitems / factor);
+          compute_complex_multiplication_and_add(
+            rs[m], is[m],
+            trig->cos, trig->sin * sign,
+            &r, &i
+          );
+        }
+        const size_t m = block_head + k + l * stride;
+        reals[m] = r;
+        imags[m] = i;
+      }
     }
   }
   return 0;
@@ -123,12 +286,17 @@ static int execute_inplace_transform(
     double * const restrict imags
 ) {
   const size_t nitems = plan->nitems;
+  const size_t nfactors = plan->nfactors;
+  const size_t * const factors = plan->factors;
   const trig_t * const trigs = plan->trigs;
-  const size_t * const reversed_bit_indices = plan->reversed_bit_indices;
-  bit_reverse_inplace(nitems, reversed_bit_indices, reals);
-  bit_reverse_inplace(nitems, reversed_bit_indices, imags);
-  for (size_t stride = 1; stride < nitems; stride <<= 1) {
-    execute_stage(nitems, trigs, stride, sign, reals, imags);
+  const size_t nswap_list = plan->nswap_list;
+  size_t (* const swap_list)[2] = plan->swap_list;
+  apply_swap_list(nswap_list, swap_list, reals);
+  apply_swap_list(nswap_list, swap_list, imags);
+  for (size_t i = 0, stride = 1; i < nfactors; i++) {
+    const size_t factor = factors[i];
+    execute_stage(nitems, trigs, factor, stride, sign, reals, imags);
+    stride *= factor;
   }
   return 0;
 }
@@ -162,25 +330,39 @@ int dft_init_plan(
     fprintf(stderr, "nitems should be at least 1: %zu\n", nitems);
     return 1;
   }
-  if (0 != (nitems & (nitems - 1))) {
-    fprintf(stderr, "nitems should be a power of 2: %zu\n", nitems);
-    return 1;
-  }
   *plan = memory_alloc(1 * sizeof(dft_plan_t));
   (*plan)->nitems = nitems;
   trig_t ** const trigs = &(*plan)->trigs;
-  size_t ** const reversed_bit_indices = &(*plan)->reversed_bit_indices;
-  *trigs = memory_alloc(nitems / 2 * sizeof(trig_t));
-  *reversed_bit_indices = memory_alloc(nitems * sizeof(size_t));
+  *trigs = memory_alloc(nitems * sizeof(trig_t));
   // prepare cosine / sine tables
-  for (size_t k = 0; k < nitems / 2; k++) {
+  for (size_t k = 0; k < nitems; k++) {
     trig_t * const trig = *trigs + k;
     trig->cos = cos(2. * pi * k / nitems);
     trig->sin = sin(2. * pi * k / nitems);
   }
-  // calculate bit-reversed order
-  for (size_t index = 0; index < nitems; index++) {
-    (*reversed_bit_indices)[index] = get_reversed_bit_index(nitems, index);
+  if (0 != prime_factorize(nitems, &(*plan)->nfactors, &(*plan)->factors)) {
+    fprintf(stderr, "failed to prime-factorize: %zu\n", nitems);
+    dft_destroy_plan(plan);
+    return 1;
+  }
+  for (size_t i = 0; i < (*plan)->nfactors; i++) {
+    const size_t factor = (*plan)->factors[i];
+    if (RADIX_MAX < factor) {
+      fprintf(stderr, "prime number is not supported: %zu\n", factor);
+      dft_destroy_plan(plan);
+      return 1;
+    }
+  }
+  if (0 != construct_swap_list(
+      nitems,
+      (*plan)->nfactors,
+      (*plan)->factors,
+      &(*plan)->nswap_list,
+      &(*plan)->swap_list)
+  ) {
+    fprintf(stderr, "failed to construct swap list\n");
+    dft_destroy_plan(plan);
+    return 1;
   }
   return 0;
 }
@@ -189,7 +371,8 @@ int dft_destroy_plan(
     dft_plan_t ** const plan
 ) {
   memory_free((*plan)->trigs);
-  memory_free((*plan)->reversed_bit_indices);
+  memory_free((*plan)->factors);
+  memory_free((*plan)->swap_list);
   memory_free(*plan);
   *plan = NULL;
   return 0;
