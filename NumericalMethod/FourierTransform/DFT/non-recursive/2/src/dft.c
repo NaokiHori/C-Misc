@@ -296,6 +296,38 @@ int dft_execute_inplace_backward_transform(
   return 0;
 }
 
+int dft_execute_outofplace_forward_transform(
+    const dft_plan_t * const plan,
+    const double * const restrict input_reals,
+    const double * const restrict input_imags,
+    double * const restrict output_reals,
+    double * const restrict output_imags
+) {
+  const size_t nitems = plan->nitems;
+  for (size_t i = 0; i < nitems; i++) {
+    output_reals[i] = input_reals[i];
+    output_imags[i] = input_imags[i];
+  }
+  dft_execute_inplace_forward_transform(plan, output_reals, output_imags);
+  return 0;
+}
+
+int dft_execute_outofplace_backward_transform(
+    const dft_plan_t * const plan,
+    const double * const restrict input_reals,
+    const double * const restrict input_imags,
+    double * const restrict output_reals,
+    double * const restrict output_imags
+) {
+  const size_t nitems = plan->nitems;
+  for (size_t i = 0; i < nitems; i++) {
+    output_reals[i] = input_reals[i];
+    output_imags[i] = input_imags[i];
+  }
+  dft_execute_inplace_backward_transform(plan, output_reals, output_imags);
+  return 0;
+}
+
 int dft_init_plan(
     const size_t nitems,
     dft_plan_t ** const plan
