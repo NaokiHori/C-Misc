@@ -23,6 +23,11 @@ and
 {{
   physical(index0)
   =
+  fraction(
+    1,
+    dof
+  )
+  *
   sum_between(
     index1,
     0,

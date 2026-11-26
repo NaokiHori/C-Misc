@@ -12,7 +12,7 @@ The forward and backward transforms are defined as
 and
 
 ```math
-{{f}_{{m}}} = {\sum_{{k} = 0}^{{N} - 1} {{F}_{{k}}} {{{W}_{{N}}}^{- {m} {k}}}},
+{{f}_{{m}}} = \frac{1}{{N}} \left( {\sum_{{k} = 0}^{{N} - 1} {{F}_{{k}}} {{{W}_{{N}}}^{- {m} {k}}}} \right),
 ```
 
 respectively, where ${m}$ and ${k}$ are integers $0, 1, \cdots, {N} - 1$.
