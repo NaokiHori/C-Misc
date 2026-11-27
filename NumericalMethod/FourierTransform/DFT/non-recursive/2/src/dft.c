@@ -1,6 +1,5 @@
 #include <limits.h>
 #include <math.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "dft.h"
@@ -382,6 +381,9 @@ int dft_init_plan(
 int dft_destroy_plan(
     dft_plan_t ** const plan
 ) {
+  if (NULL == *plan) {
+    return 0;
+  }
   memory_free((*plan)->trigs);
   memory_free((*plan)->factors);
   memory_free((*plan)->swap_list);
